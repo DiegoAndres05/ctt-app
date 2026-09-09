@@ -1,59 +1,72 @@
-# Cttadmin
+# CTT Admin - Testing Branch Guide
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.7.
+This repository contains the `001-auth-tenant-access` implementation:
 
-## Development server
+- Angular 22 standalone frontend with Signals and Signal Forms
+- Supabase/PostgreSQL schema, RLS, auth hooks, and audit controls
+- SQL and unit test suites for auth, RBAC, multi-tenant isolation, and onboarding
 
-To start a local development server, run:
+## Requirements
 
-```bash
-ng serve
-```
+- Node.js `>=20.19.0`
+- npm `>=11`
+- Docker (for SQL validation tests)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Quick Start
 
 ```bash
-ng generate component component-name
+npm install
+npm run build
+npm run lint
+npm run format:check
+npm test
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Run Frontend
+
+Set `src/environments/environment.development.ts` values:
+
+- `supabaseUrl`
+- `supabaseAnonKey`
+
+Then run:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Open `http://localhost:4200`.
 
-To build the project run:
+## Run SQL Validation Suite
+
+This launches a disposable Postgres 17 container and validates migrations + security behavior.
 
 ```bash
-ng build
+./supabase/tests/run-sql-tests.sh
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+It covers:
 
-## Running unit tests
+- auth functions and lockout behavior
+- RLS cross-tenant isolation
+- audit immutability enforcement
+- user management RPCs
+- agency registration RPC
+- performance probes
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Supabase Hooks Required (real environment)
 
-```bash
-ng test
-```
+In Supabase Dashboard:
 
-## Running end-to-end tests
+1. Authentication -> Hooks -> **Customize Access Token (JWT) Claims** -> `custom_access_token_hook`
+2. Authentication -> Hooks -> **Password Verification Attempt** -> `password_verification_hook`
 
-For end-to-end (e2e) testing, run:
+Without these hooks, key auth and lockout behavior will not match this implementation.
 
-```bash
-ng e2e
-```
+## Key Documentation
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Feature spec: `specs/001-auth-tenant-access/spec.md`
+- Plan: `specs/001-auth-tenant-access/plan.md`
+- Tasks: `specs/001-auth-tenant-access/tasks.md`
+- Validation evidence: `specs/001-auth-tenant-access/validation-evidence.md`
+- ADRs: `docs/adr/`
