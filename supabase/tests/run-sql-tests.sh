@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# Applies every migration to a throwaway PostgreSQL 17 container shaped like a Supabase
+# project, then runs the SQL test suites against it.
+#
+# The container is created and destroyed by this script, so the run is reproducible and never
+# touches a real project. Requires Docker.
+#
+# Usage: supabase/tests/run-sql-tests.sh [test-file ...]
+#        (no arguments runs every supabase/tests/*_test.sql)
+
+set -euo pipefail
+
+readonly CONTAINER=cttadmin-sqlcheck
+readonly IMAGE=postgres:17-alpine
+readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+readonly MIGRATIONS_DIR="$REPO_ROOT/supabase/migrations"
+readonly TESTS_DIR="$REPO_ROOT/supabase/tests"
+
+psql_file() {
+  docker exec -i "$CONTAINER" psql \
+    --username postgres --dbname postgres \
+    --no-psqlrc --quiet --set ON_ERROR_STOP=1 < "$1"
+}
+
+cleanup() {
+  docker rm --force "$CONTAINER" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+cleanup
+echo "==> starting $IMAGE as $CONTAINER"
+docker run --detach --name "$CONTAINER" \
+  --env POSTGRES_PASSWORD=postgres \
+  "$IMAGE" >/dev/null
+
+# The entrypoint accepts connections on a temporary local socket while it initialises the
+# cluster, then restarts the server. Poll with a real query and require several consecutive
+# successes so the restart cannot be mistaken for readiness.
+ready=0
+for _ in $(seq 1 120); do
+  if docker exec "$CONTAINER" psql --username postgres --dbname postgres \
+    --no-psqlrc --quiet --tuples-only --command 'SELECT 1' >/dev/null 2>&1; then
+    ready=$((ready + 1))
+    [ "$ready" -ge 3 ] && break
+  else
+    ready=0
+  fi
+  sleep 0.5
+done
+
+if [ "$ready" -lt 3 ]; then
+  echo "postgres did not become ready" >&2
+  exit 1
+fi
+
+echo "==> applying Supabase harness"
+for fixture in "$TESTS_DIR"/harness/*.sql; do
+  echo "    $(basename "$fixture")"
+  psql_file "$fixture"
+done
+
+echo "==> applying migrations"
+for migration in "$MIGRATIONS_DIR"/*.sql; do
+  echo "    $(basename "$migration")"
+  psql_file "$migration"
+done
+
+echo "==> applying seed"
+psql_file "$REPO_ROOT/supabase/seed.sql"
+
+if [ "$#" -gt 0 ]; then
+  suites=("$@")
+else
+  suites=("$TESTS_DIR"/*_test.sql)
+fi
+
+for suite in "${suites[@]}"; do
+  echo "==> running $(basename "$suite")"
+  psql_file "$suite"
+done
+
+echo "==> all suites passed"

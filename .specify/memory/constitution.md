@@ -1,5 +1,3 @@
-a
-
 # 1. Purpose
 
 ## Mission
@@ -34,7 +32,7 @@ Frontend
 - TypeScript
 - Standalone Components
 - Angular Signals
-- Reactive Forms
+- Signal Forms
 
 Backend
 
@@ -3163,7 +3161,7 @@ The following technologies constitute the approved baseline for the project.
 - TypeScript
 - Angular Signals
 - Standalone Components
-- Reactive Forms
+- Signal Forms
 
 Angular SHALL be the only approved frontend framework unless an Architecture Decision Record (ADR) explicitly authorizes an alternative.
 

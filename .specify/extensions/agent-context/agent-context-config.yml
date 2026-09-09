@@ -1,5 +1,7 @@
 context_file: GEMINI.md
-context_files: []
+context_files:
+  - GEMINI.md
+  - AGENTS.md
 context_markers:
   start: <!-- SPECKIT START -->
   end: <!-- SPECKIT END -->

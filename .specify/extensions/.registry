@@ -10,6 +10,9 @@
       "registered_commands": {
         "gemini": [
           "speckit.agent-context.update"
+        ],
+        "agy": [
+          "speckit.agent-context.update"
         ]
       },
       "registered_skills": [],
