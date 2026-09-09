@@ -66,3 +66,40 @@ End-to-end HTTP login against a hosted Supabase project was not measured.
 | `npm run format:check` | Pass |
 | `npm test` | 4 files, 26 tests pass |
 | `npm run build` | Pass, with budget **warning**: initial bundle 504.15 kB vs 500 kB (`maximumWarning`). Not an error. |
+
+---
+
+## Re-validation 2026-09-09 (local, Dockerless)
+
+**Environment**: Node v24.18.0, npm 11.16.0, fresh `npm install` (504 packages, 0 vulnerabilities).
+Docker was unavailable and Homebrew could not install it without admin rights, so the SQL
+suites ran on a throwaway Homebrew PostgreSQL 18.4 cluster (initdb → harness → migrations →
+seed → suites → destroy). Runner was a Dockerless variant of `run-sql-tests.sh` kept outside
+the repo (`/tmp/ctt-local-sql/run-sql-tests-local.sh`); the canonical script is untouched.
+PG 18 vs the harness's PG 17 target produced no incompatibilities.
+
+| Layer | Result |
+| --- | --- |
+| `npm test` (Vitest) | 4 files, **26/26 tests pass** |
+| `npm run lint` | Pass |
+| `npm run format:check` | Pass after a 1-line Prettier fix in `src/app/core/auth/models/organization.model.ts` |
+| `npm run build` | Pass; same budget warning as above (504.15 kB vs 500 kB warning, 1 MB error untouched) |
+| SQL: `audit_immutability` | Pass |
+| SQL: `performance_probe` | Pass |
+| SQL: `rls_isolation` (SC-002) | Pass |
+| SQL: `us1_auth_functions` | Pass |
+| SQL: `us3_user_management` | Pass |
+| SQL: `us5_register_agency` | Pass |
+
+**Still open** (unchanged): end-to-end HTTP login against a hosted Supabase project was not
+measured (SC-003); UI flows verified by unit tests + code review, not by browser session;
+`environment.*.ts` still hold placeholders.
+
+## Addendum 2026-09-09 (canonical Docker run)
+
+With Docker Desktop 29.7.2 available, the canonical `./supabase/tests/run-sql-tests.sh`
+(`postgres:17-alpine`, throwaway `cttadmin-sqlcheck` container) ran green: harness +
+10 migrations + seed applied, all 6 suites (`audit_immutability`, `performance_probe`,
+`rls_isolation`, `us1_auth_functions`, `us3_user_management`, `us5_register_agency`) passed.
+Frontend re-validated on the integrated tree: `npm test` 26/26 pass. The Dockerless PG 18
+variant results above remain consistent with this canonical run.
