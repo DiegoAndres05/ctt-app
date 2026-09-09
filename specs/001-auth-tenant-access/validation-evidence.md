@@ -103,3 +103,16 @@ With Docker Desktop 29.7.2 available, the canonical `./supabase/tests/run-sql-te
 `rls_isolation`, `us1_auth_functions`, `us3_user_management`, `us5_register_agency`) passed.
 Frontend re-validated on the integrated tree: `npm test` 26/26 pass. The Dockerless PG 18
 variant results above remain consistent with this canonical run.
+
+## Re-run 2026-09-09 15:02 (commit c7e88e2, clean tree, Docker 29.7.2)
+
+Fresh execution on the committed tree, no code changes:
+
+| Check | Result (real, this run) |
+| --- | --- |
+| `npm test` (Vitest) | 4 files, **26/26 pass** |
+| `run-sql-tests.sh` (`postgres:17-alpine`) | exit 0, **6/6 suites pass**, 101 `ok` assertions, 0 failures |
+| `performance_probe` measured | `register_agency` **37.355 ms** (budget < 2000 ms) · `audit.log_event` **1.553 ms** (budget < 500 ms) |
+
+No errors found; no source changes required. Full log: `/tmp/ctt-sql-run.log` (ephemeral,
+outside the repo).

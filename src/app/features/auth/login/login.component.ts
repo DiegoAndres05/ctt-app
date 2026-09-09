@@ -149,7 +149,7 @@ export class LoginComponent {
    * turn the login screen into an open redirect.
    */
   private safeReturnUrl(): string {
-    const target = this.returnUrl();
+    const target = this.returnUrl() ?? '/dashboard';
     return target.startsWith('/') && !target.startsWith('//') ? target : '/dashboard';
   }
 }

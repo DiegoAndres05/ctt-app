@@ -56,7 +56,11 @@ minimum_password_length = 8
 password_requirements = "lower_upper_letters_digits_symbols"
 
 [auth.email]
-enable_signup = false
+# NOTE: this must stay true or GoTrue disables the whole email provider
+# (GOTRUE_EXTERNAL_EMAIL_ENABLED=false → "email_provider_disabled" on login).
+# Public self-registration is still blocked globally by [auth] enable_signup = false
+# (GOTRUE_DISABLE_SIGNUP=true); collaborators are provisioned by an administrator.
+enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
 secure_password_change = true
@@ -69,6 +73,12 @@ enable_confirmations = false
 [auth.hook.custom_access_token]
 enabled = true
 uri = "pg-functions://postgres/public/custom_access_token_hook"
+
+# Enforces per-account lockout and rejects deactivated accounts AFTER verifying the
+# password (migration 008, ADR-0003). Required for quickstart scenario 6.
+[auth.hook.password_verification_attempt]
+enabled = true
+uri = "pg-functions://postgres/public/password_verification_hook"
 
 [edge_runtime]
 enabled = true
