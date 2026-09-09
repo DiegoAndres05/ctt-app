@@ -8,6 +8,14 @@
 
 **Input**: User description: "Gestión de catálogo turístico (experiencias, alojamientos, paquetes, add-ons) y esquema de precios derivado de mainspec.md (Capítulos 4, 5, 6, 7, 8, 18)."
 
+## Clarifications
+
+### Session 2026-09-09
+
+- Q: ¿A qué roles del sistema existente (Admin/Operador/Agente de 001) corresponden el "gestor de producto" y el "administrador comercial"? → A: Catálogo (productos, add-ons, paquetes, categorías) gestionable por Operador y Administrador; definición de esquemas de precios por Operador y Administrador; sobreescritura manual de precios restringida a Administrador; Agente solo lectura del catálogo.
+- Q: ¿El precio de un Paquete Predefinido es explícito o calculado desde sus componentes? → A: Explícito — el paquete tiene su propio esquema de precios independiente de los precios de los componentes (la suma automática queda diferida).
+- Q: ¿La moneda es única por organización o se define por esquema de precios? → A: Cada esquema de precios almacena su propia moneda, heredando por defecto la moneda configurada en la organización si no se especifica (multi-moneda futuro sin rediseño).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Gestión de Experiencias y Alojamientos (Priority: P1)
@@ -83,11 +91,13 @@ Como administrador comercial, quiero definir precios base, precios por temporada
 
 - **FR-001**: El sistema DEBE permitir el registro, actualización, consulta y desactivación lógica de Experiencias turísticas (nombre, descripción, duración, dificultad, capacidad, categoría).
 - **FR-002**: El sistema DEBE permitir el registro, actualización, consulta y desactivación lógica de Alojamientos (nombre, tipo, ubicación, capacidad, amenidades).
-- **FR-003**: El sistema DEBE soportar la creación de Paquetes Predefinidos compuestos por combinaciones de experiencias, alojamientos y complementos con itinerario.
+- **FR-003**: El sistema DEBE soportar la creación de Paquetes Predefinidos compuestos por combinaciones de experiencias, alojamientos y complementos con itinerario. El precio del paquete DEBE definirse de forma explícita como un esquema de precios propio del paquete, independiente de los precios de sus componentes.
 - **FR-004**: El sistema DEBE permitir registrar Complementos / Add-ons independientes y asociarlos a productos base.
 - **FR-005**: El sistema DEBE categorizar los productos mediante taxonomías organizacionales (ej. aventura, ecológico, cultural, lujo).
-- **FR-006**: El sistema DEBE permitir la configuración de esquemas de precios: precio por persona, precio por grupo/unidad, y precios diferenciados por temporadas (fechas inicio/fin).
+- **FR-006**: El sistema DEBE permitir la configuración de esquemas de precios (precio por persona, precio por grupo/unidad, y precios diferenciados por temporadas con fechas inicio/fin) a usuarios con rol Operador o Administrador.
 - **FR-007**: El sistema DEBE soportar el versionado o congelamiento de precios para evitar afectaciones retroactivas a cotizaciones y reservas existentes.
+- **FR-008**: El sistema DEBE restringir la creación/gestión del catálogo (experiencias, alojamientos, paquetes, add-ons, categorías) a los roles Operador y Administrador; el rol Agente DEBE tener acceso de solo lectura al catálogo.
+- **FR-009**: El sistema DEBE restringir la sobreescritura manual de precios exclusivamente al rol Administrador, registrando en auditoría el actor, motivo, valor anterior y valor nuevo.
 
 ### Key Entities
 
@@ -96,7 +106,7 @@ Como administrador comercial, quiero definir precios base, precios por temporada
 - **Alojamiento**: Subtipo de producto. Atributos: Tipo de inmueble (hotel, cabaña, glamping), Ubicación, Horarios check-in/out, Reglas de ocupación.
 - **Paquete**: Subtipo de producto. Lista de componentes (ítems de catálogo) con orden temporal/itinerario.
 - **Add-on / Complemento**: Servicio adicional opcional. Atributos: Nombre, Descripción, Unidad de medida, Reglas de aplicabilidad.
-- **Esquema de Precios**: Estructura de tarifas asociadas a un producto o add-on. Atributos: Moneda, Monto base, Tipo de cobro (por persona, por noche, por grupo), Temporada asociada (rango de fechas).
+- **Esquema de Precios**: Estructura de tarifas asociadas a un producto o add-on. Atributos: Moneda (propia de cada esquema; hereda por defecto la moneda de la organización), Monto base, Tipo de cobro (por persona, por noche, por grupo), Temporada asociada (rango de fechas).
 
 ## Success Criteria *(mandatory)*
 

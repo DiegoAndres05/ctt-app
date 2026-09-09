@@ -59,6 +59,104 @@ const protectedRoutes: Routes = [
           ),
       },
       {
+        path: 'catalog',
+        canActivate: [roleGuard('operator')],
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () =>
+              import('./features/catalog/catalog-shell/catalog-shell.component').then(
+                (m) => m.CatalogShellComponent,
+              ),
+          },
+          {
+            path: 'products',
+            canActivate: [roleGuard('operator')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/catalog/products/product-list/product-list.component').then(
+                    (m) => m.ProductListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                loadComponent: () =>
+                  import('./features/catalog/products/product-create/product-create.component').then(
+                    (m) => m.ProductCreateComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/catalog/products/product-detail/product-detail.component').then(
+                    (m) => m.ProductDetailComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'addons',
+            canActivate: [roleGuard('operator')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/catalog/addons/addon-list/addon-list.component').then(
+                    (m) => m.AddonListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                loadComponent: () =>
+                  import('./features/catalog/addons/addon-form/addon-form.component').then(
+                    (m) => m.AddonFormComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/catalog/addons/addon-form/addon-form.component').then(
+                    (m) => m.AddonFormComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'packages',
+            canActivate: [roleGuard('operator')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/catalog/packages/package-list/package-list.component').then(
+                    (m) => m.PackageListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                loadComponent: () =>
+                  import(
+                    './features/catalog/packages/package-builder/package-builder.component'
+                  ).then((m) => m.PackageBuilderComponent),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import(
+                    './features/catalog/packages/package-builder/package-builder.component'
+                  ).then((m) => m.PackageBuilderComponent),
+              },
+            ],
+          },
+        ],
+      },
+      {
         path: 'users',
         canActivate: [roleGuard('admin')],
         children: [

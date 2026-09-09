@@ -27,10 +27,13 @@ import { AlertComponent } from '../../shared/components/alert/alert.component';
         <app-alert kind="error">No tienes permisos para realizar esta acción.</app-alert>
       }
 
-      @if (canAdminister()) {
+      @if (canManageCatalog()) {
         <nav>
-          <a routerLink="/users">Usuarios</a>
-          <a routerLink="/audit">Auditoría</a>
+          <a routerLink="/catalog">Catálogo</a>
+          @if (canAdminister()) {
+            <a routerLink="/users">Usuarios</a>
+            <a routerLink="/audit">Auditoría</a>
+          }
         </nav>
       }
 
@@ -89,6 +92,10 @@ export class DashboardComponent {
 
   protected canAdminister(): boolean {
     return hasRoleAtLeast(this.auth.role(), 'admin');
+  }
+
+  protected canManageCatalog(): boolean {
+    return hasRoleAtLeast(this.auth.role(), 'operator');
   }
 
   protected async onSignOut(): Promise<void> {

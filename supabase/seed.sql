@@ -87,3 +87,43 @@ BEGIN
   END LOOP;
 END;
 $$;
+
+-- Catalog & pricing demo data for the seed agency (feature 002). Idempotent so a second
+-- apply after the tenant already exists still fills categories and a provider.
+DO $$
+DECLARE
+  v_org_id uuid := '00000000-0000-4000-a000-000000000001';
+  v_provider_id uuid := '00000000-0000-4000-c000-000000000001';
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.organizations WHERE id = v_org_id) THEN
+    RAISE NOTICE 'Demo tenant missing; skip catalog seed.';
+    RETURN;
+  END IF;
+
+  UPDATE public.organizations
+  SET settings = coalesce(settings, '{}'::jsonb) || jsonb_build_object('default_currency', 'COP')
+  WHERE id = v_org_id
+    AND coalesce(settings->>'default_currency', '') = '';
+
+  INSERT INTO public.providers (
+    id, organization_id, name, contact_email, contact_phone, is_active
+  )
+  VALUES (
+    v_provider_id,
+    v_org_id,
+    'Proveedor Demo Andes',
+    'proveedor@demo-turismo.test',
+    '+57 300 000 0000',
+    true
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  INSERT INTO public.categories (id, organization_id, name, slug)
+  VALUES
+    ('00000000-0000-4000-d000-000000000001', v_org_id, 'Aventura', 'aventura'),
+    ('00000000-0000-4000-d000-000000000002', v_org_id, 'Ecológico', 'ecologico'),
+    ('00000000-0000-4000-d000-000000000003', v_org_id, 'Cultural', 'cultural'),
+    ('00000000-0000-4000-d000-000000000004', v_org_id, 'Lujo', 'lujo')
+  ON CONFLICT (id) DO NOTHING;
+END;
+$$;
