@@ -1,0 +1,25 @@
+# Build and dependency artifacts
+node_modules/
+dist/
+.angular/
+coverage/
+*.log
+*.log*
+
+# Git and local tooling
+.git/
+.github/
+
+# Secrets and environment
+.env
+.env.*
+!.env.example
+
+# Supabase local stack leftovers
+supabase/.branches/
+supabase/.temp/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

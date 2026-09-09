@@ -46,6 +46,12 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
   REGISTRATION_FAILED: 'No se pudo completar el registro. Inténtalo de nuevo.',
   MISSING_TENANT_CONTEXT: 'Tu sesión no tiene una organización asociada. Vuelve a iniciar sesión.',
   SESSION_EXPIRED: 'Tu sesión expiró. Vuelve a iniciar sesión.',
+  PRODUCT_HAS_NO_VALID_PRICE:
+    'El producto no puede activarse porque no tiene un esquema de precio vigente.',
+  SEASON_OVERLAP: 'Ese rango de temporada se solapa con otra tarifa vigente.',
+  INVALID_SEASON_RANGE: 'La fecha de inicio de temporada no puede ser posterior a la de fin.',
+  INVALID_PRICE_TARGET: 'El precio debe aplicarse a un producto o a un complemento, no a ambos.',
+  PACKAGE_NESTING_NOT_ALLOWED: 'Un paquete no puede incluir otro paquete.',
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
 };
 
@@ -55,6 +61,8 @@ const POSTGRES_CODE_MAP: Readonly<Record<string, AuthErrorCode>> = {
   '42501': 'INSUFFICIENT_PERMISSIONS',
   // Row-level security policy rejected the write.
   '42P17': 'INSUFFICIENT_PERMISSIONS',
+  // GiST EXCLUDE on overlapping seasonal tariffs (R-004).
+  '23P01': 'SEASON_OVERLAP',
 };
 
 /** Translates an arbitrary failure into a stable, displayable {@link AppError}. */
@@ -92,8 +100,14 @@ function resolveErrorCode(error: unknown): AuthErrorCode {
     // Distinguish them from the constraint name / detail so a slug clash is not reported
     // as a duplicate address (T046).
     if (candidate.code === '23505') {
-      const blob = `${stringify(candidate.message)} ${stringify(candidate.details)}`;
-      return blob.toLowerCase().includes('slug') ? 'AGENCY_SLUG_EXISTS' : 'EMAIL_ALREADY_EXISTS';
+      const blob = `${stringify(candidate.message)} ${stringify(candidate.details)}`.toLowerCase();
+      if (blob.includes('organizations') && blob.includes('slug')) {
+        return 'AGENCY_SLUG_EXISTS';
+      }
+      if (blob.includes('email')) {
+        return 'EMAIL_ALREADY_EXISTS';
+      }
+      return 'VALIDATION_ERROR';
     }
   }
 
