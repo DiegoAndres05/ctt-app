@@ -25,6 +25,8 @@ import { RouterLink } from '@angular/router';
         <a routerLink="/catalog/products">Productos</a>
         <a routerLink="/catalog/packages">Paquetes</a>
         <a routerLink="/catalog/addons">Complementos</a>
+        <a routerLink="/catalog/public-categories">Categorías públicas</a>
+        <a routerLink="/catalog/public-cutover">Cambio de fuente</a>
       </nav>
     </main>
   `,

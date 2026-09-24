@@ -8,10 +8,13 @@
 # Usage: supabase/tests/run-sql-tests.sh [test-file ...]
 #        (no arguments runs every supabase/tests/*_test.sql)
 #
-# Catalog & pricing suites (002) are picked up by the same glob once present:
+# Catalog & pricing suites (002) and public listing suites (009) are picked up by the
+# same glob once present, including:
 #   catalog_rls_test.sql, pricing_rules_test.sql, price_freeze_test.sql,
 #   package_composition_test.sql, catalog_security_review_test.sql,
-#   catalog_performance_probe_test.sql
+#   catalog_performance_probe_test.sql,
+#   public_listing_rules_test.sql, public_listing_rls_test.sql,
+#   public_cutover_test.sql, public_sold_out_test.sql
 # There is no explicit file list to maintain; adding a `*_test.sql` is enough.
 
 set -euo pipefail

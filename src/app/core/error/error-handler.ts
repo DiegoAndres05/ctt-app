@@ -52,6 +52,25 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
   INVALID_SEASON_RANGE: 'La fecha de inicio de temporada no puede ser posterior a la de fin.',
   INVALID_PRICE_TARGET: 'El precio debe aplicarse a un producto o a un complemento, no a ambos.',
   PACKAGE_NESTING_NOT_ALLOWED: 'Un paquete no puede incluir otro paquete.',
+  PUBLIC_LISTING_INCOMPLETE:
+    'La ficha pública está incompleta. Completa los campos obligatorios, la portada y los pares bilingües.',
+  PUBLIC_SLUG_IMMUTABLE:
+    'El slug o la sección pública no se pueden cambiar después de la primera publicación.',
+  PUBLIC_SLUG_TAKEN: 'Otro producto de la agencia ya usa ese slug público.',
+  PLACEMENT_PRODUCT_MISMATCH: 'Ese tipo de producto no admite la sección pública seleccionada.',
+  ORIGINAL_PRICE_NOT_HIGHER: 'El precio anterior debe ser mayor que el precio de vitrina.',
+  BILINGUAL_PAIR_INCOMPLETE: 'Cada ítem bilingüe debe tener texto en español y en inglés.',
+  PRODUCT_NOT_ACTIVE: 'El producto debe estar activo para publicar la ficha pública.',
+  COVER_REQUIRED: 'Una ficha publicada no puede quedarse sin imagen de portada.',
+  IMAGE_TOO_LARGE: 'La imagen supera el límite de 10 MB.',
+  IMAGE_TYPE_NOT_ALLOWED: 'Solo se permiten imágenes JPEG, PNG o WebP.',
+  GALLERY_ONLY_FOR_LODGING: 'La galería solo está disponible en fichas de alojamiento.',
+  CATEGORY_IN_USE:
+    'No se puede desactivar una categoría pública que aún usan fichas publicadas.',
+  CUTOVER_INCOMPLETE:
+    'Faltan fichas del manifiesto. Publica todos los ítems antes de completar el cambio de fuente.',
+  CUTOVER_ALREADY_COMPLETED: 'El cambio de fuente a panel ya se completó.',
+  FORBIDDEN: 'No tienes permisos para realizar esta acción.',
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
 };
 

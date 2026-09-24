@@ -15,7 +15,24 @@ import type { Category } from '../../../../core/catalog/models/category.model';
 import type {
   ExperienceDifficulty,
   ProductStatus,
+  ProductType,
 } from '../../../../core/catalog/models/product.model';
+import {
+  LODGING_AMENITIES,
+  LODGING_TYPES,
+  YACHT_ICONS,
+  type BilingualPair,
+  type GuestReview,
+  type LodgingAmenity,
+  type LodgingDetails,
+  type LodgingType,
+  type PublicCategory,
+  type PublicImage,
+  type PublicListing,
+  type PublicPlacement,
+  type YachtIcon,
+  type YachtLine,
+} from '../../../../core/catalog/models/public-listing.model';
 import { CategoryService } from '../../../../core/catalog/services/category.service';
 import { AddonService } from '../../../../core/catalog/services/addon.service';
 import type { Addon, ProductAddonWithAddon } from '../../../../core/catalog/models/addon.model';
@@ -23,6 +40,7 @@ import {
   ProductService,
   type ProductDetail,
 } from '../../../../core/catalog/services/product.service';
+import { PublicListingService } from '../../../../core/catalog/services/public-listing.service';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { hasRoleAtLeast } from '../../../../core/auth/models/user.model';
 import { AlertComponent } from '../../../../shared/components/alert/alert.component';
@@ -31,7 +49,7 @@ import { PricingEditorComponent } from '../../pricing/pricing-editor/pricing-edi
 
 /**
  * Product detail: attributes, logical status, categories (User Story 1), eligible add-ons
- * (User Story 2), and pricing definition / admin override (User Story 4).
+ * (User Story 2), pricing (User Story 4), and public listing ficha (feature 009).
  */
 @Component({
   selector: 'app-product-detail',
@@ -193,6 +211,304 @@ import { PricingEditorComponent } from '../../pricing/pricing-editor/pricing-edi
           </form>
         </section>
 
+        <section class="card public-card">
+          <h2>Ficha pública</h2>
+          <p class="notice">
+            Contenido que ve la página pública. El precio de vitrina no versiona la tarifa.
+          </p>
+
+          @if (listing(); as pub) {
+            <dl class="listing-meta">
+              <dt>Estado ficha</dt>
+              <dd>{{ listingStatusLabel(pub.status) }}</dd>
+              <dt>Portada</dt>
+              <dd>{{ pub.cover_image_ref || 'Sin portada' }}</dd>
+              @if (pub.first_published_at) {
+                <dt>Primera publicación</dt>
+                <dd>{{ pub.first_published_at | date: 'short' }}</dd>
+              }
+            </dl>
+          } @else {
+            <p class="notice">Aún no hay ficha pública para este producto.</p>
+          }
+
+          <fieldset [disabled]="!canEditPublic()">
+            <form class="public-form" (submit)="onSavePublicDraft($event)" novalidate>
+              <label for="pub-placement">Sección</label>
+              @if (slugLocked()) {
+                <p class="notice">{{ placementLabel(publicDraft().placement) }} (fija tras publicar)</p>
+              } @else {
+                <select id="pub-placement" [formField]="publicForm.placement">
+                  @for (option of placementOptions(); track option) {
+                    <option [value]="option">{{ placementLabel(option) }}</option>
+                  }
+                </select>
+              }
+
+              <label for="pub-slug">Slug público</label>
+              @if (slugLocked()) {
+                <p class="notice">{{ publicDraft().publicSlug }} (inmutable tras publicar)</p>
+              } @else {
+                <input id="pub-slug" type="text" [formField]="publicForm.publicSlug" />
+              }
+
+              <label for="name-es">Nombre (ES)</label>
+              <input id="name-es" type="text" [formField]="publicForm.nameEs" />
+
+              <label for="name-en">Nombre (EN)</label>
+              <input id="name-en" type="text" [formField]="publicForm.nameEn" />
+
+              <label for="desc-es">Descripción (ES)</label>
+              <textarea id="desc-es" rows="3" [formField]="publicForm.descriptionEs"></textarea>
+
+              <label for="desc-en">Descripción (EN)</label>
+              <textarea id="desc-en" rows="3" [formField]="publicForm.descriptionEn"></textarea>
+
+              <label class="check" for="featured">
+                <input id="featured" type="checkbox" [formField]="publicForm.featured" />
+                Destacada
+              </label>
+
+              @if (publicDraft().placement === 'catalog') {
+                <label for="pub-category">Categoría pública</label>
+                <select id="pub-category" [formField]="publicForm.publicCategoryId">
+                  <option value="">Selecciona</option>
+                  @for (category of publicCategories(); track category.id) {
+                    <option [value]="category.id">{{ category.name_es }} / {{ category.name_en }}</option>
+                  }
+                </select>
+
+                <label for="pub-location">Ubicación</label>
+                <input id="pub-location" type="text" [formField]="publicForm.location" />
+
+                <label for="pub-meeting">Punto de encuentro</label>
+                <input id="pub-meeting" type="text" [formField]="publicForm.meetingPoint" />
+
+                <label for="pub-schedule">Horario</label>
+                <input id="pub-schedule" type="text" [formField]="publicForm.schedule" />
+
+                <label for="pub-duration">Duración (texto)</label>
+                <input id="pub-duration" type="text" [formField]="publicForm.duration" />
+
+                <label for="pub-includes">Inclusiones (una por línea: ES ||| EN)</label>
+                <textarea id="pub-includes" rows="4" [formField]="publicForm.includesText"></textarea>
+              }
+
+              @if (publicDraft().placement === 'lodging') {
+                <label for="lodging-type">Tipo de hospedaje</label>
+                <select id="lodging-type" [formField]="publicForm.lodgingType">
+                  @for (type of lodgingTypes; track type) {
+                    <option [value]="type">{{ type }}</option>
+                  }
+                </select>
+
+                <label for="loc-es">Ubicación (ES)</label>
+                <input id="loc-es" type="text" [formField]="publicForm.locationEs" />
+
+                <label for="loc-en">Ubicación (EN)</label>
+                <input id="loc-en" type="text" [formField]="publicForm.locationEn" />
+
+                <label for="hood-es">Barrio (ES)</label>
+                <input id="hood-es" type="text" [formField]="publicForm.neighborhoodEs" />
+
+                <label for="hood-en">Barrio (EN)</label>
+                <input id="hood-en" type="text" [formField]="publicForm.neighborhoodEn" />
+
+                <label for="bedrooms">Habitaciones</label>
+                <input id="bedrooms" type="number" [formField]="publicForm.bedrooms" />
+
+                <label for="bathrooms">Baños</label>
+                <input id="bathrooms" type="number" [formField]="publicForm.bathrooms" />
+
+                <label for="max-guests">Huéspedes máx.</label>
+                <input id="max-guests" type="number" [formField]="publicForm.maxGuests" />
+
+                <label for="map-url">Mapa (https)</label>
+                <input id="map-url" type="url" [formField]="publicForm.mapUrl" />
+
+                <label for="tags">Etiquetas (separadas por coma)</label>
+                <input id="tags" type="text" [formField]="publicForm.tagsText" />
+
+                <fieldset class="amenities">
+                  <legend>Amenidades</legend>
+                  @for (amenity of lodgingAmenities; track amenity) {
+                    <label class="check">
+                      <input
+                        type="checkbox"
+                        [checked]="selectedAmenities().includes(amenity)"
+                        (change)="toggleAmenity(amenity)"
+                      />
+                      {{ amenity }}
+                    </label>
+                  }
+                </fieldset>
+              }
+
+              @if (publicDraft().placement === 'yacht') {
+                <label for="yacht-lines">Líneas de yate (una por línea: kind|icon|ES|||EN)</label>
+                <textarea
+                  id="yacht-lines"
+                  rows="5"
+                  [formField]="publicForm.yachtLinesText"
+                  placeholder="capacity|people|Hasta 12|||Up to 12"
+                ></textarea>
+                <p class="hint">kind: capacity o feature. icon opcional ({{ yachtIcons.join(', ') }}).</p>
+              }
+
+              @if (publicDraft().placement !== 'yacht' || publicDraft().displayPrice) {
+                <label for="display-price">Precio de vitrina</label>
+                <input
+                  id="display-price"
+                  type="number"
+                  step="0.01"
+                  [formField]="publicForm.displayPrice"
+                />
+
+                <label for="original-price">Precio anterior (opcional)</label>
+                <input
+                  id="original-price"
+                  type="number"
+                  step="0.01"
+                  [formField]="publicForm.originalPrice"
+                />
+
+                <label for="currency">Moneda</label>
+                <input id="currency" type="text" [formField]="publicForm.currency" />
+              } @else {
+                <label for="display-price-opt">Precio de vitrina (opcional en yate)</label>
+                <input
+                  id="display-price-opt"
+                  type="number"
+                  step="0.01"
+                  [formField]="publicForm.displayPrice"
+                />
+
+                <label for="currency-opt">Moneda</label>
+                <input id="currency-opt" type="text" [formField]="publicForm.currency" />
+              }
+
+              <label for="rating">Valoración (0–5)</label>
+              <input id="rating" type="number" step="0.1" [formField]="publicForm.rating" />
+
+              <label for="warnings">Avisos (una por línea: ES ||| EN)</label>
+              <textarea id="warnings" rows="3" [formField]="publicForm.warningsText"></textarea>
+
+              @if (canEditPublic()) {
+                <button type="submit" [disabled]="publicForm().submitting() || publicBusy()">
+                  {{ publicForm().submitting() || publicBusy() ? 'Guardando…' : 'Guardar borrador' }}
+                </button>
+              }
+            </form>
+
+            @if (canEditPublic() && listing(); as pub) {
+              <div class="actions">
+                <button type="button" [disabled]="publicBusy()" (click)="onPublish()">
+                  Publicar
+                </button>
+                @if (pub.status === 'published') {
+                  <button type="button" [disabled]="publicBusy()" (click)="onUnpublish()">
+                    Despublicar
+                  </button>
+                  <label class="check">
+                    <input
+                      type="checkbox"
+                      [checked]="pub.sold_out"
+                      [disabled]="publicBusy()"
+                      (change)="onToggleSoldOut($event)"
+                    />
+                    Agotado
+                  </label>
+                }
+              </div>
+
+              <div class="cover-block">
+                <h3>Imagen de portada</h3>
+                <label for="cover-file">Subir archivo (JPEG/PNG/WebP ≤ 10 MB)</label>
+                <input
+                  id="cover-file"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  (change)="onCoverFileSelected($event)"
+                />
+
+                <label for="cover-ref">O referencia externa</label>
+                <div class="row">
+                  <input id="cover-ref" type="text" [value]="coverExternalRef()" (input)="onCoverRefInput($event)" />
+                  <button type="button" [disabled]="publicBusy() || !coverExternalRef().trim()" (click)="onAttachExternalCover()">
+                    Adjuntar
+                  </button>
+                </div>
+              </div>
+
+              @if (pub.placement === 'lodging') {
+                <div class="gallery-block">
+                  <h3>Galería</h3>
+                  @if (images().length === 0) {
+                    <p class="notice">Sin imágenes activas.</p>
+                  } @else {
+                    <ul>
+                      @for (image of images(); track image.id) {
+                        <li>
+                          {{ image.role }} · {{ image.external_ref || image.storage_path }}
+                          (orden {{ image.sort_order }})
+                        </li>
+                      }
+                    </ul>
+                  }
+                  <label for="gallery-file">Añadir a galería</label>
+                  <input
+                    id="gallery-file"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    (change)="onGalleryFileSelected($event)"
+                  />
+                </div>
+
+                <div class="reviews-block">
+                  <h3>Opiniones de huéspedes</h3>
+                  @if (reviews().length === 0) {
+                    <p class="notice">Sin opiniones.</p>
+                  } @else {
+                    <ul>
+                      @for (review of reviews(); track review.id) {
+                        <li>
+                          {{ review.author }} · {{ review.rating }}/5 · {{ review.reviewed_on }}
+                          — {{ review.text_es }}
+                        </li>
+                      }
+                    </ul>
+                  }
+
+                  <form class="link-form" (submit)="onSaveReview($event)" novalidate>
+                    <label for="rev-author">Autor</label>
+                    <input id="rev-author" type="text" [formField]="reviewForm.author" />
+
+                    <label for="rev-rating">Valoración (1–5)</label>
+                    <input id="rev-rating" type="number" [formField]="reviewForm.rating" />
+
+                    <label for="rev-date">Fecha</label>
+                    <input id="rev-date" type="date" [formField]="reviewForm.reviewedOn" />
+
+                    <label for="rev-es">Texto (ES)</label>
+                    <textarea id="rev-es" rows="2" [formField]="reviewForm.textEs"></textarea>
+
+                    <label for="rev-en">Texto (EN)</label>
+                    <textarea id="rev-en" rows="2" [formField]="reviewForm.textEn"></textarea>
+
+                    <button type="submit" [disabled]="reviewForm().submitting()">
+                      {{ reviewForm().submitting() ? 'Guardando…' : 'Añadir opinión' }}
+                    </button>
+                  </form>
+                </div>
+              }
+            }
+          </fieldset>
+
+          @if (!canEditPublic()) {
+            <p class="notice">Tu rol solo puede consultar la ficha pública.</p>
+          }
+        </section>
+
         @if (actionError(); as failure) {
           <app-alert kind="error">{{ failure.message }}</app-alert>
         }
@@ -215,7 +531,8 @@ import { PricingEditorComponent } from '../../pricing/pricing-editor/pricing-edi
     }
 
     h1,
-    h2 {
+    h2,
+    h3 {
       margin: 0;
     }
 
@@ -233,10 +550,11 @@ import { PricingEditorComponent } from '../../pricing/pricing-editor/pricing-edi
       margin: 0;
     }
 
-    .card {
+    .card,
+    .public-card {
       display: grid;
       gap: 0.5rem;
-      width: min(32rem, 100%);
+      width: min(36rem, 100%);
     }
 
     label {
@@ -250,8 +568,14 @@ import { PricingEditorComponent } from '../../pricing/pricing-editor/pricing-edi
       align-items: center;
     }
 
-    .notice {
+    .notice,
+    .hint {
       margin: 0;
+      font-weight: 400;
+    }
+
+    .hint {
+      font-size: 0.85rem;
     }
 
     button {
@@ -271,13 +595,39 @@ import { PricingEditorComponent } from '../../pricing/pricing-editor/pricing-edi
       border-bottom: 1px solid #ddd;
     }
 
-    .link-form {
+    .link-form,
+    .public-form,
+    .cover-block,
+    .gallery-block,
+    .reviews-block {
       display: grid;
       gap: 0.5rem;
     }
 
-    h3 {
-      margin: 0.5rem 0 0;
+    .actions,
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    fieldset {
+      border: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .amenities {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.1rem;
     }
   `,
 })
@@ -285,17 +635,29 @@ export class ProductDetailComponent {
   private readonly productsApi = inject(ProductService);
   private readonly categoriesApi = inject(CategoryService);
   private readonly addonsApi = inject(AddonService);
+  private readonly publicApi = inject(PublicListingService);
   private readonly auth = inject(AuthService);
 
   /** Bound from the `:id` route param. */
   readonly id = input.required<string>();
+
+  protected readonly lodgingTypes = LODGING_TYPES;
+  protected readonly lodgingAmenities = LODGING_AMENITIES;
+  protected readonly yachtIcons = YACHT_ICONS;
 
   protected readonly product = signal<ProductDetail | null>(null);
   protected readonly categories = signal<Category[]>([]);
   protected readonly selectedCategoryIds = signal<string[]>([]);
   protected readonly catalogAddons = signal<Addon[]>([]);
   protected readonly linkedAddons = signal<ProductAddonWithAddon[]>([]);
+  protected readonly listing = signal<PublicListing | null>(null);
+  protected readonly publicCategories = signal<PublicCategory[]>([]);
+  protected readonly images = signal<PublicImage[]>([]);
+  protected readonly reviews = signal<GuestReview[]>([]);
+  protected readonly selectedAmenities = signal<LodgingAmenity[]>([]);
+  protected readonly coverExternalRef = signal('');
   protected readonly loading = signal(true);
+  protected readonly publicBusy = signal(false);
   protected readonly error = signal<AppError | null>(null);
   protected readonly actionError = signal<AppError | null>(null);
   protected readonly notice = signal<string | null>(null);
@@ -337,6 +699,28 @@ export class ProductDetailComponent {
     required(fields.addonId);
   });
 
+  protected readonly publicDraft = signal(emptyPublicDraft('catalog'));
+
+  protected readonly publicForm = form(this.publicDraft, (fields) => {
+    required(fields.publicSlug);
+    required(fields.placement);
+  });
+
+  protected readonly reviewDraft = signal({
+    author: '',
+    rating: 5,
+    reviewedOn: '',
+    textEs: '',
+    textEn: '',
+  });
+
+  protected readonly reviewForm = form(this.reviewDraft, (fields) => {
+    required(fields.author);
+    required(fields.textEs);
+    required(fields.textEn);
+    required(fields.reviewedOn);
+  });
+
   constructor() {
     effect(() => {
       const id = this.id();
@@ -357,8 +741,52 @@ export class ProductDetailComponent {
     }
   }
 
+  protected listingStatusLabel(status: PublicListing['status']): string {
+    switch (status) {
+      case 'draft':
+        return 'Borrador';
+      case 'published':
+        return 'Publicada';
+      case 'unpublished':
+        return 'Despublicada';
+    }
+  }
+
+  protected placementLabel(placement: PublicPlacement): string {
+    switch (placement) {
+      case 'catalog':
+        return 'Catálogo (ofertas)';
+      case 'lodging':
+        return 'Alojamiento';
+      case 'yacht':
+        return 'Yate';
+    }
+  }
+
   protected canOverridePrice(): boolean {
     return hasRoleAtLeast(this.auth.role(), 'admin');
+  }
+
+  protected canEditPublic(): boolean {
+    return hasRoleAtLeast(this.auth.role(), 'operator');
+  }
+
+  protected slugLocked(): boolean {
+    return this.listing()?.first_published_at != null;
+  }
+
+  protected placementOptions(): PublicPlacement[] {
+    const type = this.product()?.type;
+    if (type === 'accommodation') {
+      return ['lodging'];
+    }
+    if (type === 'package') {
+      return ['catalog'];
+    }
+    if (type === 'experience') {
+      return ['catalog', 'yacht'];
+    }
+    return ['catalog'];
   }
 
   protected availableAddons(): Addon[] {
@@ -371,6 +799,19 @@ export class ProductDetailComponent {
     this.selectedCategoryIds.set(
       current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
     );
+  }
+
+  protected toggleAmenity(amenity: LodgingAmenity): void {
+    const current = this.selectedAmenities();
+    this.selectedAmenities.set(
+      current.includes(amenity)
+        ? current.filter((item) => item !== amenity)
+        : [...current, amenity],
+    );
+  }
+
+  protected onCoverRefInput(event: Event): void {
+    this.coverExternalRef.set((event.target as HTMLInputElement).value);
   }
 
   protected async onSaveAttributes(event: Event): Promise<void> {
@@ -495,22 +936,276 @@ export class ProductDetailComponent {
     }
   }
 
+  protected async onSavePublicDraft(event: Event): Promise<void> {
+    event.preventDefault();
+    if (!this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+
+    await submit(this.publicForm, async () => {
+      try {
+        this.publicBusy.set(true);
+        const saved = await this.publicApi.saveListing(this.buildSavePayload());
+        await this.refreshPublic(this.id());
+        this.notice.set(
+          saved.status === 'published'
+            ? 'La ficha pública se actualizó (sigue publicada).'
+            : 'Borrador de ficha pública guardado.',
+        );
+      } catch (failure) {
+        this.actionError.set(toAppError(failure));
+      } finally {
+        this.publicBusy.set(false);
+      }
+      return undefined;
+    });
+  }
+
+  protected async onPublish(): Promise<void> {
+    const listing = this.listing();
+    if (!listing || !this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+    this.publicBusy.set(true);
+    try {
+      await this.publicApi.saveListing(this.buildSavePayload());
+      await this.publicApi.publishListing(listing.id);
+      await this.refreshPublic(this.id());
+      this.notice.set('La ficha pública quedó publicada.');
+    } catch (failure) {
+      this.actionError.set(toAppError(failure));
+    } finally {
+      this.publicBusy.set(false);
+    }
+  }
+
+  protected async onUnpublish(): Promise<void> {
+    const listing = this.listing();
+    if (!listing || !this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+    this.publicBusy.set(true);
+    try {
+      await this.publicApi.unpublish(listing.id);
+      await this.refreshPublic(this.id());
+      this.notice.set('La ficha pública se despublicó.');
+    } catch (failure) {
+      this.actionError.set(toAppError(failure));
+    } finally {
+      this.publicBusy.set(false);
+    }
+  }
+
+  protected async onToggleSoldOut(event: Event): Promise<void> {
+    const listing = this.listing();
+    if (!listing || !this.canEditPublic()) {
+      return;
+    }
+    const soldOut = (event.target as HTMLInputElement).checked;
+    this.actionError.set(null);
+    this.notice.set(null);
+    this.publicBusy.set(true);
+    try {
+      await this.publicApi.setSoldOut(listing.id, soldOut);
+      await this.refreshPublic(this.id());
+      this.notice.set(soldOut ? 'Marcada como agotada.' : 'Disponible de nuevo para solicitudes.');
+    } catch (failure) {
+      this.actionError.set(toAppError(failure));
+    } finally {
+      this.publicBusy.set(false);
+    }
+  }
+
+  protected async onCoverFileSelected(event: Event): Promise<void> {
+    const listing = this.listing();
+    const file = (event.target as HTMLInputElement).files?.[0];
+    (event.target as HTMLInputElement).value = '';
+    if (!listing || !file || !this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+    this.publicBusy.set(true);
+    try {
+      await this.publicApi.uploadAndAttachImage({
+        listingId: listing.id,
+        role: 'cover',
+        file,
+      });
+      await this.refreshPublic(this.id());
+      this.notice.set('Portada actualizada.');
+    } catch (failure) {
+      this.actionError.set(toAppError(failure));
+    } finally {
+      this.publicBusy.set(false);
+    }
+  }
+
+  protected async onAttachExternalCover(): Promise<void> {
+    const listing = this.listing();
+    const ref = this.coverExternalRef().trim();
+    if (!listing || !ref || !this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+    this.publicBusy.set(true);
+    try {
+      await this.publicApi.attachImage({
+        listingId: listing.id,
+        role: 'cover',
+        externalRef: ref,
+      });
+      this.coverExternalRef.set('');
+      await this.refreshPublic(this.id());
+      this.notice.set('Portada por referencia externa adjuntada.');
+    } catch (failure) {
+      this.actionError.set(toAppError(failure));
+    } finally {
+      this.publicBusy.set(false);
+    }
+  }
+
+  protected async onGalleryFileSelected(event: Event): Promise<void> {
+    const listing = this.listing();
+    const file = (event.target as HTMLInputElement).files?.[0];
+    (event.target as HTMLInputElement).value = '';
+    if (!listing || !file || !this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+    this.publicBusy.set(true);
+    try {
+      const nextOrder = this.images().reduce((max, image) => Math.max(max, image.sort_order), -1) + 1;
+      await this.publicApi.uploadAndAttachImage({
+        listingId: listing.id,
+        role: 'gallery',
+        file,
+        sortOrder: nextOrder,
+      });
+      await this.refreshPublic(this.id());
+      this.notice.set('Imagen añadida a la galería.');
+    } catch (failure) {
+      this.actionError.set(toAppError(failure));
+    } finally {
+      this.publicBusy.set(false);
+    }
+  }
+
+  protected async onSaveReview(event: Event): Promise<void> {
+    event.preventDefault();
+    const listing = this.listing();
+    if (!listing || !this.canEditPublic()) {
+      return;
+    }
+    this.actionError.set(null);
+    this.notice.set(null);
+
+    await submit(this.reviewForm, async (fields) => {
+      try {
+        await this.publicApi.saveGuestReview({
+          listing_id: listing.id,
+          author: fields.author().value().trim(),
+          rating: fields.rating().value(),
+          reviewed_on: fields.reviewedOn().value(),
+          text_es: fields.textEs().value().trim(),
+          text_en: fields.textEn().value().trim(),
+        });
+        this.reviewDraft.set({
+          author: '',
+          rating: 5,
+          reviewedOn: '',
+          textEs: '',
+          textEn: '',
+        });
+        this.reviews.set(await this.publicApi.listGuestReviews(listing.id));
+        this.notice.set('Opinión guardada.');
+      } catch (failure) {
+        this.actionError.set(toAppError(failure));
+      }
+      return undefined;
+    });
+  }
+
+  private buildSavePayload() {
+    const draft = this.publicDraft();
+    const placement = draft.placement;
+    const displayPrice = optionalNumber(draft.displayPrice);
+    const originalPrice = optionalNumber(draft.originalPrice);
+    const rating = optionalNumber(draft.rating);
+
+    return {
+      product_id: this.id(),
+      placement,
+      public_slug: draft.publicSlug.trim().toLowerCase(),
+      name_es: draft.nameEs.trim() || null,
+      name_en: draft.nameEn.trim() || null,
+      description_es: draft.descriptionEs.trim() || null,
+      description_en: draft.descriptionEn.trim() || null,
+      featured: draft.featured,
+      rating,
+      display_price: displayPrice,
+      original_price: originalPrice,
+      currency: draft.currency.trim().toUpperCase() || null,
+      warnings: parseBilingualLines(draft.warningsText),
+      includes: placement === 'catalog' ? parseBilingualLines(draft.includesText) : [],
+      public_category_id: placement === 'catalog' ? draft.publicCategoryId || null : null,
+      location: placement === 'catalog' ? draft.location.trim() || null : null,
+      meeting_point: placement === 'catalog' ? draft.meetingPoint.trim() || null : null,
+      schedule: placement === 'catalog' ? draft.schedule.trim() || null : null,
+      duration: placement === 'catalog' ? draft.duration.trim() || null : null,
+      max_guests:
+        placement === 'lodging'
+          ? draft.maxGuests
+          : optionalNumber(String(draft.maxGuests || '')),
+      lodging: placement === 'lodging' ? this.buildLodgingDetails(draft) : null,
+      yacht_lines: placement === 'yacht' ? parseYachtLines(draft.yachtLinesText) : [],
+    };
+  }
+
+  private buildLodgingDetails(draft: ReturnType<typeof emptyPublicDraft>): LodgingDetails {
+    return {
+      lodging_type: draft.lodgingType as LodgingType,
+      location_es: draft.locationEs.trim(),
+      location_en: draft.locationEn.trim(),
+      neighborhood_es: draft.neighborhoodEs.trim(),
+      neighborhood_en: draft.neighborhoodEn.trim(),
+      bedrooms: draft.bedrooms,
+      bathrooms: draft.bathrooms,
+      amenities: [...this.selectedAmenities()],
+      tags: draft.tagsText
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      map_url: draft.mapUrl.trim() || null,
+    };
+  }
+
   private async refresh(id: string): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
     this.actionError.set(null);
     this.notice.set(null);
     try {
-      const [item, taxonomy, addons, links] = await Promise.all([
+      const [item, taxonomy, addons, links, publicCats] = await Promise.all([
         this.productsApi.getById(id),
         this.categoriesApi.list(),
         this.addonsApi.list(),
         this.addonsApi.listForProduct(id),
+        this.publicApi.listCategories(true),
       ]);
       this.product.set(item);
       this.categories.set(taxonomy);
       this.catalogAddons.set(addons);
       this.linkedAddons.set(links);
+      this.publicCategories.set(publicCats);
       if (item) {
         this.selectedCategoryIds.set(item.category_ids);
         this.statusDraft.set({
@@ -530,6 +1225,11 @@ export class ProductDetailComponent {
           checkOut: toTimeInput(item.accommodation?.check_out),
           maxOccupancy: item.accommodation?.max_occupancy ?? 2,
         });
+        await this.refreshPublic(id, item.type);
+      } else {
+        this.listing.set(null);
+        this.images.set([]);
+        this.reviews.set([]);
       }
     } catch (failure) {
       this.error.set(toAppError(failure));
@@ -537,6 +1237,180 @@ export class ProductDetailComponent {
       this.loading.set(false);
     }
   }
+
+  private async refreshPublic(productId: string, productType?: ProductType): Promise<void> {
+    const type = productType ?? this.product()?.type ?? 'experience';
+    const listing = await this.publicApi.getByProductId(productId);
+    this.listing.set(listing);
+    this.applyListingToDraft(listing, type);
+
+    if (listing) {
+      const [images, reviews] = await Promise.all([
+        this.publicApi.listImages(listing.id),
+        listing.placement === 'lodging'
+          ? this.publicApi.listGuestReviews(listing.id)
+          : Promise.resolve([] as GuestReview[]),
+      ]);
+      this.images.set(images);
+      this.reviews.set(reviews);
+    } else {
+      this.images.set([]);
+      this.reviews.set([]);
+    }
+  }
+
+  private applyListingToDraft(listing: PublicListing | null, productType: ProductType): void {
+    const placement = listing?.placement ?? defaultPlacement(productType);
+    const lodging = listing?.lodging;
+    this.selectedAmenities.set((lodging?.amenities ?? []) as LodgingAmenity[]);
+    this.publicDraft.set({
+      ...emptyPublicDraft(placement),
+      placement,
+      publicSlug: listing?.public_slug ?? '',
+      nameEs: listing?.name_es ?? '',
+      nameEn: listing?.name_en ?? '',
+      descriptionEs: listing?.description_es ?? '',
+      descriptionEn: listing?.description_en ?? '',
+      featured: listing?.featured ?? false,
+      publicCategoryId: listing?.public_category_id ?? '',
+      location: listing?.location ?? '',
+      meetingPoint: listing?.meeting_point ?? '',
+      schedule: listing?.schedule ?? '',
+      duration: listing?.duration ?? '',
+      displayPrice: listing?.display_price == null ? '' : String(listing.display_price),
+      originalPrice: listing?.original_price == null ? '' : String(listing.original_price),
+      currency: listing?.currency ?? 'COP',
+      rating: listing?.rating == null ? '' : String(listing.rating),
+      includesText: formatBilingualLines(listing?.includes ?? []),
+      warningsText: formatBilingualLines(listing?.warnings ?? []),
+      lodgingType: lodging?.lodging_type ?? 'casa',
+      locationEs: lodging?.location_es ?? '',
+      locationEn: lodging?.location_en ?? '',
+      neighborhoodEs: lodging?.neighborhood_es ?? '',
+      neighborhoodEn: lodging?.neighborhood_en ?? '',
+      bedrooms: lodging?.bedrooms ?? 0,
+      bathrooms: lodging?.bathrooms ?? 0,
+      maxGuests: listing?.max_guests ?? 2,
+      mapUrl: lodging?.map_url ?? '',
+      tagsText: (lodging?.tags ?? []).join(', '),
+      yachtLinesText: formatYachtLines(listing?.yacht_lines ?? []),
+    });
+  }
+}
+
+function defaultPlacement(type: ProductType): PublicPlacement {
+  if (type === 'accommodation') {
+    return 'lodging';
+  }
+  return 'catalog';
+}
+
+function emptyPublicDraft(placement: PublicPlacement) {
+  return {
+    placement,
+    publicSlug: '',
+    nameEs: '',
+    nameEn: '',
+    descriptionEs: '',
+    descriptionEn: '',
+    featured: false,
+    publicCategoryId: '',
+    location: '',
+    meetingPoint: '',
+    schedule: '',
+    duration: '',
+    displayPrice: '',
+    originalPrice: '',
+    currency: 'COP',
+    rating: '',
+    includesText: '',
+    warningsText: '',
+    lodgingType: 'casa' as LodgingType,
+    locationEs: '',
+    locationEn: '',
+    neighborhoodEs: '',
+    neighborhoodEn: '',
+    bedrooms: 0,
+    bathrooms: 0,
+    maxGuests: 2,
+    mapUrl: '',
+    tagsText: '',
+    yachtLinesText: '',
+  };
+}
+
+function parseBilingualLines(text: string): BilingualPair[] {
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [es, en] = line.split('|||').map((part) => part.trim());
+      return { es: es ?? '', en: en ?? '' };
+    });
+}
+
+function formatBilingualLines(pairs: BilingualPair[]): string {
+  return pairs.map((pair) => `${pair.es} ||| ${pair.en}`).join('\n');
+}
+
+function parseYachtLines(text: string): YachtLine[] {
+  const capacity: YachtLine[] = [];
+  const feature: YachtLine[] = [];
+
+  for (const raw of text.split('\n').map((line) => line.trim()).filter(Boolean)) {
+    const [meta, texts] = splitOnce(raw, '|||');
+    const [kindRaw, iconRaw, esPart] = (meta ?? '').split('|').map((part) => part.trim());
+    const kind = kindRaw === 'feature' ? 'feature' : 'capacity';
+    const icon = (iconRaw || null) as YachtIcon | null;
+    const text_es = (esPart ?? '').trim();
+    const text_en = (texts ?? '').trim();
+    const line: YachtLine = {
+      kind,
+      position: 0,
+      icon: icon && (YACHT_ICONS as readonly string[]).includes(icon) ? icon : null,
+      text_es,
+      text_en,
+    };
+    if (kind === 'feature') {
+      feature.push(line);
+    } else {
+      capacity.push(line);
+    }
+  }
+
+  return [
+    ...capacity.map((line, index) => ({ ...line, position: index })),
+    ...feature.map((line, index) => ({ ...line, position: index })),
+  ];
+}
+
+function formatYachtLines(lines: YachtLine[]): string {
+  return [...lines]
+    .sort((a, b) => {
+      if (a.kind === b.kind) {
+        return a.position - b.position;
+      }
+      return a.kind === 'capacity' ? -1 : 1;
+    })
+    .map((line) => `${line.kind}|${line.icon ?? ''}|${line.text_es}|||${line.text_en}`)
+    .join('\n');
+}
+
+function splitOnce(value: string, separator: string): [string, string] {
+  const index = value.indexOf(separator);
+  if (index < 0) {
+    return [value, ''];
+  }
+  return [value.slice(0, index), value.slice(index + separator.length)];
+}
+
+function optionalNumber(value: string | number | null | undefined): number | null {
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : null;
 }
 
 function toTimeInput(value: string | null | undefined): string {
