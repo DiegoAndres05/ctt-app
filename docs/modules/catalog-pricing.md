@@ -1,20 +1,23 @@
-# Catalog & Pricing (002-catalog-pricing)
+# Catalog & Pricing (002-catalog-pricing + 009-catalog-site-cms)
 
 Module that owns the internal tourism catalog (experiences, accommodations, predefined
-packages, add-ons) and versioned tariff schemes. Tenant isolation, JWT claims, and the
-audit trail are inherited from Identity & Access.
+packages, add-ons) and versioned tariff schemes. Feature **009** adds the **public listing**
+layer the agency website consumes (`get_public_site`), without opening `products` or
+`pricing_schemes` to `anon`. Tenant isolation, JWT claims, and the audit trail are inherited
+from Identity & Access.
 
-**Spec**: `specs/002-catalog-pricing/`
-**Plan**: `specs/002-catalog-pricing/plan.md`
+**Spec (ops catalog)**: `specs/002-catalog-pricing/`
+**Spec (public site CMS)**: `specs/009-catalog-site-cms/`
+**Plan**: `specs/009-catalog-site-cms/plan.md` (current) · `specs/002-catalog-pricing/plan.md`
 
 ## What lives where
 
 | Concern | Location |
 | --- | --- |
-| Schema, RLS, RPCs, triggers | `supabase/migrations/011_create_catalog_enums.sql` … `021_us3_packages.sql` |
-| SQL verification (RLS, prices, freeze, packages, perf, security) | `supabase/tests/` |
-| Domain models | `src/app/core/catalog/models/` |
-| Product / category / add-on / pricing services | `src/app/core/catalog/services/` |
+| Schema, RLS, RPCs, triggers | `supabase/migrations/011_…` … `021_…` (ops) · `022_…` … `027_…` (public listings) |
+| SQL verification | `supabase/tests/` (incl. `public_*_test.sql`) |
+| Domain models | `src/app/core/catalog/models/` (`public-listing.model.ts` for 009) |
+| Product / category / add-on / pricing / public listing services | `src/app/core/catalog/services/` |
 | Catalog UI (Operator/Admin via `roleGuard`) | `src/app/features/catalog/` |
 | Shared banners and spinners | `src/app/shared/components/` |
 
@@ -30,6 +33,36 @@ audit trail are inherited from Identity & Access.
 | Add-on | `add_ons` + `product_addons` | Independent complement; eligibility rules `is_mandatory` / `max_quantity`. |
 | Pricing scheme | `pricing_schemes` | XOR `product_id` / `addon_id`. Currency per scheme (defaults from organization). Append-only versions via `valid_from` / `valid_to`. |
 | Provider | `providers` | Supplier metadata only; availability is out of scope. |
+| Public listing | `public_listings` | 1:1 with `products`. Placement `catalog` / `lodging` / `yacht`. Showcase price ≠ tariff. |
+| Public category | `public_categories` | Site filters (not ops `categories`). Eight protected seeds. |
+| Public image | `public_images` | Cover / gallery; Storage path XOR external ref. Bucket `catalog-media`. |
+| Guest review | `guest_reviews` | Lodging only. |
+| Public site | `public_sites` | `source` `legacy` → `panel` via cutover. |
+| Cutover item | `public_cutover_items` | Manifesto of slugs that must be published before cutover. |
+
+## Public listings (009)
+
+- One public ficha per product. Editing `display_price` **never** calls `upsert_pricing_scheme`.
+- `public_slug` and `placement` are immutable after `first_published_at`.
+- Images: JPEG/PNG/WebP ≤ 10 MB in `catalog-media`, or an `external_ref` copied from the legacy site.
+- Yates = `experience` + `placement = yacht` (no new `product_type`).
+- Angular: «Ficha pública» on product detail; `/catalog/public-categories`; `/catalog/public-cutover`.
+- Agents: read-only in the UI (`hasRoleAtLeast(…, 'operator')` gates writes). RLS still rejects agent writes.
+
+### Public RPCs
+
+| RPC | Who | Behavior |
+| --- | --- | --- |
+| `save_public_listing` | Operator / Admin | Upsert draft/published ficha. Slug/placement rules, bilingual pairs, showcase price. |
+| `publish_public_listing` | Operator / Admin | Requires complete ficha, cover, `active` product, valid tariff. |
+| `unpublish_public_listing` | Operator / Admin | Hides from public projection; keeps product/tariff. |
+| `set_public_listing_sold_out` | Operator / Admin | Only while published. Does not change product status or tariff. |
+| `attach_public_image` | Operator / Admin | Cover or gallery; replaces cover with audit. |
+| `reorder_public_gallery` | Operator / Admin | Lodging gallery order. |
+| `save_guest_review` | Operator / Admin | Lodging reviews. |
+| `save_public_category` | Operator / Admin | Upsert; `CATEGORY_IN_USE` if deactivating a category still on published listings. |
+| `complete_public_cutover` | **Admin only** | Switches `public_sites.source` to `panel` when manifesto is complete. |
+| `get_public_site(organization_id)` | `anon` / authenticated | Empty arrays while `legacy`; Offer/Lodging/Yacht projection when `panel`. Authenticated callers are limited to their JWT org. |
 
 ## RPCs
 
@@ -53,6 +86,9 @@ Mutating RPCs are `SECURITY DEFINER` and call `require_catalog_manager()` or `re
 | Manage products, packages, add-ons, categories | No | Yes | Yes |
 | Define / version tariffs (`upsert_pricing_scheme`) | No | Yes | Yes |
 | Manual price override (`apply_price_override`) | No | No | Yes |
+| Read public listings / categories / cutover status | Yes (own org) | Yes | Yes |
+| Save / publish / images / sold out / public categories | No | Yes | Yes |
+| Complete public cutover (`complete_public_cutover`) | No | No | Yes |
 
 Angular `roleGuard('operator')` only hides routes. PostgreSQL RLS is the authorization boundary.
 
@@ -81,7 +117,9 @@ npm start                          # Angular on http://127.0.0.1:4200
 ng build
 ```
 
-Catalog routes (Operator/Admin): `/catalog`, `/catalog/products`, `/catalog/packages`, `/catalog/addons`. Pricing is edited on the product detail screen.
+Catalog routes (Operator/Admin): `/catalog`, `/catalog/products`, `/catalog/packages`,
+`/catalog/addons`, `/catalog/public-categories`, `/catalog/public-cutover`. Pricing and the
+«Ficha pública» section are edited on the product detail screen.
 
 ## Quickstart mapping (T043)
 

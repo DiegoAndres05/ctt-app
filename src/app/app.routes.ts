@@ -60,7 +60,7 @@ const protectedRoutes: Routes = [
       },
       {
         path: 'catalog',
-        canActivate: [roleGuard('operator')],
+        canActivate: [roleGuard('agent')],
         children: [
           {
             path: '',
@@ -72,7 +72,7 @@ const protectedRoutes: Routes = [
           },
           {
             path: 'products',
-            canActivate: [roleGuard('operator')],
+            canActivate: [roleGuard('agent')],
             children: [
               {
                 path: '',
@@ -84,6 +84,7 @@ const protectedRoutes: Routes = [
               },
               {
                 path: 'new',
+                canActivate: [roleGuard('operator')],
                 loadComponent: () =>
                   import('./features/catalog/products/product-create/product-create.component').then(
                     (m) => m.ProductCreateComponent,
@@ -97,6 +98,22 @@ const protectedRoutes: Routes = [
                   ),
               },
             ],
+          },
+          {
+            path: 'public-categories',
+            canActivate: [roleGuard('operator')],
+            loadComponent: () =>
+              import('./features/catalog/public-categories/public-categories.component').then(
+                (m) => m.PublicCategoriesComponent,
+              ),
+          },
+          {
+            path: 'public-cutover',
+            canActivate: [roleGuard('operator')],
+            loadComponent: () =>
+              import('./features/catalog/public-cutover/public-cutover.component').then(
+                (m) => m.PublicCutoverComponent,
+              ),
           },
           {
             path: 'addons',
