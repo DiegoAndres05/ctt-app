@@ -2,6 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { toAppError } from '../../error/error-handler';
 import { SupabaseService } from '../../auth/services/supabase.service';
 import type {
+  PublicPlacement,
+  PublicListingStatus,
+} from '../models/public-listing.model';
+import type {
   Accommodation,
   Experience,
   Package,
@@ -13,6 +17,7 @@ import type {
 } from '../models/product.model';
 
 const LIST_LIMIT = 50;
+const LIST_PAGE_SIZE = 20;
 
 /** Nested PostgREST shape for a product list/detail row. */
 interface ProductRow extends Product {
@@ -29,6 +34,56 @@ export interface ProductListFilters {
 
 export interface ProductListItem extends Product {
   category_ids: string[];
+}
+
+export type ProductListPublicStatus = 'none' | PublicListingStatus | 'sold_out';
+
+export interface ProductListPageInput {
+  type: ProductType;
+  q?: string;
+  status?: ProductStatus | '';
+  publicStatus?: ProductListPublicStatus | '';
+  placement?: 'catalog' | 'yacht' | '';
+  categoryId?: string;
+  /** 1-based. Page size is fixed at 20. */
+  page: number;
+}
+
+export interface ProductListRow {
+  id: string;
+  name: string;
+  type: ProductType;
+  status: ProductStatus;
+  category_ids: string[];
+  category_names: string[];
+  cover_thumb: string | null;
+  public_status: ProductListPublicStatus;
+  display_price: number | null;
+  currency: string | null;
+  placement: PublicPlacement | null;
+}
+
+interface ListingEmbed {
+  cover_image_ref: string | null;
+  status: PublicListingStatus;
+  sold_out: boolean;
+  display_price: number | string | null;
+  currency: string | null;
+  placement: PublicPlacement;
+}
+
+interface CategoryEmbed {
+  category_id: string;
+  categories: { name: string } | { name: string }[] | null;
+}
+
+interface ListPageRow {
+  id: string;
+  name: string;
+  type: ProductType;
+  status: ProductStatus;
+  product_categories?: CategoryEmbed[] | null;
+  public_listings?: ListingEmbed | ListingEmbed[] | null;
 }
 
 export interface ProductDetail extends Product {
@@ -158,6 +213,67 @@ export class ProductService {
       ...row,
       category_ids: categoryIds(row),
     }));
+  }
+
+  /**
+   * One page of catalog rows joined to the public listing for the list columns.
+   * Does not add a database view or RPC; filters use PostgREST `range` and `ilike`.
+   */
+  async listPage(input: ProductListPageInput): Promise<{ rows: ProductListRow[]; total: number }> {
+    const page = Math.max(1, Math.floor(input.page) || 1);
+    const from = (page - 1) * LIST_PAGE_SIZE;
+    const to = from + LIST_PAGE_SIZE - 1;
+    const publicStatus = input.publicStatus || '';
+    const innerListing = Boolean(input.placement) || (publicStatus !== '' && publicStatus !== 'none');
+    const listingSelect = innerListing
+      ? 'public_listings!inner(cover_image_ref, status, sold_out, display_price, currency, placement)'
+      : 'public_listings(cover_image_ref, status, sold_out, display_price, currency, placement)';
+    const categorySelect = input.categoryId
+      ? 'product_categories!inner(category_id, categories(name))'
+      : 'product_categories(category_id, categories(name))';
+
+    let query = this.supabase.client
+      .from('products')
+      .select(`id, name, type, status, ${categorySelect}, ${listingSelect}`, { count: 'exact' })
+      .eq('type', input.type)
+      .order('name', { ascending: true })
+      .range(from, to);
+
+    const q = input.q?.trim();
+    if (q) {
+      query = query.ilike('name', `%${q}%`);
+    }
+    if (input.status) {
+      query = query.eq('status', input.status);
+    }
+    if (input.categoryId) {
+      query = query.eq('product_categories.category_id', input.categoryId);
+    }
+    if (input.placement) {
+      query = query.eq('public_listings.placement', input.placement);
+    }
+    if (publicStatus === 'none') {
+      const listedIds = await this.listedProductIds();
+      if (listedIds.length > 0) {
+        query = query.not('id', 'in', `(${listedIds.join(',')})`);
+      }
+    } else if (publicStatus === 'sold_out') {
+      query = query.eq('public_listings.status', 'published').eq('public_listings.sold_out', true);
+    } else if (publicStatus) {
+      query = query
+        .eq('public_listings.status', publicStatus)
+        .eq('public_listings.sold_out', false);
+    }
+
+    const { data, error, count } = await query.returns<ListPageRow[]>();
+    if (error) {
+      throw toAppError(error);
+    }
+
+    return {
+      rows: (data ?? []).map((row) => this.toListRow(row)),
+      total: count ?? 0,
+    };
   }
 
   async getById(id: string): Promise<ProductDetail | null> {
@@ -332,6 +448,50 @@ export class ProductService {
 
     return (data as PackageConsistencyPayload | null)?.packages ?? [];
   }
+
+  private async listedProductIds(): Promise<string[]> {
+    const { data, error } = await this.supabase.client
+      .from('public_listings')
+      .select('product_id')
+      .returns<{ product_id: string }[]>();
+
+    if (error) {
+      throw toAppError(error);
+    }
+
+    return (data ?? []).map((row) => row.product_id);
+  }
+
+  private toListRow(row: ListPageRow): ProductListRow {
+    const listing = one(row.public_listings);
+    const links = row.product_categories ?? [];
+    const price = listing?.display_price;
+    return {
+      id: row.id,
+      name: row.name,
+      type: row.type,
+      status: row.status,
+      category_ids: links.map((link) => link.category_id),
+      category_names: links
+        .map((link) => one(link.categories)?.name ?? '')
+        .filter((name) => name.length > 0),
+      cover_thumb: this.mediaUrl(listing?.cover_image_ref ?? null),
+      public_status: publicStatusOf(listing),
+      display_price: price == null || price === '' ? null : Number(price),
+      currency: listing?.currency ?? null,
+      placement: listing?.placement ?? null,
+    };
+  }
+
+  private mediaUrl(ref: string | null): string | null {
+    if (!ref) {
+      return null;
+    }
+    if (/^https?:\/\//i.test(ref)) {
+      return ref;
+    }
+    return this.supabase.client.storage.from('catalog-media').getPublicUrl(ref).data.publicUrl;
+  }
 }
 
 function categoryIds(row: ProductRow): string[] {
@@ -343,4 +503,14 @@ function one<T>(value: T | T[] | null | undefined): T | null {
     return null;
   }
   return Array.isArray(value) ? (value[0] ?? null) : value;
+}
+
+function publicStatusOf(listing: ListingEmbed | null): ProductListPublicStatus {
+  if (!listing) {
+    return 'none';
+  }
+  if (listing.sold_out && listing.status === 'published') {
+    return 'sold_out';
+  }
+  return listing.status;
 }

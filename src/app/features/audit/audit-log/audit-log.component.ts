@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { form, FormField } from '@angular/forms/signals';
 import { toAppError, type AppError } from '../../../core/error/error-handler';
 import {
@@ -54,15 +53,11 @@ const EVENT_TYPE_LABELS: Readonly<Record<AuditEventType, string>> = {
 @Component({
   selector: 'app-audit-log',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, FormField, RouterLink, AlertComponent, SpinnerComponent],
+  imports: [DatePipe, FormField, AlertComponent, SpinnerComponent],
   template: `
     <main class="page">
       <header>
-        <div>
-          <a routerLink="/dashboard">Panel</a>
-          <h1>Auditoría</h1>
-        </div>
-        <a routerLink="/users">Usuarios</a>
+        <h1>Auditoría</h1>
       </header>
 
       <form class="filters" (submit)="onFilter($event)" novalidate>

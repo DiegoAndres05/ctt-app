@@ -3,6 +3,7 @@
 # Compiled output
 /dist
 dist/
+build/
 /tmp
 /out-tsc
 /bazel-out
@@ -13,6 +14,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 pnpm-debug.log
+*.log
 .npm/
 
 # Angular

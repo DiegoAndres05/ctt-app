@@ -5,6 +5,7 @@ import { toAppError, type AppError } from '../../../core/error/error-handler';
 import type { AppRole } from '../../../core/auth/models/user.model';
 import { UserService } from '../services/user.service';
 import { AlertComponent } from '../../../shared/components/alert/alert.component';
+import type { UnsavedChangesHost } from '../../../shared/components/unsaved-changes.guard';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -17,7 +18,7 @@ const MIN_PASSWORD_LENGTH = 8;
   imports: [FormField, RouterLink, AlertComponent],
   template: `
     <main class="page">
-      <a routerLink="/users">Volver a usuarios</a>
+      <a routerLink="/settings/users">Cancelar</a>
       <form class="card" (submit)="onSubmit($event)" novalidate>
         <h1>Nuevo colaborador</h1>
         <p class="notice">
@@ -96,7 +97,7 @@ const MIN_PASSWORD_LENGTH = 8;
     }
   `,
 })
-export class UserCreateComponent {
+export class UserCreateComponent implements UnsavedChangesHost {
   private readonly usersApi = inject(UserService);
   private readonly router = inject(Router);
 
@@ -118,6 +119,11 @@ export class UserCreateComponent {
 
   protected readonly error = signal<AppError | null>(null);
 
+  hasUnsavedChanges(): boolean {
+    const draft = this.draft();
+    return Boolean(draft.fullName.trim() || draft.email.trim() || draft.temporaryPassword);
+  }
+
   protected async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
     this.error.set(null);
@@ -131,7 +137,7 @@ export class UserCreateComponent {
           temporaryPassword: fields.temporaryPassword().value(),
         });
         this.draft.set({ fullName: '', email: '', role: 'agent', temporaryPassword: '' });
-        await this.router.navigate(['/users', created.id]);
+        await this.router.navigate(['/settings/users', created.id]);
       } catch (failure) {
         this.error.set(toAppError(failure));
       }

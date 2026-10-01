@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   input,
@@ -21,6 +22,12 @@ import {
 } from '../../../../core/catalog/services/product.service';
 import { AlertComponent } from '../../../../shared/components/alert/alert.component';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
+import { ListingPreviewCardComponent } from '../../../../shared/components/listing-preview/listing-preview-card.component';
+import {
+  toPreviewListing,
+  type PreviewLocale,
+} from '../../../../shared/components/listing-preview/preview-listing.model';
+import type { UnsavedChangesHost } from '../../../../shared/components/unsaved-changes.guard';
 
 interface BuilderItem {
   component_product_id: string;
@@ -37,10 +44,11 @@ interface BuilderItem {
 @Component({
   selector: 'app-package-builder',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormField, RouterLink, AlertComponent, SpinnerComponent],
+  imports: [FormField, RouterLink, AlertComponent, SpinnerComponent, ListingPreviewCardComponent],
   template: `
-    <main class="page">
-      <a routerLink="/catalog/packages">Volver a paquetes</a>
+    <div class="editor-layout">
+    <main class="editor-main">
+      <a routerLink="/cms/packages">Cancelar</a>
 
       @if (loading()) {
         <app-spinner label="Cargando paquete…" />
@@ -79,7 +87,7 @@ interface BuilderItem {
               suma de componentes.
             </p>
 
-            <label for="name">Nombre</label>
+            <label class="req" for="name">Nombre</label>
             <input id="name" type="text" [formField]="builderForm.name" />
             @if (builderForm.name().touched() && builderForm.name().invalid()) {
               <p class="field-error">Ingresa el nombre del paquete.</p>
@@ -125,9 +133,12 @@ interface BuilderItem {
               }
             </fieldset>
 
-            <button type="submit" [disabled]="builderForm().submitting()">
-              {{ builderForm().submitting() ? 'Creando…' : 'Crear paquete' }}
-            </button>
+            <div class="actions">
+              <button class="primary" type="submit" [disabled]="builderForm().submitting()">
+                {{ builderForm().submitting() ? 'Guardando…' : 'Guardar borrador' }}
+              </button>
+              <a class="button-link" routerLink="/cms/packages">Cancelar</a>
+            </div>
 
             @if (error(); as failure) {
               <app-alert kind="error">{{ failure.message }}</app-alert>
@@ -136,6 +147,14 @@ interface BuilderItem {
         }
       }
     </main>
+    <aside class="preview-column">
+      <div class="locale-toggle" role="group" aria-label="Idioma de la vista previa">
+        <button type="button" [class.primary]="previewLocale() === 'es'" (click)="previewLocale.set('es')">ES</button>
+        <button type="button" [class.primary]="previewLocale() === 'en'" (click)="previewLocale.set('en')">EN</button>
+      </div>
+      <app-listing-preview-card [listing]="preview()" />
+    </aside>
+    </div>
   `,
   styles: `
     .page {
@@ -200,7 +219,7 @@ interface BuilderItem {
     }
   `,
 })
-export class PackageBuilderComponent {
+export class PackageBuilderComponent implements UnsavedChangesHost {
   private readonly productsApi = inject(ProductService);
   private readonly router = inject(Router);
 
@@ -214,6 +233,28 @@ export class PackageBuilderComponent {
   protected readonly items = signal<BuilderItem[]>([]);
   protected readonly existing = signal<PackageDetail | null>(null);
   protected readonly existingConsistency = signal<PackageConsistency | null>(null);
+  protected readonly previewLocale = signal<PreviewLocale>('es');
+  private allowLeave = false;
+
+  protected readonly preview = computed(() => {
+    const existing = this.existing();
+    const locale = this.previewLocale();
+    return toPreviewListing({
+      variant: 'catalog',
+      locale,
+      titleEs: existing?.name ?? this.draft().name,
+      titleEn: '',
+      descriptionEs: existing?.description ?? this.draft().description,
+      descriptionEn: '',
+      categoryLabelEs: '',
+      categoryLabelEn: '',
+      location: '',
+      imageUrl: null,
+      displayPrice: null,
+      currency: 'COP',
+      soldOut: false,
+    });
+  });
 
   protected readonly draft = signal({
     name: '',
@@ -235,6 +276,13 @@ export class PackageBuilderComponent {
         void this.bootstrap(id);
       });
     });
+  }
+
+  hasUnsavedChanges(): boolean {
+    if (this.allowLeave || this.existing()) {
+      return false;
+    }
+    return this.draft().name.trim().length > 0 || this.draft().description.trim().length > 0 || this.items().length > 0;
   }
 
   protected typeLabel(type: ProductType): string {
@@ -320,7 +368,8 @@ export class PackageBuilderComponent {
             day_number: item.day_number,
           })),
         });
-        await this.router.navigate(['/catalog/packages', created.id]);
+        this.allowLeave = true;
+        await this.router.navigate(['/cms/packages', created.id]);
       } catch (failure) {
         this.error.set(toAppError(failure));
       }

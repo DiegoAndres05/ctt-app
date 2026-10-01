@@ -26,7 +26,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   imports: [DatePipe, FormField, RouterLink, AlertComponent, SpinnerComponent],
   template: `
     <main class="page">
-      <a routerLink="/users">Volver a usuarios</a>
+      <a routerLink="/settings/users">Volver a usuarios</a>
 
       @if (loading()) {
         <app-spinner />

@@ -20,7 +20,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
     <main class="page">
       <header>
         <div>
-          <a routerLink="/catalog">Catálogo</a>
+          <a routerLink="/cms/settings">Ajustes del catálogo</a>
           <h1>Cambio de fuente</h1>
         </div>
       </header>

@@ -1,0 +1,417 @@
+@if (loading()) {
+  <app-spinner label="Cargando producto…" />
+} @else if (error(); as failure) {
+  <app-alert kind="error">{{ failure.message }}</app-alert>
+} @else if (!id() || product()) {
+  <div class="editor-layout">
+    <div class="editor-main">
+      <header>
+        <h1>{{ screenTitle() }}</h1>
+        @if (product(); as item) {
+          <p class="notice">
+            {{ statusLabel(item.status) }} · alta {{ item.created_at | date: 'short' }}
+          </p>
+        }
+      </header>
+
+      @if (!canEdit()) {
+        <app-alert kind="info">Estás consultando esta ficha. Tu rol no puede guardar ni publicar.</app-alert>
+      }
+
+      <fieldset class="plain" [disabled]="!canEdit()">
+        <section class="section" [class.incomplete]="basicIncomplete()">
+          <h2>Información básica</h2>
+          <label class="req" for="name">Nombre</label>
+          <input id="name" type="text" [formField]="attrForm.name" />
+          @if (attrForm.name().touched() && attrForm.name().invalid()) {
+            <p class="field-error">Ingresa el nombre.</p>
+          }
+          <label for="description">Descripción interna</label>
+          <textarea id="description" rows="3" [formField]="attrForm.description"></textarea>
+        </section>
+
+        <section class="section" [class.incomplete]="operativeIncomplete()">
+          <h2>Detalles operativos</h2>
+          @if ((product()?.type ?? productType()) === 'experience') {
+            <label for="duration">Duración (minutos)</label>
+            <input id="duration" type="number" [formField]="attrForm.durationMinutes" />
+            <label for="difficulty">Dificultad</label>
+            <select id="difficulty" [formField]="attrForm.difficulty">
+              <option value="">Sin especificar</option>
+              <option value="easy">Fácil</option>
+              <option value="moderate">Moderada</option>
+              <option value="hard">Difícil</option>
+            </select>
+            <label for="meeting-point">Punto de encuentro</label>
+            <input id="meeting-point" type="text" [formField]="attrForm.meetingPoint" />
+            <label for="min-capacity">Capacidad mínima</label>
+            <input id="min-capacity" type="number" [formField]="attrForm.minCapacity" />
+            <label for="max-capacity">Capacidad máxima</label>
+            <input id="max-capacity" type="number" [formField]="attrForm.maxCapacity" />
+          } @else {
+            <label class="req" for="property-type">Tipo de inmueble</label>
+            <input id="property-type" type="text" [formField]="attrForm.propertyType" />
+            @if (operativeIncomplete()) {
+              <p class="field-error">Ingresa el tipo de inmueble y la ubicación.</p>
+            }
+            <label class="req" for="ops-location">Ubicación</label>
+            <input id="ops-location" type="text" [formField]="attrForm.location" />
+            <label for="check-in">Check-in</label>
+            <input id="check-in" type="time" [formField]="attrForm.checkIn" />
+            <label for="check-out">Check-out</label>
+            <input id="check-out" type="time" [formField]="attrForm.checkOut" />
+            <label for="max-occupancy">Ocupación máxima</label>
+            <input id="max-occupancy" type="number" [formField]="attrForm.maxOccupancy" />
+          }
+        </section>
+
+        <section class="section">
+          <h2>Categorías y adicionales</h2>
+          @for (category of categories(); track category.id) {
+            <label class="check">
+              <input
+                type="checkbox"
+                [checked]="selectedCategoryIds().includes(category.id)"
+                (change)="toggleCategory(category.id)"
+              />
+              {{ category.name }}
+            </label>
+          }
+          @if (saved()) {
+            @if (linkedAddons().length === 0) {
+              <p class="notice">Este producto no tiene complementos vinculados.</p>
+            } @else {
+              <table class="data">
+                <thead>
+                  <tr>
+                    <th>Complemento</th>
+                    <th>Obligatorio</th>
+                    <th>Cantidad máx.</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (link of linkedAddons(); track link.id) {
+                    <tr>
+                      <td>{{ link.add_ons?.name ?? link.addon_id }}</td>
+                      <td>{{ link.is_mandatory ? 'Sí' : 'No' }}</td>
+                      <td>{{ link.max_quantity ?? '—' }}</td>
+                      <td>
+                        @if (canEdit()) {
+                          <button type="button" (click)="onUnlinkAddon(link.id)">Quitar</button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+            @if (canEdit()) {
+              <h3>Vincular complemento</h3>
+              <label for="addon">Complemento</label>
+              <select id="addon" [formField]="linkForm.addonId">
+                <option value="">Selecciona un complemento</option>
+                @for (addon of availableAddons(); track addon.id) {
+                  <option [value]="addon.id">{{ addon.name }}</option>
+                }
+              </select>
+              <label class="check" for="mandatory">
+                <input id="mandatory" type="checkbox" [formField]="linkForm.isMandatory" />
+                Obligatorio
+              </label>
+              <label for="max-quantity">Cantidad máxima (opcional)</label>
+              <input id="max-quantity" type="number" [formField]="linkForm.maxQuantity" />
+              <button type="button" [disabled]="availableAddons().length === 0" (click)="onLinkAddon($event)">
+                Vincular
+              </button>
+            }
+          }
+        </section>
+
+        <section class="section" [class.incomplete]="publicIncomplete()">
+          <h2>Contenido público</h2>
+          <p class="notice">Español e inglés. La vista previa no sustituye un idioma por el otro.</p>
+          <label for="pub-placement">Sección pública</label>
+          @if (slugLocked()) {
+            <p class="notice">{{ placementLabel(publicDraft().placement) }} (fija tras publicar)</p>
+          } @else {
+            <select id="pub-placement" [formField]="publicForm.placement">
+              @for (option of options(); track option) {
+                <option [value]="option">{{ placementLabel(option) }}</option>
+              }
+            </select>
+          }
+          <label for="pub-slug">Slug público</label>
+          @if (slugLocked()) {
+            <p class="notice">{{ publicDraft().publicSlug }} (inmutable tras publicar)</p>
+          } @else {
+            <input id="pub-slug" type="text" [formField]="publicForm.publicSlug" />
+          }
+          <label class="req" for="name-es">Nombre (ES)</label>
+          <input id="name-es" type="text" [formField]="publicForm.nameEs" />
+          <label class="req" for="name-en">Nombre (EN)</label>
+          <input id="name-en" type="text" [formField]="publicForm.nameEn" />
+          <label class="req" for="desc-es">Descripción (ES)</label>
+          <textarea id="desc-es" rows="3" [formField]="publicForm.descriptionEs"></textarea>
+          <label class="req" for="desc-en">Descripción (EN)</label>
+          <textarea id="desc-en" rows="3" [formField]="publicForm.descriptionEn"></textarea>
+          <label class="check" for="featured">
+            <input id="featured" type="checkbox" [formField]="publicForm.featured" />
+            Destacada
+          </label>
+
+          @if (publicDraft().placement === 'catalog') {
+            <label for="pub-category">Categoría pública</label>
+            <select id="pub-category" [formField]="publicForm.publicCategoryId">
+              <option value="">Selecciona</option>
+              @for (category of publicCategories(); track category.id) {
+                <option [value]="category.id">{{ category.name_es }} / {{ category.name_en }}</option>
+              }
+            </select>
+            <label for="pub-location">Ubicación</label>
+            <input id="pub-location" type="text" [formField]="publicForm.location" />
+            <label for="pub-meeting">Punto de encuentro</label>
+            <input id="pub-meeting" type="text" [formField]="publicForm.meetingPoint" />
+            <label for="pub-schedule">Horario</label>
+            <input id="pub-schedule" type="text" [formField]="publicForm.schedule" />
+            <label for="pub-duration">Duración (texto)</label>
+            <input id="pub-duration" type="text" [formField]="publicForm.duration" />
+            <label for="pub-includes">Inclusiones (una por línea: ES ||| EN)</label>
+            <textarea id="pub-includes" rows="4" [formField]="publicForm.includesText"></textarea>
+          }
+
+          @if (publicDraft().placement === 'lodging') {
+            <label for="lodging-type">Tipo de hospedaje</label>
+            <select id="lodging-type" [formField]="publicForm.lodgingType">
+              @for (type of lodgingTypes; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+            <label for="loc-es">Ubicación (ES)</label>
+            <input id="loc-es" type="text" [formField]="publicForm.locationEs" />
+            <label for="loc-en">Ubicación (EN)</label>
+            <input id="loc-en" type="text" [formField]="publicForm.locationEn" />
+            <label for="hood-es">Barrio (ES)</label>
+            <input id="hood-es" type="text" [formField]="publicForm.neighborhoodEs" />
+            <label for="hood-en">Barrio (EN)</label>
+            <input id="hood-en" type="text" [formField]="publicForm.neighborhoodEn" />
+            <label for="bedrooms">Habitaciones</label>
+            <input id="bedrooms" type="number" [formField]="publicForm.bedrooms" />
+            <label for="bathrooms">Baños</label>
+            <input id="bathrooms" type="number" [formField]="publicForm.bathrooms" />
+            <label for="max-guests">Huéspedes máx.</label>
+            <input id="max-guests" type="number" [formField]="publicForm.maxGuests" />
+            <label for="map-url">Mapa (https)</label>
+            <input id="map-url" type="url" [formField]="publicForm.mapUrl" />
+            <label for="tags">Etiquetas (separadas por coma)</label>
+            <input id="tags" type="text" [formField]="publicForm.tagsText" />
+            <fieldset class="plain">
+              <legend>Amenidades</legend>
+              @for (amenity of lodgingAmenities; track amenity) {
+                <label class="check">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedAmenities().includes(amenity)"
+                    (change)="toggleAmenity(amenity)"
+                  />
+                  {{ amenity }}
+                </label>
+              }
+            </fieldset>
+          }
+
+          @if (publicDraft().placement === 'yacht') {
+            <label for="yacht-lines">Líneas de yate (una por línea: kind|icon|ES|||EN)</label>
+            <textarea
+              id="yacht-lines"
+              rows="5"
+              [formField]="publicForm.yachtLinesText"
+              placeholder="capacity|people|Hasta 12|||Up to 12"
+            ></textarea>
+            <p class="hint">kind: capacity o feature. icon opcional ({{ yachtIcons.join(', ') }}).</p>
+          }
+
+          <label [class.req]="publicDraft().placement !== 'yacht'" for="display-price">
+            Precio de vitrina {{ publicDraft().placement === 'yacht' ? '(opcional)' : '' }}
+          </label>
+          <input id="display-price" type="number" step="0.01" [formField]="publicForm.displayPrice" />
+          <label for="original-price">Precio anterior (opcional)</label>
+          <input id="original-price" type="number" step="0.01" [formField]="publicForm.originalPrice" />
+          <label for="pub-currency">Moneda</label>
+          <input id="pub-currency" type="text" [formField]="publicForm.currency" />
+          <label for="rating">Valoración (0–5)</label>
+          <input id="rating" type="number" step="0.1" [formField]="publicForm.rating" />
+          <label for="warnings">Avisos (una por línea: ES ||| EN)</label>
+          <textarea id="warnings" rows="3" [formField]="publicForm.warningsText"></textarea>
+        </section>
+      </fieldset>
+
+      <section class="section" [class.is-disabled]="!saved()">
+        <h2>Imágenes</h2>
+        @if (!saved()) {
+          <p>Guarda el borrador para continuar</p>
+        } @else if (canEdit()) {
+          <label for="cover-file">Subir portada (JPEG/PNG/WebP ≤ 10 MB)</label>
+          <input
+            id="cover-file"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onCoverFileSelected($event)"
+          />
+          <label for="cover-ref">O referencia externa</label>
+          <div class="actions">
+            <input id="cover-ref" type="text" [value]="coverExternalRef()" (input)="onCoverRefInput($event)" />
+            <button type="button" [disabled]="publicBusy() || !coverExternalRef().trim()" (click)="onAttachExternalCover()">
+              Adjuntar
+            </button>
+          </div>
+          @if (listing(); as pub) {
+            <p class="notice">Portada actual: {{ pub.cover_image_ref || 'sin portada' }}</p>
+          }
+          @if (publicDraft().placement === 'lodging') {
+            <h3>Galería</h3>
+            @if (images().length === 0) {
+              <p class="notice">Sin imágenes activas.</p>
+            } @else {
+              <ul>
+                @for (image of images(); track image.id) {
+                  <li>{{ image.role }} · {{ image.external_ref || image.storage_path }} (orden {{ image.sort_order }})</li>
+                }
+              </ul>
+            }
+            <label for="gallery-file">Añadir a galería</label>
+            <input
+              id="gallery-file"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              (change)="onGalleryFileSelected($event)"
+            />
+          }
+        } @else if (listing(); as pub) {
+          <p class="notice">Portada: {{ pub.cover_image_ref || 'sin portada' }}</p>
+        }
+      </section>
+
+      <section class="section" [class.is-disabled]="!saved()">
+        <h2>Precio</h2>
+        @if (!saved()) {
+          <p>Guarda el borrador para continuar</p>
+        } @else if (product(); as item) {
+          <app-pricing-editor
+            [productId]="item.id"
+            [allowOverride]="canOverridePrice()"
+            [readOnly]="!canEdit()"
+            (tariffSaved)="onTariffSaved()"
+          />
+        }
+      </section>
+
+      <section class="section" [class.incomplete]="saved() && !canPublish()">
+        <h2>Publicación</h2>
+        @if (listing(); as pub) {
+          <p class="notice">
+            Ficha {{ listingStatusLabel(pub.status) }}
+            @if (pub.first_published_at) {
+              · primera publicación {{ pub.first_published_at | date: 'short' }}
+            }
+          </p>
+        } @else {
+          <p class="notice">Aún no hay ficha pública. El primer guardado la crea en borrador.</p>
+        }
+        <ul>
+          @for (gate of gates(); track gate.id) {
+            <li>{{ gate.ok ? 'Listo' : 'Pendiente' }}: {{ gate.label }}</li>
+          }
+        </ul>
+        @if (canEdit() && saved()) {
+          <form (submit)="onSaveStatus($event)" novalidate>
+            <label for="status">Estado comercial</label>
+            <p class="notice">Un producto solo puede activarse si tiene un esquema de precio vigente.</p>
+            <select id="status" [formField]="statusForm.status">
+              <option value="active">Activo</option>
+              <option value="inactive">Inactivo</option>
+            </select>
+            <button type="submit" [disabled]="statusForm().submitting()">Actualizar estado</button>
+          </form>
+          @if (canPublish()) {
+            <div class="actions">
+              <button type="button" [disabled]="publicBusy()" (click)="onPublish()">Publicar</button>
+              @if (listing()?.status === 'published') {
+                <button type="button" [disabled]="publicBusy()" (click)="onUnpublish()">Despublicar</button>
+                <label class="check">
+                  <input
+                    type="checkbox"
+                    [checked]="listing()?.sold_out"
+                    [disabled]="publicBusy()"
+                    (change)="onToggleSoldOut($event)"
+                  />
+                  Agotado
+                </label>
+              }
+            </div>
+          }
+        }
+      </section>
+
+      @if ((product()?.type ?? productType()) === 'accommodation') {
+        <section class="section" [class.is-disabled]="!saved()">
+          <h2>Opiniones de huéspedes</h2>
+          @if (!saved()) {
+            <p>Guarda el borrador para continuar</p>
+          } @else {
+            @if (reviews().length === 0) {
+              <p class="notice">Sin opiniones.</p>
+            } @else {
+              <ul>
+                @for (review of reviews(); track review.id) {
+                  <li>{{ review.author }} · {{ review.rating }}/5 · {{ review.reviewed_on }} — {{ review.text_es }}</li>
+                }
+              </ul>
+            }
+            @if (canEdit()) {
+              <label for="rev-author">Autor</label>
+              <input id="rev-author" type="text" [formField]="reviewForm.author" />
+              <label for="rev-rating">Valoración (1–5)</label>
+              <input id="rev-rating" type="number" [formField]="reviewForm.rating" />
+              <label for="rev-date">Fecha</label>
+              <input id="rev-date" type="date" [formField]="reviewForm.reviewedOn" />
+              <label for="rev-es">Texto (ES)</label>
+              <textarea id="rev-es" rows="2" [formField]="reviewForm.textEs"></textarea>
+              <label for="rev-en">Texto (EN)</label>
+              <textarea id="rev-en" rows="2" [formField]="reviewForm.textEn"></textarea>
+              <button type="button" (click)="onSaveReview($event)">Añadir opinión</button>
+            }
+          }
+        </section>
+      }
+
+      @if (canEdit()) {
+        <div class="actions">
+          <button class="primary" type="button" [disabled]="saving()" (click)="onSaveDraft()">
+            {{ saving() ? 'Guardando…' : 'Guardar borrador' }}
+          </button>
+          <a class="button-link" [routerLink]="listLink()">Cancelar</a>
+        </div>
+      } @else {
+        <a class="button-link" [routerLink]="listLink()">Volver al listado</a>
+      }
+
+      @if (actionError(); as failure) {
+        <app-alert kind="error">{{ failure.message }}</app-alert>
+      }
+      @if (notice(); as message) {
+        <app-alert kind="success">{{ message }}</app-alert>
+      }
+    </div>
+
+    <aside class="preview-column">
+      <div class="locale-toggle" role="group" aria-label="Idioma de la vista previa">
+        <button type="button" [class.primary]="previewLocale() === 'es'" (click)="setLocale('es')">ES</button>
+        <button type="button" [class.primary]="previewLocale() === 'en'" (click)="setLocale('en')">EN</button>
+      </div>
+      <app-listing-preview-card [listing]="preview()" />
+    </aside>
+  </div>
+} @else {
+  <app-alert kind="info">El producto no existe o no pertenece a tu organización.</app-alert>
+}

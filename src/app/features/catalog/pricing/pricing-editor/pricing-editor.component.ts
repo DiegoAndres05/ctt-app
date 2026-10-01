@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -67,6 +68,7 @@ type PricingKind = 'base' | 'season';
           </table>
         }
 
+        @if (!readOnly()) {
         <form class="editor" (submit)="onSave($event)" novalidate>
           <h3>Definir o versionar tarifa</h3>
           <p class="notice">
@@ -105,6 +107,7 @@ type PricingKind = 'base' | 'season';
             {{ priceForm().submitting() ? 'Guardando…' : 'Guardar tarifa' }}
           </button>
         </form>
+        }
 
         <form class="editor" (submit)="onResolve($event)" novalidate>
           <h3>Consultar tarifa vigente</h3>
@@ -119,7 +122,7 @@ type PricingKind = 'base' | 'season';
           }
         </form>
 
-        @if (allowOverride()) {
+        @if (allowOverride() && !readOnly()) {
           <form class="editor" (submit)="onOverride($event)" novalidate>
             <h3>Sobreescritura manual</h3>
             <p class="notice">Solo administradores. Queda registrada en auditoría.</p>
@@ -204,6 +207,9 @@ export class PricingEditorComponent {
   readonly productId = input.required<string>();
   /** When true, the admin-only manual override form is shown. */
   readonly allowOverride = input(false);
+  /** Hides tariff mutations. Agents can still see the current schemes. */
+  readonly readOnly = input(false);
+  readonly tariffSaved = output<void>();
 
   protected readonly currentSchemes = signal<PricingScheme[]>([]);
   protected readonly loading = signal(true);
@@ -290,6 +296,7 @@ export class PricingEditorComponent {
         });
         await this.refresh(this.productId());
         this.notice.set('La tarifa se guardó. Las versiones anteriores quedan históricas.');
+        this.tariffSaved.emit();
       } catch (failure) {
         this.error.set(toAppError(failure));
       }
@@ -338,6 +345,7 @@ export class PricingEditorComponent {
           `Sobreescritura aplicada: ${result.previous_amount} → ${result.new_amount}.`,
         );
         this.overrideDraft.set({ newAmount: 0, reason: '' });
+        this.tariffSaved.emit();
       } catch (failure) {
         this.error.set(toAppError(failure));
       }

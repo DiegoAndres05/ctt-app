@@ -47,8 +47,22 @@ npm start                          # Angular on http://127.0.0.1:4200
 npm test && npm run lint && npm run format:check && npm run build
 ```
 
-Public routes: `/login`, `/register`. Everything else requires a session with
-`organization_id` and `app_role` in the access token.
+Public routes: `/login`, `/register`. Mandatory password change is `/change-password`
+and has no sidebar. Everything else requires a session with `organization_id` and
+`app_role` in the access token and renders inside the admin shell.
+
+## Admin layout (010)
+
+| Path | Who | Screen |
+| --- | --- | --- |
+| `/dashboard` | any collaborator | Greeting; indicators come later |
+| `/settings/users` | admin | Collaborator list (`?q&page&role&status`) |
+| `/settings/roles` | admin | Read-only role matrix |
+| `/settings/audit` | admin | Audit log |
+| `/change-password` | session | No sidebar |
+
+`/users` and `/audit` redirect to the settings paths. Last access on the user list is the
+latest `login_success` in `audit.audit_events`, not a new column.
 
 ## Onboarding flow (US5)
 

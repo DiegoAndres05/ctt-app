@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { toAppError, type AppError } from '../../../core/error/error-handler';
 import type { PublicCategory } from '../../../core/catalog/models/public-listing.model';
@@ -8,6 +7,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 import { hasRoleAtLeast } from '../../../core/auth/models/user.model';
 import { AlertComponent } from '../../../shared/components/alert/alert.component';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
+import type { UnsavedChangesHost } from '../../../shared/components/unsaved-changes.guard';
 
 /**
  * Public catalog categories (feature 009). Operator/Admin write; RLS scopes rows.
@@ -15,12 +15,11 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
 @Component({
   selector: 'app-public-categories',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormField, RouterLink, AlertComponent, SpinnerComponent],
+  imports: [FormField, AlertComponent, SpinnerComponent],
   template: `
     <main class="page">
       <header>
         <div>
-          <a routerLink="/catalog">Catálogo</a>
           <h1>Categorías públicas</h1>
         </div>
       </header>
@@ -62,16 +61,25 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
         </table>
 
         @if (canManage()) {
-          <form class="card" (submit)="onCreate($event)" novalidate>
+          <form class="section" (submit)="onCreate($event)" novalidate>
             <h2>Nueva categoría</h2>
-            <label for="cat-id">Id (minúsculas y _)</label>
+            <label class="req" for="cat-id">Id (minúsculas y _)</label>
             <input id="cat-id" type="text" [formField]="createForm.id" />
+            @if (createForm.id().touched() && createForm.id().invalid()) {
+              <p class="field-error">Ingresa el identificador.</p>
+            }
 
-            <label for="cat-es">Nombre (ES)</label>
+            <label class="req" for="cat-es">Nombre (ES)</label>
             <input id="cat-es" type="text" [formField]="createForm.nameEs" />
+            @if (createForm.nameEs().touched() && createForm.nameEs().invalid()) {
+              <p class="field-error">Ingresa el nombre en español.</p>
+            }
 
-            <label for="cat-en">Nombre (EN)</label>
+            <label class="req" for="cat-en">Nombre (EN)</label>
             <input id="cat-en" type="text" [formField]="createForm.nameEn" />
+            @if (createForm.nameEn().touched() && createForm.nameEn().invalid()) {
+              <p class="field-error">Ingresa el nombre en inglés.</p>
+            }
 
             <button type="submit" [disabled]="createForm().submitting()">
               {{ createForm().submitting() ? 'Guardando…' : 'Crear categoría' }}
@@ -133,7 +141,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
     }
   `,
 })
-export class PublicCategoriesComponent {
+export class PublicCategoriesComponent implements UnsavedChangesHost {
   private readonly api = inject(PublicListingService);
   private readonly auth = inject(AuthService);
 
@@ -157,6 +165,11 @@ export class PublicCategoriesComponent {
 
   constructor() {
     void this.refresh();
+  }
+
+  hasUnsavedChanges(): boolean {
+    const draft = this.createDraft();
+    return Boolean(draft.id.trim() || draft.nameEs.trim() || draft.nameEn.trim());
   }
 
   protected canManage(): boolean {

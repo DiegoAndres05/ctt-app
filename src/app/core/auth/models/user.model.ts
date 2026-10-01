@@ -46,3 +46,15 @@ export const ROLE_RANK: Readonly<Record<AppRole, number>> = {
 export function hasRoleAtLeast(actual: AppRole | null, required: AppRole): boolean {
   return actual !== null && ROLE_RANK[actual] >= ROLE_RANK[required];
 }
+
+/** Spanish label for the application role shown in the shell, lists, and matrix. */
+export function roleLabel(role: AppRole): string {
+  switch (role) {
+    case 'admin':
+      return 'Administrador';
+    case 'operator':
+      return 'Operador';
+    case 'agent':
+      return 'Agente';
+  }
+}

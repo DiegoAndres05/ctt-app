@@ -105,7 +105,7 @@ export class LoginComponent {
   private readonly router = inject(Router);
 
   /** Where to go after signing in; bound from the query string by the router. */
-  readonly returnUrl = input('/dashboard');
+  readonly returnUrl = input<string | undefined>(undefined);
   readonly reason = input<LoginRedirectReason | undefined>(undefined);
 
   protected readonly credentials = signal({ email: '', password: '' });
@@ -149,7 +149,7 @@ export class LoginComponent {
    * turn the login screen into an open redirect.
    */
   private safeReturnUrl(): string {
-    const target = this.returnUrl();
+    const target = this.returnUrl() ?? '/dashboard';
     return target.startsWith('/') && !target.startsWith('//') ? target : '/dashboard';
   }
 }

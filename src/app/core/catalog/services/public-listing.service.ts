@@ -34,6 +34,17 @@ export class PublicListingService {
   private readonly supabase = inject(SupabaseService);
   private readonly auth = inject(AuthService);
 
+  /** Public URL for a cover ref that is either an external URL or a storage path. */
+  mediaUrl(ref: string | null | undefined): string | null {
+    if (!ref) {
+      return null;
+    }
+    if (/^https?:\/\//i.test(ref)) {
+      return ref;
+    }
+    return this.supabase.client.storage.from(CATALOG_MEDIA_BUCKET).getPublicUrl(ref).data.publicUrl;
+  }
+
   async getByProductId(productId: string): Promise<PublicListing | null> {
     const { data, error } = await this.supabase.client
       .from('public_listings')
