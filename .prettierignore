@@ -1,4 +1,5 @@
 dist/
+build/
 .angular/
 node_modules/
 coverage/

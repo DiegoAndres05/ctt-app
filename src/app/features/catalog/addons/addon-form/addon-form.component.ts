@@ -14,6 +14,7 @@ import type { AddonUnit } from '../../../../core/catalog/models/addon.model';
 import { AddonService } from '../../../../core/catalog/services/addon.service';
 import { AlertComponent } from '../../../../shared/components/alert/alert.component';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
+import type { UnsavedChangesHost } from '../../../../shared/components/unsaved-changes.guard';
 
 /**
  * Create or edit an add-on (User Story 2).
@@ -24,17 +25,17 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
   imports: [FormField, RouterLink, AlertComponent, SpinnerComponent],
   template: `
     <main class="page">
-      <a routerLink="/catalog/addons">Volver a complementos</a>
+      <a routerLink="/cms/settings/addons">Cancelar</a>
 
       @if (loading()) {
         <app-spinner label="Cargando complemento…" />
       } @else if (loadError(); as failure) {
         <app-alert kind="error">{{ failure.message }}</app-alert>
       } @else {
-        <form class="card" (submit)="onSubmit($event)" novalidate>
+        <form class="section" (submit)="onSubmit($event)" novalidate>
           <h1>{{ isEdit() ? 'Editar complemento' : 'Nuevo complemento' }}</h1>
 
-          <label for="name">Nombre</label>
+          <label class="req" for="name">Nombre</label>
           <input id="name" type="text" [formField]="addonForm.name" />
           @if (addonForm.name().touched() && addonForm.name().invalid()) {
             <p class="field-error">Ingresa el nombre del complemento.</p>
@@ -55,9 +56,12 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
             Activo
           </label>
 
-          <button type="submit" [disabled]="addonForm().submitting()">
-            {{ addonForm().submitting() ? 'Guardando…' : isEdit() ? 'Guardar cambios' : 'Crear complemento' }}
-          </button>
+          <div class="actions">
+            <button class="primary" type="submit" [disabled]="addonForm().submitting()">
+              {{ addonForm().submitting() ? 'Guardando…' : 'Guardar' }}
+            </button>
+            <a class="button-link" routerLink="/cms/settings/addons">Cancelar</a>
+          </div>
 
           @if (error(); as failure) {
             <app-alert kind="error">{{ failure.message }}</app-alert>
@@ -102,7 +106,7 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
     }
   `,
 })
-export class AddonFormComponent {
+export class AddonFormComponent implements UnsavedChangesHost {
   private readonly addonsApi = inject(AddonService);
   private readonly router = inject(Router);
 
@@ -112,6 +116,8 @@ export class AddonFormComponent {
   protected readonly loading = signal(false);
   protected readonly loadError = signal<AppError | null>(null);
   protected readonly error = signal<AppError | null>(null);
+  private baseline = '';
+  private allowLeave = false;
 
   protected readonly draft = signal({
     name: '',
@@ -126,6 +132,7 @@ export class AddonFormComponent {
   });
 
   constructor() {
+    this.baseline = JSON.stringify(this.draft());
     effect(() => {
       const id = this.id();
       untracked(() => {
@@ -134,6 +141,13 @@ export class AddonFormComponent {
         }
       });
     });
+  }
+
+  hasUnsavedChanges(): boolean {
+    if (this.allowLeave) {
+      return false;
+    }
+    return JSON.stringify(this.draft()) !== this.baseline;
   }
 
   protected isEdit(): boolean {
@@ -161,9 +175,11 @@ export class AddonFormComponent {
             unit: payload.unit,
             isActive: payload.isActive,
           });
+          this.baseline = JSON.stringify(this.draft());
         } else {
           const created = await this.addonsApi.create(payload);
-          await this.router.navigate(['/catalog/addons', created.id]);
+          this.allowLeave = true;
+          await this.router.navigate(['/cms/settings/addons', created.id]);
         }
       } catch (failure) {
         this.error.set(toAppError(failure));
@@ -187,6 +203,7 @@ export class AddonFormComponent {
         unit: addon.unit,
         isActive: addon.is_active,
       });
+      this.baseline = JSON.stringify(this.draft());
     } catch (failure) {
       this.loadError.set(toAppError(failure));
     } finally {

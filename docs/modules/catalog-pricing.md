@@ -46,7 +46,7 @@ from Identity & Access.
 - `public_slug` and `placement` are immutable after `first_published_at`.
 - Images: JPEG/PNG/WebP ≤ 10 MB in `catalog-media`, or an `external_ref` copied from the legacy site.
 - Yates = `experience` + `placement = yacht` (no new `product_type`).
-- Angular: «Ficha pública» on product detail; `/catalog/public-categories`; `/catalog/public-cutover`.
+- Angular: the product editor sections include the public ficha; `/cms/settings/public-categories`; `/cms/settings/cutover` (admin).
 - Agents: read-only in the UI (`hasRoleAtLeast(…, 'operator')` gates writes). RLS still rejects agent writes.
 
 ### Public RPCs
@@ -117,9 +117,24 @@ npm start                          # Angular on http://127.0.0.1:4200
 ng build
 ```
 
-Catalog routes (Operator/Admin): `/catalog`, `/catalog/products`, `/catalog/packages`,
-`/catalog/addons`, `/catalog/public-categories`, `/catalog/public-cutover`. Pricing and the
-«Ficha pública» section are edited on the product detail screen.
+## Admin layout (010)
+
+The CMS lives under `/cms`. Old `/catalog/**` paths redirect.
+
+| Path | Min role | Screen |
+| --- | --- | --- |
+| `/cms/experiences` | agent | Experience list, including yachts (`placement`) |
+| `/cms/experiences/new` and `/:id` | operator to create; agent reads `/:id` | Sectioned editor + live preview |
+| `/cms/accommodations` | agent | Accommodation list |
+| `/cms/accommodations/new` and `/:id` | operator to create; agent reads `/:id` | Same editor, lodging sections |
+| `/cms/packages` | agent | Package list |
+| `/cms/packages/new` and `/:id` | operator to create; agent reads `/:id` | Package builder + preview |
+| `/cms/settings` | operator | Categories, public categories, add-ons |
+| `/cms/settings/cutover` | admin | Publicación del sitio |
+
+Lists show 20 rows and keep filters in the query string. Agents do not see create, save, or
+publish actions. `/catalog/products/:id` still opens the experience editor, which redirects
+when the product is an accommodation or a package.
 
 ## Quickstart mapping (T043)
 

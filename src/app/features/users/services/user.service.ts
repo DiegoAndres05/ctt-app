@@ -3,6 +3,11 @@ import { toAppError } from '../../../core/error/error-handler';
 import { SupabaseService } from '../../../core/auth/services/supabase.service';
 import type { AppRole, UserProfile, UserStatus } from '../../../core/auth/models/user.model';
 
+/** Collaborator row plus the latest successful sign-in recorded in the audit log. */
+export interface UserListRow extends UserProfile {
+  last_access_at: string | null;
+}
+
 /** Payload for `create_internal_user`. Admins invite operators and agents, never peers. */
 export interface CreateInternalUserInput {
   fullName: string;
@@ -54,6 +59,45 @@ export class UserService {
     }
 
     return data ?? [];
+  }
+
+  /**
+   * Roster enriched with the latest `login_success` per actor.
+   * One audit query for the whole page, not one query per collaborator.
+   */
+  async listWithLastAccess(): Promise<UserListRow[]> {
+    const users = await this.list();
+    if (users.length === 0) {
+      return [];
+    }
+
+    const { data, error } = await this.supabase.client
+      .schema('audit')
+      .from('audit_events')
+      .select('actor_id, created_at')
+      .eq('event_type', 'login_success')
+      .in(
+        'actor_id',
+        users.map((user) => user.id),
+      )
+      .order('created_at', { ascending: false })
+      .returns<{ actor_id: string | null; created_at: string }[]>();
+
+    if (error) {
+      throw toAppError(error);
+    }
+
+    const latest = new Map<string, string>();
+    for (const event of data ?? []) {
+      if (event.actor_id && !latest.has(event.actor_id)) {
+        latest.set(event.actor_id, event.created_at);
+      }
+    }
+
+    return users.map((user) => ({
+      ...user,
+      last_access_at: latest.get(user.id) ?? null,
+    }));
   }
 
   async getById(id: string): Promise<UserProfile | null> {

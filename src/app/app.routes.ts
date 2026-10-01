@@ -1,20 +1,17 @@
-import { Routes } from '@angular/router';
+import { Routes, type RedirectFunction } from '@angular/router';
 import { authGuard } from './core/auth/guards/auth.guard';
 import { passwordChangeGuard } from './core/auth/guards/password-change.guard';
 import { roleGuard } from './core/auth/guards/role.guard';
+import { unsavedChangesGuard } from './shared/components/unsaved-changes.guard';
 
 /**
  * Application routing shells.
  *
- * The split below is the security boundary of the router: a route is either reachable
- * without a session or it is not, and there is no third category. Feature routes are
- * appended to one of the two arrays so that adding a screen forces that choice explicitly
- * rather than defaulting to "public".
+ * Login and register are public. Mandatory password change is authenticated and has no
+ * sidebar. Every other authenticated screen renders inside `AdminShellComponent`.
+ * `roleGuard` still decides what is rendered; Row Level Security authorizes the data.
  */
 
-/**
- * Reachable without a session: login and public agency registration (T045).
- */
 const publicRoutes: Routes = [
   {
     path: 'login',
@@ -28,23 +25,25 @@ const publicRoutes: Routes = [
   },
 ];
 
-/**
- * Requires an authenticated session with a tenant claim.
- *
- * Both guards hang off the shell, so every child inherits them and a new screen cannot forget
- * one; `roleGuard` is applied per route for the administration screens and the audit log.
- *
- * `change-password` sits inside the shell on purpose: it needs a session, and
- * `passwordChangeGuard` lets it through as the one destination reachable while the mandatory
- * change is pending.
- *
- * Guards only decide what to render. Data access is authorized independently by Row Level
- * Security, so a bypassed guard still cannot read another organization's rows.
- */
+const redirectParam =
+  (prefix: string): RedirectFunction =>
+  ({ params }) =>
+    `${prefix}/${params['id']}`;
+
 const protectedRoutes: Routes = [
+  {
+    path: 'change-password',
+    canActivate: [authGuard, passwordChangeGuard],
+    loadComponent: () =>
+      import('./features/auth/change-password/change-password.component').then(
+        (m) => m.ChangePasswordComponent,
+      ),
+  },
   {
     path: '',
     canActivate: [authGuard, passwordChangeGuard],
+    loadComponent: () =>
+      import('./shared/layout/admin-shell.component').then((m) => m.AdminShellComponent),
     children: [
       {
         path: 'dashboard',
@@ -52,31 +51,65 @@ const protectedRoutes: Routes = [
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
-        path: 'change-password',
-        loadComponent: () =>
-          import('./features/auth/change-password/change-password.component').then(
-            (m) => m.ChangePasswordComponent,
-          ),
-      },
-      {
-        path: 'catalog',
-        canActivate: [roleGuard('agent')],
+        path: 'settings',
+        canActivate: [roleGuard('admin')],
         children: [
           {
-            path: '',
-            pathMatch: 'full',
+            path: 'users',
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/users/user-list/user-list.component').then(
+                    (m) => m.UserListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/users/user-create/user-create.component').then(
+                    (m) => m.UserCreateComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/users/user-detail/user-detail.component').then(
+                    (m) => m.UserDetailComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'roles',
+            canActivate: [roleGuard('admin')],
             loadComponent: () =>
-              import('./features/catalog/catalog-shell/catalog-shell.component').then(
-                (m) => m.CatalogShellComponent,
+              import('./features/users/roles/roles-matrix.component').then(
+                (m) => m.RolesMatrixComponent,
               ),
           },
           {
-            path: 'products',
+            path: 'audit',
+            loadComponent: () =>
+              import('./features/audit/audit-log/audit-log.component').then(
+                (m) => m.AuditLogComponent,
+              ),
+          },
+        ],
+      },
+      {
+        path: 'cms',
+        children: [
+          {
+            path: 'experiences',
             canActivate: [roleGuard('agent')],
             children: [
               {
                 path: '',
                 pathMatch: 'full',
+                data: { productType: 'experience' },
                 loadComponent: () =>
                   import('./features/catalog/products/product-list/product-list.component').then(
                     (m) => m.ProductListComponent,
@@ -85,67 +118,61 @@ const protectedRoutes: Routes = [
               {
                 path: 'new',
                 canActivate: [roleGuard('operator')],
+                canDeactivate: [unsavedChangesGuard],
+                data: { productType: 'experience' },
                 loadComponent: () =>
-                  import('./features/catalog/products/product-create/product-create.component').then(
-                    (m) => m.ProductCreateComponent,
+                  import('./features/catalog/products/product-editor/product-editor.component').then(
+                    (m) => m.ProductEditorComponent,
                   ),
               },
               {
                 path: ':id',
+                canDeactivate: [unsavedChangesGuard],
+                data: { productType: 'experience' },
                 loadComponent: () =>
-                  import('./features/catalog/products/product-detail/product-detail.component').then(
-                    (m) => m.ProductDetailComponent,
+                  import('./features/catalog/products/product-editor/product-editor.component').then(
+                    (m) => m.ProductEditorComponent,
                   ),
               },
             ],
           },
           {
-            path: 'public-categories',
-            canActivate: [roleGuard('operator')],
-            loadComponent: () =>
-              import('./features/catalog/public-categories/public-categories.component').then(
-                (m) => m.PublicCategoriesComponent,
-              ),
-          },
-          {
-            path: 'public-cutover',
-            canActivate: [roleGuard('operator')],
-            loadComponent: () =>
-              import('./features/catalog/public-cutover/public-cutover.component').then(
-                (m) => m.PublicCutoverComponent,
-              ),
-          },
-          {
-            path: 'addons',
-            canActivate: [roleGuard('operator')],
+            path: 'accommodations',
+            canActivate: [roleGuard('agent')],
             children: [
               {
                 path: '',
                 pathMatch: 'full',
+                data: { productType: 'accommodation' },
                 loadComponent: () =>
-                  import('./features/catalog/addons/addon-list/addon-list.component').then(
-                    (m) => m.AddonListComponent,
+                  import('./features/catalog/products/product-list/product-list.component').then(
+                    (m) => m.ProductListComponent,
                   ),
               },
               {
                 path: 'new',
+                canActivate: [roleGuard('operator')],
+                canDeactivate: [unsavedChangesGuard],
+                data: { productType: 'accommodation' },
                 loadComponent: () =>
-                  import('./features/catalog/addons/addon-form/addon-form.component').then(
-                    (m) => m.AddonFormComponent,
+                  import('./features/catalog/products/product-editor/product-editor.component').then(
+                    (m) => m.ProductEditorComponent,
                   ),
               },
               {
                 path: ':id',
+                canDeactivate: [unsavedChangesGuard],
+                data: { productType: 'accommodation' },
                 loadComponent: () =>
-                  import('./features/catalog/addons/addon-form/addon-form.component').then(
-                    (m) => m.AddonFormComponent,
+                  import('./features/catalog/products/product-editor/product-editor.component').then(
+                    (m) => m.ProductEditorComponent,
                   ),
               },
             ],
           },
           {
             path: 'packages',
-            canActivate: [roleGuard('operator')],
+            canActivate: [roleGuard('agent')],
             children: [
               {
                 path: '',
@@ -157,65 +184,112 @@ const protectedRoutes: Routes = [
               },
               {
                 path: 'new',
+                canActivate: [roleGuard('operator')],
+                canDeactivate: [unsavedChangesGuard],
                 loadComponent: () =>
-                  import(
-                    './features/catalog/packages/package-builder/package-builder.component'
-                  ).then((m) => m.PackageBuilderComponent),
+                  import('./features/catalog/packages/package-builder/package-builder.component').then(
+                    (m) => m.PackageBuilderComponent,
+                  ),
               },
               {
                 path: ':id',
+                canDeactivate: [unsavedChangesGuard],
                 loadComponent: () =>
-                  import(
-                    './features/catalog/packages/package-builder/package-builder.component'
-                  ).then((m) => m.PackageBuilderComponent),
+                  import('./features/catalog/packages/package-builder/package-builder.component').then(
+                    (m) => m.PackageBuilderComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'settings',
+            canActivate: [roleGuard('operator')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/catalog/catalog-settings/catalog-settings.component').then(
+                    (m) => m.CatalogSettingsComponent,
+                  ),
+              },
+              {
+                path: 'categories',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/catalog/categories/category-list.component').then(
+                    (m) => m.CategoryListComponent,
+                  ),
+              },
+              {
+                path: 'public-categories',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/catalog/public-categories/public-categories.component').then(
+                    (m) => m.PublicCategoriesComponent,
+                  ),
+              },
+              {
+                path: 'addons',
+                children: [
+                  {
+                    path: '',
+                    pathMatch: 'full',
+                    loadComponent: () =>
+                      import('./features/catalog/addons/addon-list/addon-list.component').then(
+                        (m) => m.AddonListComponent,
+                      ),
+                  },
+                  {
+                    path: 'new',
+                    canDeactivate: [unsavedChangesGuard],
+                    loadComponent: () =>
+                      import('./features/catalog/addons/addon-form/addon-form.component').then(
+                        (m) => m.AddonFormComponent,
+                      ),
+                  },
+                  {
+                    path: ':id',
+                    canDeactivate: [unsavedChangesGuard],
+                    loadComponent: () =>
+                      import('./features/catalog/addons/addon-form/addon-form.component').then(
+                        (m) => m.AddonFormComponent,
+                      ),
+                  },
+                ],
+              },
+              {
+                path: 'cutover',
+                canActivate: [roleGuard('admin')],
+                loadComponent: () =>
+                  import('./features/catalog/public-cutover/public-cutover.component').then(
+                    (m) => m.PublicCutoverComponent,
+                  ),
               },
             ],
           },
         ],
       },
+      { path: 'users', pathMatch: 'full', redirectTo: '/settings/users' },
+      { path: 'users/:id', redirectTo: redirectParam('/settings/users') },
+      { path: 'audit', pathMatch: 'full', redirectTo: '/settings/audit' },
+      { path: 'catalog', pathMatch: 'full', redirectTo: '/cms/experiences' },
+      { path: 'catalog/products', pathMatch: 'full', redirectTo: '/cms/experiences' },
+      { path: 'catalog/products/new', pathMatch: 'full', redirectTo: '/cms/experiences/new' },
+      { path: 'catalog/products/:id', redirectTo: redirectParam('/cms/experiences') },
+      { path: 'catalog/packages', pathMatch: 'full', redirectTo: '/cms/packages' },
+      { path: 'catalog/packages/:id', redirectTo: redirectParam('/cms/packages') },
+      { path: 'catalog/addons', pathMatch: 'full', redirectTo: '/cms/settings/addons' },
+      { path: 'catalog/addons/:id', redirectTo: redirectParam('/cms/settings/addons') },
       {
-        path: 'users',
-        canActivate: [roleGuard('admin')],
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            loadComponent: () =>
-              import('./features/users/user-list/user-list.component').then(
-                (m) => m.UserListComponent,
-              ),
-          },
-          {
-            path: 'new',
-            loadComponent: () =>
-              import('./features/users/user-create/user-create.component').then(
-                (m) => m.UserCreateComponent,
-              ),
-          },
-          {
-            path: ':id',
-            loadComponent: () =>
-              import('./features/users/user-detail/user-detail.component').then(
-                (m) => m.UserDetailComponent,
-              ),
-          },
-        ],
+        path: 'catalog/public-categories',
+        pathMatch: 'full',
+        redirectTo: '/cms/settings/public-categories',
       },
-      {
-        path: 'audit',
-        canActivate: [roleGuard('admin')],
-        loadComponent: () =>
-          import('./features/audit/audit-log/audit-log.component').then((m) => m.AuditLogComponent),
-      },
+      { path: 'catalog/public-cutover', pathMatch: 'full', redirectTo: '/cms/settings/cutover' },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
 ];
 
-export const routes: Routes = [
-  ...publicRoutes,
-  ...protectedRoutes,
-  // An unknown path is not a hint that something exists elsewhere: it lands on the protected
-  // shell and is answered by the guards. The not-found screen arrives with T047.
-  { path: '**', redirectTo: '' },
-];
+export const routes: Routes = [...publicRoutes, ...protectedRoutes, { path: '**', redirectTo: '' }];

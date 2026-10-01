@@ -1,1 +1,186 @@
-/* You can add global styles to this file, and also import other style files */
+/* Shared panel rhythm for lists and sectioned editors. */
+body {
+  margin: 0;
+  color: #1c1917;
+  background: #f4f1ec;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  line-height: 1.45;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+a {
+  color: #9a3412;
+}
+
+button,
+.button-link {
+  font: inherit;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.35rem;
+  border: 1px solid #d6d3d1;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a.primary,
+button.primary {
+  background: #9a3412;
+  border-color: #9a3412;
+  color: #fff;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.35rem;
+  width: 100%;
+  max-width: 36rem;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+label,
+legend {
+  font-weight: 600;
+}
+
+label.req::after {
+  content: ' *';
+  color: #b3261e;
+}
+
+.field-error {
+  color: #b3261e;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.section {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.5rem;
+}
+
+.section.incomplete {
+  border-color: #d97706;
+}
+
+.section.is-disabled {
+  opacity: 0.72;
+}
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  gap: 1rem;
+  align-items: start;
+}
+
+.editor-main,
+.preview-column {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+}
+
+.preview-column {
+  position: sticky;
+  top: 1rem;
+}
+
+.locale-toggle {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.check {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  font-weight: 400;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.notice,
+.hint {
+  margin: 0;
+  font-weight: 400;
+  color: #44403c;
+}
+
+.hint {
+  font-size: 0.85rem;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+table.data th,
+table.data td {
+  text-align: left;
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid #e7e5e4;
+  vertical-align: middle;
+}
+
+.thumb {
+  width: 3rem;
+  height: 2.25rem;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  background: #e7e5e4;
+  display: inline-block;
+}
+
+fieldset.plain {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.filters-bar label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 960px) {
+  .editor-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-column {
+    position: static;
+  }
+}
