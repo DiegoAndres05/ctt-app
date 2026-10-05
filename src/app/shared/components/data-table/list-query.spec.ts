@@ -51,6 +51,19 @@ describe('withListFilterChange', () => {
     expect(withListFilterChange(current, { status: 'draft' }).page).toBe(1);
     expect(withListFilterChange(current, { q: 'mar' }).page).toBe(4);
     expect(withListFilterChange(current, { page: 3 }).page).toBe(3);
+    expect(withListFilterChange(current, { channel: 'web' }).page).toBe(1);
+    expect(withListFilterChange(current, { assignee: 'none' }).page).toBe(1);
+  });
+
+  it('parses channel and assignee and omits them when empty', () => {
+    const params = parseListQuery({
+      get: (name) => ({ channel: 'whatsapp', assignee: 'none', page: '1' })[name] ?? null,
+    });
+    expect(params.channel).toBe('whatsapp');
+    expect(params.assignee).toBe('none');
+    expect(listQueryToParams(params)).toEqual({ channel: 'whatsapp', assignee: 'none' });
+    expect(hasActiveListFilters(params)).toBe(true);
+    expect(listQueryToParams(emptyListQuery())).toEqual({});
   });
 });
 

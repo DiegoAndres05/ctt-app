@@ -13,7 +13,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { hasRoleAtLeast } from '../../../../core/auth/models/user.model';
 import type { Category } from '../../../../core/catalog/models/category.model';
-import type { PackageConsistency, ProductStatus } from '../../../../core/catalog/models/product.model';
+import type {
+  PackageConsistency,
+  ProductStatus,
+} from '../../../../core/catalog/models/product.model';
 import { CategoryService } from '../../../../core/catalog/services/category.service';
 import {
   ProductService,
@@ -64,13 +67,21 @@ import {
       (clearFilters)="onClear()"
     >
       @if (canCreate()) {
-        <a dataTableCreate class="primary button-link" routerLink="/cms/packages/new">Nuevo paquete</a>
+        <a dataTableCreate class="primary button-link" routerLink="/cms/packages/new"
+          >Nuevo paquete</a
+        >
       }
 
       <div dataTableFilters class="filters-bar">
         <label for="pkg-q">
           Buscar
-          <input id="pkg-q" type="search" [value]="searchDraft()" (input)="onSearch($event)" placeholder="Nombre" />
+          <input
+            id="pkg-q"
+            type="search"
+            [value]="searchDraft()"
+            (input)="onSearch($event)"
+            placeholder="Nombre"
+          />
         </label>
         <label for="pkg-status">
           Estado del producto
@@ -125,7 +136,9 @@ import {
                   <span class="thumb"></span>
                 }
               </td>
-              <td><a [routerLink]="['/cms/packages', row.id]">{{ row.name }}</a></td>
+              <td>
+                <a [routerLink]="['/cms/packages', row.id]">{{ row.name }}</a>
+              </td>
               <td>{{ row.category_names.join(', ') || '—' }}</td>
               <td>{{ statusLabel(row.status) }}</td>
               <td>{{ publicStatusLabel(row.public_status) }}</td>
@@ -178,7 +191,9 @@ export class PackageListComponent {
       .catch(() => undefined);
     void this.productsApi
       .getPackageConsistency()
-      .then((reports) => this.consistency.set(new Map(reports.map((report) => [report.package_id, report]))))
+      .then((reports) =>
+        this.consistency.set(new Map(reports.map((report) => [report.package_id, report]))),
+      )
       .catch(() => undefined);
 
     effect(() => {
@@ -256,12 +271,16 @@ export class PackageListComponent {
   }
 
   protected onStatus(event: Event): void {
-    this.write(withListFilterChange(this.query(), { status: (event.target as HTMLSelectElement).value }));
+    this.write(
+      withListFilterChange(this.query(), { status: (event.target as HTMLSelectElement).value }),
+    );
   }
 
   protected onPublicStatus(event: Event): void {
     this.write(
-      withListFilterChange(this.query(), { publicStatus: (event.target as HTMLSelectElement).value }),
+      withListFilterChange(this.query(), {
+        publicStatus: (event.target as HTMLSelectElement).value,
+      }),
     );
   }
 

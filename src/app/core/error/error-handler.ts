@@ -65,11 +65,26 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
   IMAGE_TOO_LARGE: 'La imagen supera el límite de 10 MB.',
   IMAGE_TYPE_NOT_ALLOWED: 'Solo se permiten imágenes JPEG, PNG o WebP.',
   GALLERY_ONLY_FOR_LODGING: 'La galería solo está disponible en fichas de alojamiento.',
-  CATEGORY_IN_USE:
-    'No se puede desactivar una categoría pública que aún usan fichas publicadas.',
+  CATEGORY_IN_USE: 'No se puede desactivar una categoría pública que aún usan fichas publicadas.',
   CUTOVER_INCOMPLETE:
     'Faltan fichas del manifiesto. Publica todos los ítems antes de completar el cambio de fuente.',
   CUTOVER_ALREADY_COMPLETED: 'El cambio de fuente a panel ya se completó.',
+  CONSENT_REQUIRED:
+    'Debes confirmar que el cliente fue informado sobre el tratamiento de sus datos.',
+  CONTACT_REQUIRED: 'Ingresa el nombre y al menos un correo o un teléfono.',
+  INVALID_EMAIL: 'El correo no tiene un formato válido.',
+  INVALID_PHONE: 'El teléfono no es válido. Incluye el indicativo del país si no es de Colombia.',
+  TRAVEL_DATE_IN_PAST: 'La fecha de inicio del viaje no puede estar en el pasado.',
+  INVALID_DATE_RANGE: 'La fecha de fin no puede ser anterior a la de inicio.',
+  LISTING_NOT_AVAILABLE: 'Uno de los productos no está disponible para solicitudes.',
+  RATE_LIMITED: 'Se recibieron demasiadas solicitudes. Inténtalo más tarde.',
+  INVALID_STATUS_TRANSITION: 'Ese cambio de estado no está permitido.',
+  PRE_RESERVATION_REQUIRES_CONVERSION: 'La pre-reserva se crea desde el módulo de pre-reservas.',
+  DISCARD_REASON_REQUIRED: 'Indica el motivo para descartar la solicitud.',
+  REQUEST_CLOSED: 'La solicitud está cerrada y ya no admite cambios de gestión.',
+  ASSIGNEE_NOT_IN_ORGANIZATION: 'El colaborador elegido no está activo en tu organización.',
+  CUSTOMER_ANONYMIZED: 'El cliente fue anonimizado y no admite cambios.',
+  CUSTOMER_CONTACT_TAKEN: 'Ese correo o teléfono ya pertenece a otro cliente.',
   FORBIDDEN: 'No tienes permisos para realizar esta acción.',
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
 };

@@ -12,8 +12,8 @@ import { AuthService } from '../../core/auth/services/auth.service';
     <section class="dashboard">
       <h1>Hola, {{ name() }}</h1>
       <p>
-        Este es tu panel. Los indicadores de la operación llegarán más adelante; mientras tanto
-        usa el menú lateral para entrar a cada sección.
+        Este es tu panel. Los indicadores de la operación llegarán más adelante; mientras tanto usa
+        el menú lateral para entrar a cada sección.
       </p>
     </section>
   `,

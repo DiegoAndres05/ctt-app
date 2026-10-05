@@ -1,10 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { toAppError } from '../../error/error-handler';
 import { SupabaseService } from '../../auth/services/supabase.service';
-import type {
-  PublicPlacement,
-  PublicListingStatus,
-} from '../models/public-listing.model';
+import type { PublicPlacement, PublicListingStatus } from '../models/public-listing.model';
 import type {
   Accommodation,
   Experience,
@@ -185,7 +182,9 @@ export class ProductService {
   private readonly supabase = inject(SupabaseService);
 
   async list(filters: ProductListFilters = {}): Promise<ProductListItem[]> {
-    const categoryJoin = filters.categoryId ? 'product_categories!inner(category_id)' : 'product_categories(category_id)';
+    const categoryJoin = filters.categoryId
+      ? 'product_categories!inner(category_id)'
+      : 'product_categories(category_id)';
 
     let query = this.supabase.client
       .from('products')
@@ -224,7 +223,8 @@ export class ProductService {
     const from = (page - 1) * LIST_PAGE_SIZE;
     const to = from + LIST_PAGE_SIZE - 1;
     const publicStatus = input.publicStatus || '';
-    const innerListing = Boolean(input.placement) || (publicStatus !== '' && publicStatus !== 'none');
+    const innerListing =
+      Boolean(input.placement) || (publicStatus !== '' && publicStatus !== 'none');
     const listingSelect = innerListing
       ? 'public_listings!inner(cover_image_ref, status, sold_out, display_price, currency, placement)'
       : 'public_listings(cover_image_ref, status, sold_out, display_price, currency, placement)';
@@ -367,7 +367,10 @@ export class ProductService {
     }
   }
 
-  async setStatus(productId: string, status: Extract<ProductStatus, 'active' | 'inactive'>): Promise<ProductStatusUpdate> {
+  async setStatus(
+    productId: string,
+    status: Extract<ProductStatus, 'active' | 'inactive'>,
+  ): Promise<ProductStatusUpdate> {
     const { data, error } = await this.supabase.client.rpc('set_product_status', {
       p_product_id: productId,
       p_status: status,

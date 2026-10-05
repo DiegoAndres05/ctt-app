@@ -12,6 +12,8 @@ export interface ListQuery {
   publicStatus: string;
   placement: string;
   categoryId: string;
+  channel: string;
+  assignee: string;
 }
 
 export function emptyListQuery(): ListQuery {
@@ -23,6 +25,8 @@ export function emptyListQuery(): ListQuery {
     publicStatus: '',
     placement: '',
     categoryId: '',
+    channel: '',
+    assignee: '',
   };
 }
 
@@ -38,6 +42,8 @@ export function parseListQuery(params: { get(name: string): string | null }): Li
     publicStatus: params.get('publicStatus') ?? '',
     placement: params.get('placement') ?? '',
     categoryId: params.get('categoryId') ?? '',
+    channel: params.get('channel') ?? '',
+    assignee: params.get('assignee') ?? '',
   };
 }
 
@@ -65,6 +71,12 @@ export function listQueryToParams(query: ListQuery): Record<string, string> {
   if (query.categoryId) {
     params['categoryId'] = query.categoryId;
   }
+  if (query.channel) {
+    params['channel'] = query.channel;
+  }
+  if (query.assignee) {
+    params['assignee'] = query.assignee;
+  }
   return params;
 }
 
@@ -75,6 +87,8 @@ const FILTER_KEYS = [
   'publicStatus',
   'placement',
   'categoryId',
+  'channel',
+  'assignee',
 ] as const satisfies readonly (keyof ListQuery)[];
 
 /** Changing a search or filter returns to the first page unless `page` is set explicitly. */
@@ -90,11 +104,13 @@ export function withListFilterChange(query: ListQuery, patch: Partial<ListQuery>
 export function hasActiveListFilters(query: ListQuery): boolean {
   return Boolean(
     query.q ||
-      query.role ||
-      query.status ||
-      query.publicStatus ||
-      query.placement ||
-      query.categoryId,
+    query.role ||
+    query.status ||
+    query.publicStatus ||
+    query.placement ||
+    query.categoryId ||
+    query.channel ||
+    query.assignee,
   );
 }
 

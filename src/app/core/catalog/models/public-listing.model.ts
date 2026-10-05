@@ -39,15 +39,7 @@ export type YachtIcon =
 
 /** Mirrors `public.lodging_amenity`. */
 export type LodgingAmenity =
-  | 'wifi'
-  | 'pool'
-  | 'ac'
-  | 'kitchen'
-  | 'parking'
-  | 'terrace'
-  | 'washer'
-  | 'tv'
-  | 'bbq';
+  'wifi' | 'pool' | 'ac' | 'kitchen' | 'parking' | 'terrace' | 'washer' | 'tv' | 'bbq';
 
 /** Bilingual pair stored in JSONB arrays (`includes`, `warnings`). */
 export interface BilingualPair {

@@ -127,3 +127,87 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
 END;
 $$;
+
+-- Customers and requests for the demo agency (feature 003). Stops when the tenant
+-- already has customers so a second apply does not mint new SOL- references.
+DO $$
+DECLARE
+  v_org_id uuid := '00000000-0000-4000-a000-000000000001';
+  v_agent_id uuid := '00000000-0000-4000-b000-000000000003';
+  v_product_id uuid;
+  v_result jsonb;
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.customers WHERE organization_id = v_org_id) THEN
+    RAISE NOTICE 'Demo customers already seeded; nothing to do.';
+    RETURN;
+  END IF;
+
+  UPDATE public.organizations
+  SET settings = coalesce(settings, '{}'::jsonb) || '{"default_phone_country_code":"57"}'::jsonb
+  WHERE id = v_org_id;
+
+  SELECT pl.product_id
+  INTO v_product_id
+  FROM public.public_listings pl
+  WHERE pl.organization_id = v_org_id
+    AND pl.public_slug = 'islas-capri-premium';
+
+  IF v_product_id IS NULL THEN
+    RAISE EXCEPTION 'Demo listing islas-capri-premium is missing';
+  END IF;
+
+  PERFORM public.capture_request_core(
+    v_org_id,
+    'web',
+    NULL,
+    jsonb_build_object(
+      'first_name', 'Laura Gómez',
+      'email', 'laura@example.com',
+      'phone', '+573001112233'
+    ),
+    jsonb_build_object(
+      'privacy_consent_at', now(),
+      'adults', 2,
+      'travel_start_date', '2027-03-15'
+    ),
+    jsonb_build_array(jsonb_build_object(
+      'product_id', v_product_id,
+      'public_slug', 'islas-capri-premium',
+      'quantity', 1
+    )),
+    NULL
+  );
+
+  v_result := public.capture_request_core(
+    v_org_id,
+    'phone',
+    NULL,
+    jsonb_build_object('first_name', 'John Smith', 'phone', '+13055550123'),
+    jsonb_build_object(
+      'assign_to', v_agent_id,
+      'special_requirements', 'Llamada recibida en recepción'
+    ),
+    jsonb_build_array(jsonb_build_object('free_text', 'Tour gastronómico', 'quantity', 1)),
+    v_agent_id
+  );
+
+  UPDATE public.customer_requests
+  SET status = 'in_review',
+      first_handled_at = now()
+  WHERE id = (v_result ->> 'request_id')::uuid;
+END;
+$$;
+
+-- Simulated WhatsApp connection for local webhook tests. No credentials are stored.
+INSERT INTO public.channel_connections (
+  organization_id, channel, provider, external_account_id, display_phone, status
+)
+VALUES (
+  '00000000-0000-4000-a000-000000000001',
+  'whatsapp',
+  'meta_cloud',
+  'local-dev-phone-number-id',
+  '+57 300 000 0000',
+  'active'
+)
+ON CONFLICT (provider, external_account_id) DO NOTHING;

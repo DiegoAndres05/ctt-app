@@ -9,7 +9,11 @@ import type { PreviewListing } from './preview-listing.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (listing(); as card) {
-      <article class="card" [class.yacht]="card.variant === 'yacht'" [class.lodging]="card.variant === 'lodging'">
+      <article
+        class="card"
+        [class.yacht]="card.variant === 'yacht'"
+        [class.lodging]="card.variant === 'lodging'"
+      >
         <div class="cover">
           @if (card.imageLoading) {
             <p>Cargando imagen…</p>

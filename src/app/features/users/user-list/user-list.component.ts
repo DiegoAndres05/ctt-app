@@ -48,7 +48,9 @@ import { UserService, type UserListRow } from '../services/user.service';
       (pageChange)="onPage($event)"
       (clearFilters)="onClear()"
     >
-      <a dataTableCreate class="primary button-link" routerLink="/settings/users/new">Nuevo usuario</a>
+      <a dataTableCreate class="primary button-link" routerLink="/settings/users/new"
+        >Nuevo usuario</a
+      >
 
       <div dataTableFilters class="filters-bar">
         <label for="user-q">

@@ -57,7 +57,9 @@ import {
       (clearFilters)="onClear()"
     >
       @if (canCreate()) {
-        <a dataTableCreate class="primary button-link" [routerLink]="createLink()">{{ createLabel() }}</a>
+        <a dataTableCreate class="primary button-link" [routerLink]="createLink()">{{
+          createLabel()
+        }}</a>
       }
 
       <div dataTableFilters class="filters-bar">
@@ -82,7 +84,11 @@ import {
         </label>
         <label [attr.for]="fieldId('public')">
           Estado de la ficha
-          <select [id]="fieldId('public')" [value]="query().publicStatus" (change)="onPublicStatus($event)">
+          <select
+            [id]="fieldId('public')"
+            [value]="query().publicStatus"
+            (change)="onPublicStatus($event)"
+          >
             <option value="">Todos</option>
             <option value="none">Sin ficha</option>
             <option value="draft">Borrador</option>
@@ -93,7 +99,11 @@ import {
         </label>
         <label [attr.for]="fieldId('category')">
           Categoría
-          <select [id]="fieldId('category')" [value]="query().categoryId" (change)="onCategory($event)">
+          <select
+            [id]="fieldId('category')"
+            [value]="query().categoryId"
+            (change)="onCategory($event)"
+          >
             <option value="">Todas</option>
             @for (category of categories(); track category.id) {
               <option [value]="category.id">{{ category.name }}</option>
@@ -103,7 +113,11 @@ import {
         @if (productType() === 'experience') {
           <label [attr.for]="fieldId('placement')">
             Ubicación pública
-            <select [id]="fieldId('placement')" [value]="query().placement" (change)="onPlacement($event)">
+            <select
+              [id]="fieldId('placement')"
+              [value]="query().placement"
+              (change)="onPlacement($event)"
+            >
               <option value="">Todas</option>
               <option value="catalog">Catálogo</option>
               <option value="yacht">Yates</option>
@@ -225,7 +239,9 @@ export class ProductListComponent {
   }
 
   protected createLink(): string {
-    return this.productType() === 'accommodation' ? '/cms/accommodations/new' : '/cms/experiences/new';
+    return this.productType() === 'accommodation'
+      ? '/cms/accommodations/new'
+      : '/cms/experiences/new';
   }
 
   protected detailLink(): string {
@@ -295,12 +311,16 @@ export class ProductListComponent {
   }
 
   protected onStatus(event: Event): void {
-    this.write(withListFilterChange(this.query(), { status: (event.target as HTMLSelectElement).value }));
+    this.write(
+      withListFilterChange(this.query(), { status: (event.target as HTMLSelectElement).value }),
+    );
   }
 
   protected onPublicStatus(event: Event): void {
     this.write(
-      withListFilterChange(this.query(), { publicStatus: (event.target as HTMLSelectElement).value }),
+      withListFilterChange(this.query(), {
+        publicStatus: (event.target as HTMLSelectElement).value,
+      }),
     );
   }
 
@@ -342,7 +362,10 @@ export class ProductListComponent {
         q: query.q,
         status: (query.status || undefined) as ProductStatus | undefined,
         publicStatus: (query.publicStatus || undefined) as ProductListPublicStatus | undefined,
-        placement: type === 'experience' ? ((query.placement || undefined) as 'catalog' | 'yacht' | undefined) : undefined,
+        placement:
+          type === 'experience'
+            ? ((query.placement || undefined) as 'catalog' | 'yacht' | undefined)
+            : undefined,
         categoryId: query.categoryId || undefined,
         page: query.page,
       });

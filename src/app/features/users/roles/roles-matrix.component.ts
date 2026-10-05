@@ -38,7 +38,8 @@ const MATRIX: readonly MatrixRow[] = [
 
 const ROLE_COPY: Readonly<Record<AppRole, string>> = {
   admin: 'Administra la organización, los colaboradores y todo el CMS.',
-  operator: 'Edita el catálogo y las fichas públicas. No administra usuarios ni la publicación del sitio.',
+  operator:
+    'Edita el catálogo y las fichas públicas. No administra usuarios ni la publicación del sitio.',
   agent: 'Consulta experiencias, alojamientos y paquetes. No crea ni publica.',
 };
 
@@ -52,7 +53,9 @@ const ROLE_COPY: Readonly<Record<AppRole, string>> = {
   template: `
     <section class="stack">
       <h1>Roles y permisos</h1>
-      <p class="notice">Consulta de los roles existentes. No se crean roles ni se cambian sus permisos.</p>
+      <p class="notice">
+        Consulta de los roles existentes. No se crean roles ni se cambian sus permisos.
+      </p>
 
       @if (loading()) {
         <app-spinner label="Cargando colaboradores…" />
@@ -65,7 +68,9 @@ const ROLE_COPY: Readonly<Record<AppRole, string>> = {
               <h2>{{ roleLabel(role) }}</h2>
               <p>{{ ROLE_COPY[role] }}</p>
               <p>{{ count(role) }} activos</p>
-              <a [routerLink]="['/settings/users']" [queryParams]="{ role }">Ver {{ roleLabel(role) }}</a>
+              <a [routerLink]="['/settings/users']" [queryParams]="{ role }"
+                >Ver {{ roleLabel(role) }}</a
+              >
             </li>
           }
         </ul>
