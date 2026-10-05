@@ -11,7 +11,11 @@ import {
 import { DatePipe } from '@angular/common';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { toAppError, type AppError } from '../../../../core/error/error-handler';
-import type { ChargeType, PricingScheme, ResolvedPrice } from '../../../../core/catalog/models/pricing.model';
+import type {
+  ChargeType,
+  PricingScheme,
+  ResolvedPrice,
+} from '../../../../core/catalog/models/pricing.model';
 import { PricingService } from '../../../../core/catalog/services/pricing.service';
 import { AlertComponent } from '../../../../shared/components/alert/alert.component';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
@@ -69,44 +73,44 @@ type PricingKind = 'base' | 'season';
         }
 
         @if (!readOnly()) {
-        <form class="editor" (submit)="onSave($event)" novalidate>
-          <h3>Definir o versionar tarifa</h3>
-          <p class="notice">
-            Un cambio de monto cierra la versión actual y crea una nueva. Los históricos no se
-            modifican.
-          </p>
+          <form class="editor" (submit)="onSave($event)" novalidate>
+            <h3>Definir o versionar tarifa</h3>
+            <p class="notice">
+              Un cambio de monto cierra la versión actual y crea una nueva. Los históricos no se
+              modifican.
+            </p>
 
-          <label for="kind">Esquema</label>
-          <select id="kind" [formField]="priceForm.kind">
-            <option value="base">Precio base</option>
-            <option value="season">Precio de temporada</option>
-          </select>
+            <label for="kind">Esquema</label>
+            <select id="kind" [formField]="priceForm.kind">
+              <option value="base">Precio base</option>
+              <option value="season">Precio de temporada</option>
+            </select>
 
-          <label for="charge-type">Tipo de cobro</label>
-          <select id="charge-type" [formField]="priceForm.chargeType">
-            <option value="per_person">Por persona</option>
-            <option value="per_night">Por noche</option>
-            <option value="per_group">Por grupo</option>
-          </select>
+            <label for="charge-type">Tipo de cobro</label>
+            <select id="charge-type" [formField]="priceForm.chargeType">
+              <option value="per_person">Por persona</option>
+              <option value="per_night">Por noche</option>
+              <option value="per_group">Por grupo</option>
+            </select>
 
-          <label for="currency">Moneda (ISO 4217)</label>
-          <input id="currency" type="text" [formField]="priceForm.currency" />
+            <label for="currency">Moneda (ISO 4217)</label>
+            <input id="currency" type="text" [formField]="priceForm.currency" />
 
-          <label for="amount">Monto</label>
-          <input id="amount" type="number" step="0.01" [formField]="priceForm.baseAmount" />
+            <label for="amount">Monto</label>
+            <input id="amount" type="number" step="0.01" [formField]="priceForm.baseAmount" />
 
-          @if (priceForm.kind().value() === 'season') {
-            <label for="season-start">Inicio de temporada</label>
-            <input id="season-start" type="date" [formField]="priceForm.seasonStart" />
+            @if (priceForm.kind().value() === 'season') {
+              <label for="season-start">Inicio de temporada</label>
+              <input id="season-start" type="date" [formField]="priceForm.seasonStart" />
 
-            <label for="season-end">Fin de temporada</label>
-            <input id="season-end" type="date" [formField]="priceForm.seasonEnd" />
-          }
+              <label for="season-end">Fin de temporada</label>
+              <input id="season-end" type="date" [formField]="priceForm.seasonEnd" />
+            }
 
-          <button type="submit" [disabled]="priceForm().submitting()">
-            {{ priceForm().submitting() ? 'Guardando…' : 'Guardar tarifa' }}
-          </button>
-        </form>
+            <button type="submit" [disabled]="priceForm().submitting()">
+              {{ priceForm().submitting() ? 'Guardando…' : 'Guardar tarifa' }}
+            </button>
+          </form>
         }
 
         <form class="editor" (submit)="onResolve($event)" novalidate>
@@ -116,8 +120,9 @@ type PricingKind = 'base' | 'season';
           <button type="submit" [disabled]="resolveForm().submitting()">Consultar</button>
           @if (resolved(); as price) {
             <p class="notice">
-              {{ price.amount }} {{ price.currency }}
-              ({{ price.source === 'season' ? 'temporada' : 'base' }})
+              {{ price.amount }} {{ price.currency }} ({{
+                price.source === 'season' ? 'temporada' : 'base'
+              }})
             </p>
           }
         </form>
@@ -359,8 +364,7 @@ export class PricingEditorComponent {
     try {
       const current = await this.pricingApi.listCurrentForProduct(productId);
       this.currentSchemes.set(current);
-      const preferred =
-        current.find((row) => row.season_start == null) ?? current[0] ?? null;
+      const preferred = current.find((row) => row.season_start == null) ?? current[0] ?? null;
       if (preferred) {
         this.priceDraft.set({
           kind: preferred.season_start ? 'season' : 'base',

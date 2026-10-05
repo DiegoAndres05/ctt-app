@@ -14,7 +14,11 @@ import { roleLabel } from '../../core/auth/models/user.model';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { SupabaseService } from '../../core/auth/services/supabase.service';
 import { AlertComponent } from '../components/alert/alert.component';
-import { SidebarNavComponent, readSidebarCollapsed, writeSidebarCollapsed } from './sidebar-nav.component';
+import {
+  SidebarNavComponent,
+  readSidebarCollapsed,
+  writeSidebarCollapsed,
+} from './sidebar-nav.component';
 
 const NARROW_QUERY = '(max-width: 959px)';
 
@@ -29,7 +33,12 @@ const NARROW_QUERY = '(max-width: 959px)';
   template: `
     <div class="shell" [class.collapsed]="collapsed() && !narrow()" [class.narrow]="narrow()">
       @if (narrow() && drawerOpen()) {
-        <button type="button" class="backdrop" aria-label="Cerrar menú" (click)="drawerOpen.set(false)"></button>
+        <button
+          type="button"
+          class="backdrop"
+          aria-label="Cerrar menú"
+          (click)="drawerOpen.set(false)"
+        ></button>
       }
       <div class="sidebar-slot" [class.open]="!narrow() || drawerOpen()">
         <app-sidebar-nav

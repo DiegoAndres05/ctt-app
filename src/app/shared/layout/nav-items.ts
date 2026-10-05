@@ -24,6 +24,26 @@ export const NAV_TREE: readonly NavItem[] = [
     minRole: 'agent',
   },
   {
+    id: 'sales',
+    label: 'Comercial',
+    path: null,
+    minRole: 'agent',
+    children: [
+      {
+        id: 'sales-requests',
+        label: 'Solicitudes',
+        path: '/sales/requests',
+        minRole: 'agent',
+      },
+      {
+        id: 'sales-customers',
+        label: 'Clientes',
+        path: '/sales/customers',
+        minRole: 'agent',
+      },
+    ],
+  },
+  {
     id: 'settings',
     label: 'Configuración',
     path: null,

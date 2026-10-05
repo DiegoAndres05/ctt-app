@@ -56,6 +56,11 @@ and has no sidebar. Everything else requires a session with `organization_id` an
 | Path | Who | Screen |
 | --- | --- | --- |
 | `/dashboard` | any collaborator | Greeting; indicators come later |
+| `/sales/requests` | any collaborator | Request inbox |
+| `/sales/requests/new` | any collaborator | Assisted request intake |
+| `/sales/requests/:id` | any collaborator | Request detail |
+| `/sales/customers` | any collaborator | Customer directory |
+| `/sales/customers/:id` | any collaborator | Customer profile |
 | `/settings/users` | admin | Collaborator list (`?q&page&role&status`) |
 | `/settings/roles` | admin | Read-only role matrix |
 | `/settings/audit` | admin | Audit log |

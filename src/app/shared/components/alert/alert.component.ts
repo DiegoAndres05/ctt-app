@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-export type AlertKind = 'error' | 'info' | 'success';
+export type AlertKind = 'error' | 'info' | 'success' | 'warning';
 
 /**
  * Inline status banner for forms and lists.
@@ -40,6 +40,11 @@ export type AlertKind = 'error' | 'info' | 'success';
     .alert-success {
       color: #166534;
       background: #ecfdf3;
+    }
+
+    .alert-warning {
+      color: #92400e;
+      background: #fffbeb;
     }
   `,
 })

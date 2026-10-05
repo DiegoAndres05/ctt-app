@@ -15,6 +15,10 @@
 #   catalog_performance_probe_test.sql,
 #   public_listing_rules_test.sql, public_listing_rls_test.sql,
 #   public_cutover_test.sql, public_sold_out_test.sql
+# Customer request suites (003):
+#   customer_intake_core_test.sql, customer_requests_rls_test.sql,
+#   public_request_intake_test.sql, whatsapp_intake_test.sql,
+#   request_workflow_test.sql, customer_privacy_test.sql
 # There is no explicit file list to maintain; adding a `*_test.sql` is enough.
 
 set -euo pipefail

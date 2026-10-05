@@ -53,7 +53,9 @@ export function truncatePreview(value: string, max: number): string {
 export function toPreviewListing(input: PreviewListingInput): PreviewListing {
   const titleRaw = (input.locale === 'en' ? input.titleEn : input.titleEs).trim();
   const summaryRaw = (input.locale === 'en' ? input.descriptionEn : input.descriptionEs).trim();
-  const categoryRaw = (input.locale === 'en' ? input.categoryLabelEn : input.categoryLabelEs).trim();
+  const categoryRaw = (
+    input.locale === 'en' ? input.categoryLabelEn : input.categoryLabelEs
+  ).trim();
   const language = input.locale === 'en' ? 'inglés' : 'español';
   const missingLocale = titleRaw.length === 0 || summaryRaw.length === 0;
   const price = input.displayPrice;
@@ -72,7 +74,7 @@ export function toPreviewListing(input: PreviewListingInput): PreviewListing {
     displayPrice: price,
     currency: input.currency?.trim().toUpperCase() || 'COP',
     soldOut: input.soldOut,
-    lodgingType: input.variant === 'lodging' ? (input.lodgingType?.trim() || null) : null,
+    lodgingType: input.variant === 'lodging' ? input.lodgingType?.trim() || null : null,
     occupancy: input.variant === 'lodging' ? (input.occupancy ?? null) : null,
     missingLocale,
     showPrice,

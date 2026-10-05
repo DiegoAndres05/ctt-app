@@ -26,8 +26,8 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
       </header>
 
       <p class="notice">
-        Mientras la fuente sea «legacy», la página pública sigue su contenido embebido. Al
-        completar el cambio, pasa a leer solo fichas publicadas del panel.
+        Mientras la fuente sea «legacy», la página pública sigue su contenido embebido. Al completar
+        el cambio, pasa a leer solo fichas publicadas del panel.
       </p>
 
       @if (loading()) {

@@ -13,12 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { AuthService } from '../../core/auth/services/auth.service';
-import {
-  activeNavItemId,
-  parentIdsForActive,
-  visibleNavItems,
-  type NavItem,
-} from './nav-items';
+import { activeNavItemId, parentIdsForActive, visibleNavItems, type NavItem } from './nav-items';
 
 const COLLAPSED_KEY = 'ctt.sidebar.collapsed';
 

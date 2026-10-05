@@ -51,6 +51,62 @@ const protectedRoutes: Routes = [
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
+        path: 'sales',
+        canActivate: [roleGuard('agent')],
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'requests' },
+          {
+            path: 'requests',
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/sales/requests/request-list/request-list.component').then(
+                    (m) => m.RequestListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/sales/requests/request-intake/request-intake.component').then(
+                    (m) => m.RequestIntakeComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/sales/requests/request-detail/request-detail.component').then(
+                    (m) => m.RequestDetailComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'customers',
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/sales/customers/customer-list/customer-list.component').then(
+                    (m) => m.CustomerListComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/sales/customers/customer-detail/customer-detail.component').then(
+                    (m) => m.CustomerDetailComponent,
+                  ),
+              },
+            ],
+          },
+        ],
+      },
+      {
         path: 'settings',
         canActivate: [roleGuard('admin')],
         children: [

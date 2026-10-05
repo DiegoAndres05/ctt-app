@@ -161,7 +161,8 @@ export function buildSavePayload(
     meeting_point: placement === 'catalog' ? draft.meetingPoint.trim() || null : null,
     schedule: placement === 'catalog' ? draft.schedule.trim() || null : null,
     duration: placement === 'catalog' ? draft.duration.trim() || null : null,
-    max_guests: placement === 'lodging' ? draft.maxGuests : optionalNumber(String(draft.maxGuests || '')),
+    max_guests:
+      placement === 'lodging' ? draft.maxGuests : optionalNumber(String(draft.maxGuests || '')),
     lodging: placement === 'lodging' ? buildLodgingDetails(draft, amenities) : null,
     yacht_lines: placement === 'yacht' ? parseYachtLines(draft.yachtLinesText) : [],
   };
@@ -191,7 +192,10 @@ export function placementLabel(placement: PublicPlacement): string {
   }
 }
 
-function buildLodgingDetails(draft: PublicDraft, amenities: readonly LodgingAmenity[]): LodgingDetails {
+function buildLodgingDetails(
+  draft: PublicDraft,
+  amenities: readonly LodgingAmenity[],
+): LodgingDetails {
   return {
     lodging_type: draft.lodgingType,
     location_es: draft.locationEs.trim(),

@@ -82,7 +82,9 @@ function placementGates(placement: PublicPlacement, draft: PublicDraft): Publish
   }
 
   const lines = parseYachtLines(draft.yachtLinesText);
-  const hasCapacity = lines.some((line) => line.kind === 'capacity' && line.text_es && line.text_en);
+  const hasCapacity = lines.some(
+    (line) => line.kind === 'capacity' && line.text_es && line.text_en,
+  );
   const hasFeature = lines.some((line) => line.kind === 'feature' && line.text_es && line.text_en);
   const price = draft.displayPrice.trim();
   return [

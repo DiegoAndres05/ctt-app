@@ -8,8 +8,11 @@ see `docs/modules/identity-access.md`.
 Catalog & Pricing (experiences, accommodations, packages, add-ons, tariffs):
 see `docs/modules/catalog-pricing.md`.
 
+Customers & Requests (customer profiles, multichannel requests, WhatsApp intake boundary):
+see `docs/modules/customer-requests.md`.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/010-admin-layout-navigation/plan.md
+at specs/003-customer-requests-channels/plan.md
 <!-- SPECKIT END -->

@@ -41,7 +41,11 @@ import { LIST_PAGE_SIZE, pageCount } from './list-query';
             Anterior
           </button>
           <span>Página {{ page() }} de {{ pages() }}</span>
-          <button type="button" [disabled]="page() >= pages()" (click)="pageChange.emit(page() + 1)">
+          <button
+            type="button"
+            [disabled]="page() >= pages()"
+            (click)="pageChange.emit(page() + 1)"
+          >
             Siguiente
           </button>
         </nav>

@@ -27,9 +27,7 @@ function input(patch: Partial<PreviewListingInput> = {}): PreviewListingInput {
 
 describe('toPreviewListing', () => {
   it('uses the active locale and does not borrow the other language', () => {
-    const preview = toPreviewListing(
-      input({ locale: 'en', titleEn: '', descriptionEn: '' }),
-    );
+    const preview = toPreviewListing(input({ locale: 'en', titleEn: '', descriptionEn: '' }));
     expect(preview.title).toBe('Sin título');
     expect(preview.summary).toBe('Falta la descripción en inglés');
     expect(preview.missingLocale).toBe(true);

@@ -13,7 +13,9 @@ import { hasRoleAtLeast } from '../../../core/auth/models/user.model';
   template: `
     <section class="stack">
       <h1>Ajustes del catálogo</h1>
-      <p class="notice">Categorías operativas, categorías públicas, adicionales y la publicación del sitio.</p>
+      <p class="notice">
+        Categorías operativas, categorías públicas, adicionales y la publicación del sitio.
+      </p>
       <ul>
         <li><a routerLink="/cms/settings/categories">Categorías</a></li>
         <li><a routerLink="/cms/settings/public-categories">Categorías públicas</a></li>

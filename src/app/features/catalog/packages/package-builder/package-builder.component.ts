@@ -47,113 +47,140 @@ interface BuilderItem {
   imports: [FormField, RouterLink, AlertComponent, SpinnerComponent, ListingPreviewCardComponent],
   template: `
     <div class="editor-layout">
-    <main class="editor-main">
-      <a routerLink="/cms/packages">Cancelar</a>
+      <main class="editor-main">
+        <a routerLink="/cms/packages">Cancelar</a>
 
-      @if (loading()) {
-        <app-spinner label="Cargando paquete…" />
-      } @else if (loadError(); as failure) {
-        <app-alert kind="error">{{ failure.message }}</app-alert>
-      } @else {
-        @if (consistencyWarning(); as warning) {
-          <app-alert kind="info">{{ warning }}</app-alert>
-        }
-
-        @if (existing(); as pkg) {
-          <section class="card">
-            <h1>{{ pkg.name }}</h1>
-            <dl>
-              <dt>Estado</dt>
-              <dd>{{ pkg.status === 'draft' ? 'Borrador' : pkg.status === 'active' ? 'Activo' : 'Inactivo' }}</dd>
-              <dt>Días</dt>
-              <dd>{{ pkg.package.total_days ?? '—' }}</dd>
-              <dt>Noches</dt>
-              <dd>{{ pkg.package.total_nights ?? '—' }}</dd>
-            </dl>
-            <h2>Itinerario</h2>
-            <ul>
-              @for (item of pkg.items; track item.id) {
-                <li>
-                  Día {{ item.day_number ?? '—' }} · {{ componentName(item.component_product_id) }}
-                </li>
-              }
-            </ul>
-          </section>
+        @if (loading()) {
+          <app-spinner label="Cargando paquete…" />
+        } @else if (loadError(); as failure) {
+          <app-alert kind="error">{{ failure.message }}</app-alert>
         } @else {
-          <form class="card" (submit)="onSubmit($event)" novalidate>
-            <h1>Nuevo paquete</h1>
-            <p class="notice">
-              El precio del paquete se define de forma explícita en la ficha del producto, no como
-              suma de componentes.
-            </p>
+          @if (consistencyWarning(); as warning) {
+            <app-alert kind="info">{{ warning }}</app-alert>
+          }
 
-            <label class="req" for="name">Nombre</label>
-            <input id="name" type="text" [formField]="builderForm.name" />
-            @if (builderForm.name().touched() && builderForm.name().invalid()) {
-              <p class="field-error">Ingresa el nombre del paquete.</p>
-            }
-
-            <label for="description">Descripción</label>
-            <textarea id="description" rows="3" [formField]="builderForm.description"></textarea>
-
-            <label for="total-days">Días de itinerario</label>
-            <input id="total-days" type="number" [formField]="builderForm.totalDays" />
-
-            <label for="total-nights">Noches de itinerario</label>
-            <input id="total-nights" type="number" [formField]="builderForm.totalNights" />
-
-            <fieldset>
-              <legend>Componentes</legend>
-              <p class="notice">Selecciona experiencias o alojamientos y el día del itinerario.</p>
-
-              <label for="component">Producto</label>
-              <select id="component" [formField]="builderForm.pickerProductId">
-                <option value="">Selecciona un componente</option>
-                @for (product of candidates(); track product.id) {
-                  <option [value]="product.id">{{ product.name }} ({{ typeLabel(product.type) }})</option>
+          @if (existing(); as pkg) {
+            <section class="card">
+              <h1>{{ pkg.name }}</h1>
+              <dl>
+                <dt>Estado</dt>
+                <dd>
+                  {{
+                    pkg.status === 'draft'
+                      ? 'Borrador'
+                      : pkg.status === 'active'
+                        ? 'Activo'
+                        : 'Inactivo'
+                  }}
+                </dd>
+                <dt>Días</dt>
+                <dd>{{ pkg.package.total_days ?? '—' }}</dd>
+                <dt>Noches</dt>
+                <dd>{{ pkg.package.total_nights ?? '—' }}</dd>
+              </dl>
+              <h2>Itinerario</h2>
+              <ul>
+                @for (item of pkg.items; track item.id) {
+                  <li>
+                    Día {{ item.day_number ?? '—' }} ·
+                    {{ componentName(item.component_product_id) }}
+                  </li>
                 }
-              </select>
+              </ul>
+            </section>
+          } @else {
+            <form class="card" (submit)="onSubmit($event)" novalidate>
+              <h1>Nuevo paquete</h1>
+              <p class="notice">
+                El precio del paquete se define de forma explícita en la ficha del producto, no como
+                suma de componentes.
+              </p>
 
-              <label for="day-number">Día</label>
-              <input id="day-number" type="number" [formField]="builderForm.pickerDayNumber" />
-
-              <button type="button" (click)="addItem()">Añadir al itinerario</button>
-
-              @if (items().length === 0) {
-                <p class="notice">Aún no hay componentes en el paquete.</p>
-              } @else {
-                <ul>
-                  @for (item of items(); track item.sort_order + item.component_product_id) {
-                    <li>
-                      Día {{ item.day_number ?? '—' }} · {{ item.name }} ({{ typeLabel(item.type) }})
-                      <button type="button" (click)="removeItem(item.sort_order)">Quitar</button>
-                    </li>
-                  }
-                </ul>
+              <label class="req" for="name">Nombre</label>
+              <input id="name" type="text" [formField]="builderForm.name" />
+              @if (builderForm.name().touched() && builderForm.name().invalid()) {
+                <p class="field-error">Ingresa el nombre del paquete.</p>
               }
-            </fieldset>
 
-            <div class="actions">
-              <button class="primary" type="submit" [disabled]="builderForm().submitting()">
-                {{ builderForm().submitting() ? 'Guardando…' : 'Guardar borrador' }}
-              </button>
-              <a class="button-link" routerLink="/cms/packages">Cancelar</a>
-            </div>
+              <label for="description">Descripción</label>
+              <textarea id="description" rows="3" [formField]="builderForm.description"></textarea>
 
-            @if (error(); as failure) {
-              <app-alert kind="error">{{ failure.message }}</app-alert>
-            }
-          </form>
+              <label for="total-days">Días de itinerario</label>
+              <input id="total-days" type="number" [formField]="builderForm.totalDays" />
+
+              <label for="total-nights">Noches de itinerario</label>
+              <input id="total-nights" type="number" [formField]="builderForm.totalNights" />
+
+              <fieldset>
+                <legend>Componentes</legend>
+                <p class="notice">
+                  Selecciona experiencias o alojamientos y el día del itinerario.
+                </p>
+
+                <label for="component">Producto</label>
+                <select id="component" [formField]="builderForm.pickerProductId">
+                  <option value="">Selecciona un componente</option>
+                  @for (product of candidates(); track product.id) {
+                    <option [value]="product.id">
+                      {{ product.name }} ({{ typeLabel(product.type) }})
+                    </option>
+                  }
+                </select>
+
+                <label for="day-number">Día</label>
+                <input id="day-number" type="number" [formField]="builderForm.pickerDayNumber" />
+
+                <button type="button" (click)="addItem()">Añadir al itinerario</button>
+
+                @if (items().length === 0) {
+                  <p class="notice">Aún no hay componentes en el paquete.</p>
+                } @else {
+                  <ul>
+                    @for (item of items(); track item.sort_order + item.component_product_id) {
+                      <li>
+                        Día {{ item.day_number ?? '—' }} · {{ item.name }} ({{
+                          typeLabel(item.type)
+                        }})
+                        <button type="button" (click)="removeItem(item.sort_order)">Quitar</button>
+                      </li>
+                    }
+                  </ul>
+                }
+              </fieldset>
+
+              <div class="actions">
+                <button class="primary" type="submit" [disabled]="builderForm().submitting()">
+                  {{ builderForm().submitting() ? 'Guardando…' : 'Guardar borrador' }}
+                </button>
+                <a class="button-link" routerLink="/cms/packages">Cancelar</a>
+              </div>
+
+              @if (error(); as failure) {
+                <app-alert kind="error">{{ failure.message }}</app-alert>
+              }
+            </form>
+          }
         }
-      }
-    </main>
-    <aside class="preview-column">
-      <div class="locale-toggle" role="group" aria-label="Idioma de la vista previa">
-        <button type="button" [class.primary]="previewLocale() === 'es'" (click)="previewLocale.set('es')">ES</button>
-        <button type="button" [class.primary]="previewLocale() === 'en'" (click)="previewLocale.set('en')">EN</button>
-      </div>
-      <app-listing-preview-card [listing]="preview()" />
-    </aside>
+      </main>
+      <aside class="preview-column">
+        <div class="locale-toggle" role="group" aria-label="Idioma de la vista previa">
+          <button
+            type="button"
+            [class.primary]="previewLocale() === 'es'"
+            (click)="previewLocale.set('es')"
+          >
+            ES
+          </button>
+          <button
+            type="button"
+            [class.primary]="previewLocale() === 'en'"
+            (click)="previewLocale.set('en')"
+          >
+            EN
+          </button>
+        </div>
+        <app-listing-preview-card [listing]="preview()" />
+      </aside>
     </div>
   `,
   styles: `
@@ -282,7 +309,11 @@ export class PackageBuilderComponent implements UnsavedChangesHost {
     if (this.allowLeave || this.existing()) {
       return false;
     }
-    return this.draft().name.trim().length > 0 || this.draft().description.trim().length > 0 || this.items().length > 0;
+    return (
+      this.draft().name.trim().length > 0 ||
+      this.draft().description.trim().length > 0 ||
+      this.items().length > 0
+    );
   }
 
   protected typeLabel(type: ProductType): string {

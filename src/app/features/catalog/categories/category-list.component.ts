@@ -46,7 +46,12 @@ import type { UnsavedChangesHost } from '../../../shared/components/unsaved-chan
           </table>
         }
 
-        <form class="section" [class.incomplete]="nameInvalid()" (submit)="onCreate($event)" novalidate>
+        <form
+          class="section"
+          [class.incomplete]="nameInvalid()"
+          (submit)="onCreate($event)"
+          novalidate
+        >
           <h2>Nueva categoría</h2>
           <label class="req" for="category-name">Nombre</label>
           <input id="category-name" type="text" [formField]="createForm.name" />

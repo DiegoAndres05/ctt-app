@@ -59,7 +59,13 @@ import {
       <div dataTableFilters class="filters-bar">
         <label for="addon-q">
           Buscar
-          <input id="addon-q" type="search" [value]="searchDraft()" (input)="onSearch($event)" placeholder="Nombre" />
+          <input
+            id="addon-q"
+            type="search"
+            [value]="searchDraft()"
+            (input)="onSearch($event)"
+            placeholder="Nombre"
+          />
         </label>
         <label for="addon-status">
           Estado
@@ -82,7 +88,9 @@ import {
         <tbody>
           @for (addon of pageRows(); track addon.id) {
             <tr>
-              <td><a [routerLink]="['/cms/settings/addons', addon.id]">{{ addon.name }}</a></td>
+              <td>
+                <a [routerLink]="['/cms/settings/addons', addon.id]">{{ addon.name }}</a>
+              </td>
               <td>{{ unitLabel(addon.unit) }}</td>
               <td>{{ addon.is_active ? 'Activo' : 'Inactivo' }}</td>
             </tr>
@@ -173,7 +181,9 @@ export class AddonListComponent {
   }
 
   protected onStatus(event: Event): void {
-    this.write(withListFilterChange(this.query(), { status: (event.target as HTMLSelectElement).value }));
+    this.write(
+      withListFilterChange(this.query(), { status: (event.target as HTMLSelectElement).value }),
+    );
   }
 
   protected onPage(page: number): void {

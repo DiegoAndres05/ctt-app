@@ -15,7 +15,9 @@
       </header>
 
       @if (!canEdit()) {
-        <app-alert kind="info">Estás consultando esta ficha. Tu rol no puede guardar ni publicar.</app-alert>
+        <app-alert kind="info"
+          >Estás consultando esta ficha. Tu rol no puede guardar ni publicar.</app-alert
+        >
       }
 
       <fieldset class="plain" [disabled]="!canEdit()">
@@ -121,7 +123,11 @@
               </label>
               <label for="max-quantity">Cantidad máxima (opcional)</label>
               <input id="max-quantity" type="number" [formField]="linkForm.maxQuantity" />
-              <button type="button" [disabled]="availableAddons().length === 0" (click)="onLinkAddon($event)">
+              <button
+                type="button"
+                [disabled]="availableAddons().length === 0"
+                (click)="onLinkAddon($event)"
+              >
                 Vincular
               </button>
             }
@@ -130,7 +136,9 @@
 
         <section class="section" [class.incomplete]="publicIncomplete()">
           <h2>Contenido público</h2>
-          <p class="notice">Español e inglés. La vista previa no sustituye un idioma por el otro.</p>
+          <p class="notice">
+            Español e inglés. La vista previa no sustituye un idioma por el otro.
+          </p>
           <label for="pub-placement">Sección pública</label>
           @if (slugLocked()) {
             <p class="notice">{{ placementLabel(publicDraft().placement) }} (fija tras publicar)</p>
@@ -165,7 +173,9 @@
             <select id="pub-category" [formField]="publicForm.publicCategoryId">
               <option value="">Selecciona</option>
               @for (category of publicCategories(); track category.id) {
-                <option [value]="category.id">{{ category.name_es }} / {{ category.name_en }}</option>
+                <option [value]="category.id">
+                  {{ category.name_es }} / {{ category.name_en }}
+                </option>
               }
             </select>
             <label for="pub-location">Ubicación</label>
@@ -228,15 +238,27 @@
               [formField]="publicForm.yachtLinesText"
               placeholder="capacity|people|Hasta 12|||Up to 12"
             ></textarea>
-            <p class="hint">kind: capacity o feature. icon opcional ({{ yachtIcons.join(', ') }}).</p>
+            <p class="hint">
+              kind: capacity o feature. icon opcional ({{ yachtIcons.join(', ') }}).
+            </p>
           }
 
           <label [class.req]="publicDraft().placement !== 'yacht'" for="display-price">
             Precio de vitrina {{ publicDraft().placement === 'yacht' ? '(opcional)' : '' }}
           </label>
-          <input id="display-price" type="number" step="0.01" [formField]="publicForm.displayPrice" />
+          <input
+            id="display-price"
+            type="number"
+            step="0.01"
+            [formField]="publicForm.displayPrice"
+          />
           <label for="original-price">Precio anterior (opcional)</label>
-          <input id="original-price" type="number" step="0.01" [formField]="publicForm.originalPrice" />
+          <input
+            id="original-price"
+            type="number"
+            step="0.01"
+            [formField]="publicForm.originalPrice"
+          />
           <label for="pub-currency">Moneda</label>
           <input id="pub-currency" type="text" [formField]="publicForm.currency" />
           <label for="rating">Valoración (0–5)</label>
@@ -260,8 +282,17 @@
           />
           <label for="cover-ref">O referencia externa</label>
           <div class="actions">
-            <input id="cover-ref" type="text" [value]="coverExternalRef()" (input)="onCoverRefInput($event)" />
-            <button type="button" [disabled]="publicBusy() || !coverExternalRef().trim()" (click)="onAttachExternalCover()">
+            <input
+              id="cover-ref"
+              type="text"
+              [value]="coverExternalRef()"
+              (input)="onCoverRefInput($event)"
+            />
+            <button
+              type="button"
+              [disabled]="publicBusy() || !coverExternalRef().trim()"
+              (click)="onAttachExternalCover()"
+            >
               Adjuntar
             </button>
           </div>
@@ -275,7 +306,10 @@
             } @else {
               <ul>
                 @for (image of images(); track image.id) {
-                  <li>{{ image.role }} · {{ image.external_ref || image.storage_path }} (orden {{ image.sort_order }})</li>
+                  <li>
+                    {{ image.role }} · {{ image.external_ref || image.storage_path }} (orden
+                    {{ image.sort_order }})
+                  </li>
                 }
               </ul>
             }
@@ -326,7 +360,9 @@
         @if (canEdit() && saved()) {
           <form (submit)="onSaveStatus($event)" novalidate>
             <label for="status">Estado comercial</label>
-            <p class="notice">Un producto solo puede activarse si tiene un esquema de precio vigente.</p>
+            <p class="notice">
+              Un producto solo puede activarse si tiene un esquema de precio vigente.
+            </p>
             <select id="status" [formField]="statusForm.status">
               <option value="active">Activo</option>
               <option value="inactive">Inactivo</option>
@@ -335,9 +371,13 @@
           </form>
           @if (canPublish()) {
             <div class="actions">
-              <button type="button" [disabled]="publicBusy()" (click)="onPublish()">Publicar</button>
+              <button type="button" [disabled]="publicBusy()" (click)="onPublish()">
+                Publicar
+              </button>
               @if (listing()?.status === 'published') {
-                <button type="button" [disabled]="publicBusy()" (click)="onUnpublish()">Despublicar</button>
+                <button type="button" [disabled]="publicBusy()" (click)="onUnpublish()">
+                  Despublicar
+                </button>
                 <label class="check">
                   <input
                     type="checkbox"
@@ -364,7 +404,10 @@
             } @else {
               <ul>
                 @for (review of reviews(); track review.id) {
-                  <li>{{ review.author }} · {{ review.rating }}/5 · {{ review.reviewed_on }} — {{ review.text_es }}</li>
+                  <li>
+                    {{ review.author }} · {{ review.rating }}/5 · {{ review.reviewed_on }} —
+                    {{ review.text_es }}
+                  </li>
                 }
               </ul>
             }
@@ -406,8 +449,12 @@
 
     <aside class="preview-column">
       <div class="locale-toggle" role="group" aria-label="Idioma de la vista previa">
-        <button type="button" [class.primary]="previewLocale() === 'es'" (click)="setLocale('es')">ES</button>
-        <button type="button" [class.primary]="previewLocale() === 'en'" (click)="setLocale('en')">EN</button>
+        <button type="button" [class.primary]="previewLocale() === 'es'" (click)="setLocale('es')">
+          ES
+        </button>
+        <button type="button" [class.primary]="previewLocale() === 'en'" (click)="setLocale('en')">
+          EN
+        </button>
       </div>
       <app-listing-preview-card [listing]="preview()" />
     </aside>

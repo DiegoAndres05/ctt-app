@@ -57,6 +57,15 @@ describe('toAppError', () => {
     );
   });
 
+  it('maps customer and request contract codes carried in the message', () => {
+    expect(toAppError({ message: 'CUSTOMER_CONTACT_TAKEN' }).code).toBe('CUSTOMER_CONTACT_TAKEN');
+    expect(toAppError({ message: 'CONTACT_REQUIRED' }).code).toBe('CONTACT_REQUIRED');
+    expect(toAppError({ message: 'PRE_RESERVATION_REQUIRES_CONVERSION' }).code).toBe(
+      'PRE_RESERVATION_REQUIRES_CONVERSION',
+    );
+    expect(toAppError({ message: 'LISTING_NOT_AVAILABLE' }).code).toBe('LISTING_NOT_AVAILABLE');
+  });
+
   it('maps a unique-violation on category slug to VALIDATION_ERROR', () => {
     expect(
       toAppError({

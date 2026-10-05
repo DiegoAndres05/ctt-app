@@ -178,7 +178,8 @@ export class ProductEditorComponent implements UnsavedChangesHost {
     const draft = this.publicDraft();
     const locale = this.previewLocale();
     const category = this.publicCategories().find((item) => item.id === draft.publicCategoryId);
-    const variant = draft.placement === 'yacht' ? 'yacht' : draft.placement === 'lodging' ? 'lodging' : 'catalog';
+    const variant =
+      draft.placement === 'yacht' ? 'yacht' : draft.placement === 'lodging' ? 'lodging' : 'catalog';
     const location =
       variant === 'lodging'
         ? locale === 'en'
@@ -316,7 +317,9 @@ export class ProductEditorComponent implements UnsavedChangesHost {
   protected toggleAmenity(amenity: LodgingAmenity): void {
     const current = this.selectedAmenities();
     this.selectedAmenities.set(
-      current.includes(amenity) ? current.filter((item) => item !== amenity) : [...current, amenity],
+      current.includes(amenity)
+        ? current.filter((item) => item !== amenity)
+        : [...current, amenity],
     );
   }
 
@@ -369,7 +372,10 @@ export class ProductEditorComponent implements UnsavedChangesHost {
     this.notice.set(null);
     await submit(this.statusForm, async (fields) => {
       try {
-        const updated = await this.productsApi.setStatus(this.product()!.id, fields.status().value());
+        const updated = await this.productsApi.setStatus(
+          this.product()!.id,
+          fields.status().value(),
+        );
         const current = this.product();
         if (current) {
           this.product.set({ ...current, status: updated.status });
@@ -695,7 +701,12 @@ export class ProductEditorComponent implements UnsavedChangesHost {
     });
     try {
       await this.publicApi.saveListing(
-        buildSavePayload(created.id, this.publicDraft(), this.selectedAmenities(), slugify(attr.name)),
+        buildSavePayload(
+          created.id,
+          this.publicDraft(),
+          this.selectedAmenities(),
+          slugify(attr.name),
+        ),
       );
     } catch (failure) {
       this.handoff.stash({

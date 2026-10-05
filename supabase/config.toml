@@ -78,3 +78,7 @@ inspector_port = 8083
 # Public onboarding endpoint: callable without a session (US5).
 [functions.register-agency]
 verify_jwt = false
+
+# Webhook de Meta; la autorización es la firma X-Hub-Signature-256 verificada en la función.
+[functions.whatsapp-inbound]
+verify_jwt = false

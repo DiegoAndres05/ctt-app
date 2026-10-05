@@ -14,6 +14,11 @@ All routes below sit under the authenticated shell (`canActivate: authGuard, pas
 | `/login`, `/register` | public | Auth, no sidebar | — |
 | `/change-password` | session | Auth, no sidebar | — |
 | `/dashboard` | any authenticated | Empty dashboard | — |
+| `/sales/requests` | agent | Request inbox | `?q&page&status&channel&assignee` |
+| `/sales/requests/new` | agent | Assisted intake | `?channel&customerId` |
+| `/sales/requests/:id` | agent | Request detail | — |
+| `/sales/customers` | agent | Customer directory | `?q&page` |
+| `/sales/customers/:id` | agent | Customer profile | — |
 | `/settings/users` | admin | User list | `?q&page&role&status` |
 | `/settings/users/new` | admin | User create | — |
 | `/settings/users/:id` | admin | User detail | — |
@@ -93,6 +98,8 @@ Visible items by role (FR-004):
 | Item | admin | operator | agent |
 |------|-------|----------|-------|
 | Dashboard | ✓ | ✓ | ✓ |
+| Comercial / Solicitudes | ✓ | ✓ | ✓ |
+| Comercial / Clientes | ✓ | ✓ | ✓ |
 | Configuración / Usuarios | ✓ | — | — |
 | Configuración / Roles y permisos | ✓ | — | — |
 | Configuración / Auditoría | ✓ | — | — |
@@ -103,6 +110,8 @@ Visible items by role (FR-004):
 | Ajustes / Publicación del sitio | ✓ | — | — |
 
 Active item: longest matching `path` prefix of the current URL. Parent group stays expanded.
+
+Agregado por 003 (orden: Dashboard → Comercial → Configuración → CMS).
 
 ## Preview card contract
 
