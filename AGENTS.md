@@ -14,6 +14,8 @@ see `docs/modules/customer-requests.md`.
 Pre-Reservations & Availability (pre-reservations, human availability verification queue,
 quote eligibility): see `docs/modules/pre-reservations.md`.
 
+Quotations (commercial proposals, server-side pricing, public token): see docs/modules/quotations.md.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan

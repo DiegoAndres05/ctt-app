@@ -461,6 +461,15 @@ interface ServiceRow {
           <h2>Cotización</h2>
           @if (current.quote_eligible) {
             <p>Lista para cotizar.</p>
+            <div class="actions">
+              <a
+                class="primary button-link"
+                [routerLink]="['/sales/quotations/new']"
+                [queryParams]="{ preReservationId: current.id }"
+              >
+                Crear cotización
+              </a>
+            </div>
           } @else {
             <p>No elegible para cotizar: {{ ineligibleReason(current) }}.</p>
           }

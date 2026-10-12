@@ -11,6 +11,7 @@ describe('visibleNavItems', () => {
       'sales',
       'sales-requests',
       'sales-pre-reservations',
+      'sales-quotations',
       'sales-verification',
       'sales-customers',
       'settings',
@@ -33,6 +34,7 @@ describe('visibleNavItems', () => {
     expect(visible).toContain('experiences');
     expect(visible).toContain('sales-requests');
     expect(visible).toContain('sales-pre-reservations');
+    expect(visible).toContain('sales-quotations');
     expect(visible).toContain('sales-verification');
     expect(visible).toContain('sales-customers');
   });
@@ -43,6 +45,7 @@ describe('visibleNavItems', () => {
       'sales',
       'sales-requests',
       'sales-pre-reservations',
+      'sales-quotations',
       'sales-customers',
       'cms',
       'experiences',
@@ -66,6 +69,7 @@ describe('activeNavItemId', () => {
     expect(activeNavItemId(items, '/dashboard')).toBe('dashboard');
     expect(activeNavItemId(items, '/sales/requests/abc')).toBe('sales-requests');
     expect(activeNavItemId(items, '/sales/pre-reservations/abc')).toBe('sales-pre-reservations');
+    expect(activeNavItemId(items, '/sales/quotations/abc')).toBe('sales-quotations');
     expect(activeNavItemId(items, '/sales/verification')).toBe('sales-verification');
     expect(activeNavItemId(items, '/sales/customers/abc')).toBe('sales-customers');
   });

@@ -42,6 +42,12 @@ export const NAV_TREE: readonly NavItem[] = [
         minRole: 'agent',
       },
       {
+        id: 'sales-quotations',
+        label: 'Cotizaciones',
+        path: '/sales/quotations',
+        minRole: 'agent',
+      },
+      {
         id: 'sales-verification',
         label: 'Verificación',
         path: '/sales/verification',
