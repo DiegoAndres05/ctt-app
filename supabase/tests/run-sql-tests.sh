@@ -19,6 +19,10 @@
 #   customer_intake_core_test.sql, customer_requests_rls_test.sql,
 #   public_request_intake_test.sql, whatsapp_intake_test.sql,
 #   request_workflow_test.sql, customer_privacy_test.sql
+# Pre-reservation suites (004):
+#   pre_reservation_core_test.sql, pre_reservation_rls_test.sql,
+#   availability_verification_test.sql, pre_reservation_consolidation_test.sql,
+#   verification_traceability_test.sql
 # There is no explicit file list to maintain; adding a `*_test.sql` is enough.
 
 set -euo pipefail

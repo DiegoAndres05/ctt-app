@@ -11,8 +11,11 @@ see `docs/modules/catalog-pricing.md`.
 Customers & Requests (customer profiles, multichannel requests, WhatsApp intake boundary):
 see `docs/modules/customer-requests.md`.
 
+Pre-Reservations & Availability (pre-reservations, human availability verification queue,
+quote eligibility): see `docs/modules/pre-reservations.md`.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/003-customer-requests-channels/plan.md
+at specs/008-analytics-reporting/plan.md
 <!-- SPECKIT END -->

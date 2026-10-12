@@ -30,6 +30,26 @@ BEGIN
 END;
 $$;
 
+-- Text twin of the bigint version, so a suite can compare references and statuses without
+-- dropping them into a dynamic query. The first argument is typed text so a call never
+-- becomes ambiguous with the bigint overload above.
+CREATE OR REPLACE FUNCTION tests.assert_equals(
+  p_actual text,
+  p_expected text,
+  p_description text
+)
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF p_actual IS DISTINCT FROM p_expected THEN
+    RAISE EXCEPTION 'FAILED: % (expected %, got %)', p_description, p_expected, p_actual;
+  END IF;
+
+  RAISE NOTICE 'ok   %', p_description;
+END;
+$$;
+
 -- Companion to psql's `:ROW_COUNT`, which is how a suite checks that a statement was a no-op.
 -- A policy that grants no visibility makes SELECT, UPDATE and DELETE reach zero rows rather
 -- than fail, so "nothing happened" is the assertion that matters for those.
@@ -85,4 +105,5 @@ $$;
 GRANT USAGE ON SCHEMA tests TO anon, authenticated, service_role, supabase_auth_admin;
 GRANT EXECUTE ON FUNCTION tests.assert_true(text, text) TO anon, authenticated, service_role, supabase_auth_admin;
 GRANT EXECUTE ON FUNCTION tests.assert_equals(bigint, bigint, text) TO anon, authenticated, service_role, supabase_auth_admin;
+GRANT EXECUTE ON FUNCTION tests.assert_equals(text, text, text) TO anon, authenticated, service_role, supabase_auth_admin;
 GRANT EXECUTE ON FUNCTION tests.assert_raises(text, text, text) TO anon, authenticated, service_role, supabase_auth_admin;

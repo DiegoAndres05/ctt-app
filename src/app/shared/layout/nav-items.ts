@@ -36,6 +36,19 @@ export const NAV_TREE: readonly NavItem[] = [
         minRole: 'agent',
       },
       {
+        id: 'sales-pre-reservations',
+        label: 'Pre-reservas',
+        path: '/sales/pre-reservations',
+        minRole: 'agent',
+      },
+      {
+        id: 'sales-verification',
+        label: 'Verificación',
+        path: '/sales/verification',
+        minRole: 'operator',
+        hideForAgent: true,
+      },
+      {
         id: 'sales-customers',
         label: 'Clientes',
         path: '/sales/customers',

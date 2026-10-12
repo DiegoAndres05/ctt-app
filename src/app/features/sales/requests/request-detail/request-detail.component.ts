@@ -13,6 +13,11 @@ import {
   type RequestDetail,
 } from '../../../../core/customers/models/request.model';
 import {
+  PRE_RESERVATION_STATUS_LABELS,
+  type PreReservationListRow,
+} from '../../../../core/pre-reservations/models/pre-reservation.model';
+import { PreReservationService } from '../../../../core/pre-reservations/services/pre-reservation.service';
+import {
   RequestService,
   type AssigneeOption,
 } from '../../../../core/customers/services/request.service';
@@ -155,7 +160,51 @@ import { NotesSectionComponent } from '../../shared/notes-section.component';
               <button type="button" (click)="discard()" [disabled]="busy()">Descartar</button>
             }
           }
-          <p>La pre-reserva se crea desde el módulo de pre-reservas.</p>
+          @if (canCreatePreReservation()) {
+            <div class="actions">
+              <a
+                class="primary button-link"
+                routerLink="/sales/pre-reservations/new"
+                [queryParams]="{ requestId: current.id }"
+              >
+                Crear pre-reserva
+              </a>
+            </div>
+          } @else {
+            <p>La pre-reserva se crea desde el módulo de pre-reservas.</p>
+          }
+        </section>
+
+        <section class="section">
+          <h2>Pre-reservas</h2>
+          @if (preReservationsError(); as failure) {
+            <app-alert kind="error">{{ failure }}</app-alert>
+          } @else if (linkedPreReservations().length === 0) {
+            <p>Esta solicitud todavía no tiene pre-reservas.</p>
+          } @else {
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Referencia</th>
+                  <th>Estado</th>
+                  <th>Creada</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (preReservation of linkedPreReservations(); track preReservation.id) {
+                  <tr>
+                    <td>
+                      <a [routerLink]="['/sales/pre-reservations', preReservation.id]">
+                        {{ preReservation.reference }}
+                      </a>
+                    </td>
+                    <td>{{ preReservationStatusLabel(preReservation.status) }}</td>
+                    <td>{{ preReservation.created_at | date: 'short' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
         </section>
 
         <app-notes-section [target]="{ requestId: current.id }" />
@@ -192,6 +241,7 @@ import { NotesSectionComponent } from '../../shared/notes-section.component';
 })
 export class RequestDetailComponent {
   private readonly requests = inject(RequestService);
+  private readonly preReservations = inject(PreReservationService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -206,10 +256,14 @@ export class RequestDetailComponent {
   protected readonly assignees = signal<AssigneeOption[]>([]);
   protected readonly discardReason = signal('');
   protected readonly deduplicated = signal(readDeduplicated());
+  protected readonly linkedPreReservations = signal<PreReservationListRow[]>([]);
+  protected readonly preReservationsError = signal<string | null>(null);
   protected readonly statusLabel = (status: RequestDetail['status']) =>
     REQUEST_STATUS_LABELS[status];
   protected readonly channelLabel = (channel: RequestDetail['channel']) =>
     REQUEST_CHANNEL_LABELS[channel];
+  protected readonly preReservationStatusLabel = (status: PreReservationListRow['status']) =>
+    PRE_RESERVATION_STATUS_LABELS[status];
 
   constructor() {
     effect(() => {
@@ -222,6 +276,19 @@ export class RequestDetailComponent {
   protected closed(): boolean {
     const current = this.request();
     return current ? isRequestClosed(current.status) : false;
+  }
+
+  /** The «Crear pre-reserva» CTA: open requests with a real (non-anonymized) customer. */
+  protected canCreatePreReservation(): boolean {
+    const current = this.request();
+    if (!current || current.customer.is_anonymized) {
+      return false;
+    }
+    return (
+      current.status === 'received' ||
+      current.status === 'in_review' ||
+      current.status === 'pre_reservation'
+    );
   }
 
   protected actions(): ManualRequestStatus[] {
@@ -314,10 +381,22 @@ export class RequestDetailComponent {
       } else {
         this.messages.set([]);
       }
+      await this.loadPreReservations(id);
     } catch (failure) {
       this.loadError.set(toAppError(failure));
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  private async loadPreReservations(id: string): Promise<void> {
+    try {
+      this.linkedPreReservations.set(await this.preReservations.listForRequest(id));
+      this.preReservationsError.set(null);
+    } catch (failure) {
+      // Secondary read: the request detail stays usable even if this one fails.
+      this.linkedPreReservations.set([]);
+      this.preReservationsError.set(toAppError(failure).message);
     }
   }
 

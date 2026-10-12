@@ -66,6 +66,24 @@ describe('toAppError', () => {
     expect(toAppError({ message: 'LISTING_NOT_AVAILABLE' }).code).toBe('LISTING_NOT_AVAILABLE');
   });
 
+  it('maps pre-reservation contract codes carried in the message to code and message', () => {
+    const requiresItems = toAppError({ message: 'PRE_RESERVATION_REQUIRES_ITEMS' });
+    expect(requiresItems.code).toBe('PRE_RESERVATION_REQUIRES_ITEMS');
+    expect(requiresItems.message).toBe(
+      'La pre-reserva debe conservar al menos un servicio principal.',
+    );
+
+    const holdInPast = toAppError({ message: 'HOLD_EXPIRY_IN_PAST' });
+    expect(holdInPast.code).toBe('HOLD_EXPIRY_IN_PAST');
+    expect(holdInPast.message).toBe('La fecha límite de retención debe ser futura.');
+
+    const overrideNotRequired = toAppError({ message: 'OVERRIDE_NOT_REQUIRED' });
+    expect(overrideNotRequired.code).toBe('OVERRIDE_NOT_REQUIRED');
+    expect(overrideNotRequired.message).toBe(
+      'La pre-reserva ya está totalmente verificada; no necesita excepción.',
+    );
+  });
+
   it('maps a unique-violation on category slug to VALIDATION_ERROR', () => {
     expect(
       toAppError({
