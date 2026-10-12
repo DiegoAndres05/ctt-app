@@ -65,13 +65,19 @@ and has no sidebar. Everything else requires a session with `organization_id` an
 | `/sales/pre-reservations/new` | any collaborator | Pre-reservation create (from a request) |
 | `/sales/pre-reservations/:id` | any collaborator | Pre-reservation detail |
 | `/sales/verification` | operator and above | Availability verification queue |
+| `/sales/quotations` | agent and above | Quotation list |
+| `/sales/quotations/new` | agent and above | Quotation draft create (`?preReservationId=`) |
+| `/sales/quotations/:versionId` | agent and above | Quotation detail / editor |
+| `/q/:token` | public, no session | Client quotation view, outside the shell |
 | `/settings/users` | admin | Collaborator list (`?q&page&role&status`) |
 | `/settings/roles` | admin | Read-only role matrix |
 | `/settings/audit` | admin | Audit log |
 | `/change-password` | session | No sidebar |
 
 `/users` and `/audit` redirect to the settings paths. Last access on the user list is the
-latest `login_success` in `audit.audit_events`, not a new column.
+latest `login_success` in `audit.audit_events`, not a new column. `/q/:token` (quotation
+proposals, feature 005) is public like `/login`: no session, no sidebar, no `authGuard`;
+it renders outside the admin shell.
 
 ## Onboarding flow (US5)
 

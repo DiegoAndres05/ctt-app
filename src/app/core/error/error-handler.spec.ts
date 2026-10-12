@@ -94,4 +94,49 @@ describe('toAppError', () => {
       }).code,
     ).toBe('VALIDATION_ERROR');
   });
+
+  // Quotations (feature 005): contracts §2–§5 raise the contract code as the message.
+  const QUOTATION_MESSAGES: readonly (readonly [string, string])[] = [
+    ['TARIFF_NOT_FOUND', 'No hay tarifa vigente para este servicio.'],
+    ['AMBIGUOUS_TARIFF', 'Hay más de una tarifa vigente y ninguna coincide con el tipo de cobro.'],
+    ['EXCHANGE_RATE_REQUIRED', 'Falta la tasa de cambio para emitir.'],
+    ['EXCHANGE_RATE_INVALID', 'La tasa de cambio debe ser mayor que cero.'],
+    ['TAX_RATE_OUT_OF_RANGE', 'El impuesto debe estar entre 0 % y 100 %.'],
+    ['ADJUSTMENT_REQUIRES_ADMIN', 'Este ajuste supera el 15 % y requiere un administrador.'],
+    ['ADJUSTMENT_LABEL_REQUIRED', 'El ajuste necesita una etiqueta.'],
+    ['QUOTATION_FROZEN', 'La cotización emitida no se edita. Cree una versión nueva.'],
+    ['QUOTATION_ALREADY_OPEN', 'Ya hay una cotización abierta para esta pre-reserva.'],
+    ['QUOTATION_ALREADY_ACCEPTED', 'Esta pre-reserva ya tiene una cotización aceptada.'],
+    ['VALIDITY_EXCEEDS_HOLD', 'La vigencia no puede pasar de la retención de la pre-reserva.'],
+    ['VALIDITY_EXCEEDS_30_DAYS', 'La vigencia no puede pasar de 30 días.'],
+    ['TERMS_REQUIRED', 'Faltan las condiciones de la propuesta.'],
+    [
+      'QUOTATION_STALE',
+      'La pre-reserva cambió después de emitir. Hay que crear una versión nueva.',
+    ],
+    ['QUOTATION_NOT_OPEN', 'Esta propuesta ya no admite esa respuesta.'],
+    ['QUOTATION_TERMINAL', 'Esta cotización está cerrada.'],
+    ['QUOTATION_NOT_ACCEPTED', 'Solo una cotización aceptada puede confirmarse como reserva.'],
+    ['QUOTATION_ACCEPTED', 'Una cotización aceptada no se anula.'],
+    ['VOID_REASON_REQUIRED', 'Indique el motivo de la anulación.'],
+    ['CONFIRMATION_REQUIRED', 'Confirme la aceptación para continuar.'],
+  ];
+
+  it('maps every quotation contract code carried in the message to its exact message', () => {
+    for (const [code, message] of QUOTATION_MESSAGES) {
+      const fromMessage = toAppError({ message: code });
+      expect(fromMessage.code).toBe(code);
+      expect(fromMessage.message).toBe(message);
+
+      const fromCode = toAppError({ code });
+      expect(fromCode.code).toBe(code);
+      expect(fromCode.message).toBe(message);
+    }
+  });
+
+  it('reuses the existing pre-reservation message for PRE_RESERVATION_NOT_VERIFIED', () => {
+    const error = toAppError({ message: 'PRE_RESERVATION_NOT_VERIFIED' });
+    expect(error.code).toBe('PRE_RESERVATION_NOT_VERIFIED');
+    expect(error.message).toBe('La pre-reserva aún no está totalmente verificada.');
+  });
 });

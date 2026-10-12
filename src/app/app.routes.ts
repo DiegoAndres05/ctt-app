@@ -23,6 +23,15 @@ const publicRoutes: Routes = [
     loadComponent: () =>
       import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
   },
+  // Public proposal link (feature 005): no shell, no authGuard — `get_public_quotation`
+  // resolves the opaque token and returns no customer data (contracts §4 and §6).
+  {
+    path: 'q/:token',
+    loadComponent: () =>
+      import('./features/public-quotation/public-quotation.component').then(
+        (m) => m.PublicQuotationComponent,
+      ),
+  },
 ];
 
 const redirectParam =
@@ -108,6 +117,36 @@ const protectedRoutes: Routes = [
                 loadComponent: () =>
                   import('./features/sales/pre-reservations/pre-reservation-detail/pre-reservation-detail.component').then(
                     (m) => m.PreReservationDetailComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'quotations',
+            canActivate: [roleGuard('agent')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/sales/quotations/quotation-list/quotation-list.component').then(
+                    (m) => m.QuotationListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/sales/quotations/quotation-editor/quotation-editor.component').then(
+                    (m) => m.QuotationEditorComponent,
+                  ),
+              },
+              {
+                path: ':versionId',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/sales/quotations/quotation-editor/quotation-editor.component').then(
+                    (m) => m.QuotationEditorComponent,
                   ),
               },
             ],
