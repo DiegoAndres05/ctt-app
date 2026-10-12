@@ -65,6 +65,25 @@ describe('withListFilterChange', () => {
     expect(hasActiveListFilters(params)).toBe(true);
     expect(listQueryToParams(emptyListQuery())).toEqual({});
   });
+
+  it('parses providerId and group and omits them when empty', () => {
+    const params = parseListQuery({
+      get: (name) => ({ providerId: 'prov-1', group: 'provider', page: '1' })[name] ?? null,
+    });
+    expect(params.providerId).toBe('prov-1');
+    expect(params.group).toBe('provider');
+    expect(listQueryToParams(params)).toEqual({ providerId: 'prov-1', group: 'provider' });
+    expect(hasActiveListFilters(params)).toBe(true);
+    expect(hasActiveListFilters({ ...emptyListQuery(), group: '' })).toBe(false);
+  });
+
+  it('resets the page when providerId or group changes', () => {
+    const current = { ...emptyListQuery(), page: 4, providerId: 'prov-1', group: 'provider' };
+    expect(withListFilterChange(current, { providerId: 'prov-2' }).page).toBe(1);
+    expect(withListFilterChange(current, { group: '' }).page).toBe(1);
+    expect(withListFilterChange(current, { providerId: 'prov-1' }).page).toBe(4);
+    expect(withListFilterChange(current, { group: 'provider' }).page).toBe(4);
+  });
 });
 
 describe('pageSlice', () => {

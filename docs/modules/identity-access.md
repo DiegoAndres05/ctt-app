@@ -61,6 +61,10 @@ and has no sidebar. Everything else requires a session with `organization_id` an
 | `/sales/requests/:id` | any collaborator | Request detail |
 | `/sales/customers` | any collaborator | Customer directory |
 | `/sales/customers/:id` | any collaborator | Customer profile |
+| `/sales/pre-reservations` | any collaborator | Pre-reservation list |
+| `/sales/pre-reservations/new` | any collaborator | Pre-reservation create (from a request) |
+| `/sales/pre-reservations/:id` | any collaborator | Pre-reservation detail |
+| `/sales/verification` | operator and above | Availability verification queue |
 | `/settings/users` | admin | Collaborator list (`?q&page&role&status`) |
 | `/settings/roles` | admin | Read-only role matrix |
 | `/settings/audit` | admin | Audit log |

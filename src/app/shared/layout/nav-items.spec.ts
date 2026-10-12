@@ -10,6 +10,8 @@ describe('visibleNavItems', () => {
       'dashboard',
       'sales',
       'sales-requests',
+      'sales-pre-reservations',
+      'sales-verification',
       'sales-customers',
       'settings',
       'users',
@@ -30,6 +32,8 @@ describe('visibleNavItems', () => {
     expect(visible).toContain('cms-settings');
     expect(visible).toContain('experiences');
     expect(visible).toContain('sales-requests');
+    expect(visible).toContain('sales-pre-reservations');
+    expect(visible).toContain('sales-verification');
     expect(visible).toContain('sales-customers');
   });
 
@@ -38,6 +42,7 @@ describe('visibleNavItems', () => {
       'dashboard',
       'sales',
       'sales-requests',
+      'sales-pre-reservations',
       'sales-customers',
       'cms',
       'experiences',
@@ -60,6 +65,8 @@ describe('activeNavItemId', () => {
     expect(activeNavItemId(items, '/settings/users/new')).toBe('users');
     expect(activeNavItemId(items, '/dashboard')).toBe('dashboard');
     expect(activeNavItemId(items, '/sales/requests/abc')).toBe('sales-requests');
+    expect(activeNavItemId(items, '/sales/pre-reservations/abc')).toBe('sales-pre-reservations');
+    expect(activeNavItemId(items, '/sales/verification')).toBe('sales-verification');
     expect(activeNavItemId(items, '/sales/customers/abc')).toBe('sales-customers');
   });
 
@@ -73,6 +80,8 @@ describe('activeNavItemId', () => {
     expect(parentIdsForActive(items, 'audit')).toEqual(['settings']);
     expect(parentIdsForActive(items, 'dashboard')).toEqual([]);
     expect(parentIdsForActive(items, 'sales-requests')).toEqual(['sales']);
+    expect(parentIdsForActive(items, 'sales-pre-reservations')).toEqual(['sales']);
+    expect(parentIdsForActive(items, 'sales-verification')).toEqual(['sales']);
     expect(parentIdsForActive(items, 'sales-customers')).toEqual(['sales']);
   });
 });

@@ -211,3 +211,160 @@ VALUES (
   'active'
 )
 ON CONFLICT (provider, external_account_id) DO NOTHING;
+
+-- Pre-reservations for the demo agency (feature 004). Stops when the tenant already has
+-- pre-reservations so a second apply leaves the demo untouched. Creation goes through
+-- public.create_pre_reservation_core (the authenticated RPC needs a JWT the seed has no
+-- way to mint). The one "available" line and the derived header state are written with
+-- direct UPDATEs because record_item_verification also requires a signed-in operator.
+DO $$
+DECLARE
+  v_org_id uuid := '00000000-0000-4000-a000-000000000001';
+  v_operator_id uuid := '00000000-0000-4000-b000-000000000002';
+  v_agent_id uuid := '00000000-0000-4000-b000-000000000003';
+  v_provider_id uuid := '00000000-0000-4000-c000-000000000001';
+  v_offer_product_id uuid := '00000000-0000-4000-e000-000000000101';
+  v_lodging_product_id uuid := '00000000-0000-4000-e000-000000000102';
+  v_experience_product_id uuid := '00000000-0000-4000-e000-000000000103';
+  v_today date := (now() AT TIME ZONE 'America/Bogota')::date;
+  v_request_id uuid;
+  v_source_item_id uuid;
+  v_pre_reservation_id uuid;
+  v_item_id uuid;
+  v_hold timestamptz;
+  v_result jsonb;
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.pre_reservations WHERE organization_id = v_org_id) THEN
+    RAISE NOTICE 'Demo pre-reservations already seeded; nothing to do.';
+    RETURN;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM public.organizations WHERE id = v_org_id) THEN
+    RAISE NOTICE 'Demo tenant missing; skip pre-reservation seed.';
+    RETURN;
+  END IF;
+
+  -- (a) The in-review demo request from feature 003: two main lines (a lodging with the
+  -- demo provider and an experience) plus a date alternative for the experience.
+  SELECT id
+  INTO v_request_id
+  FROM public.customer_requests
+  WHERE organization_id = v_org_id
+    AND status = 'in_review'
+  ORDER BY created_at
+  LIMIT 1;
+
+  IF v_request_id IS NULL THEN
+    RAISE EXCEPTION 'Demo in_review request is missing';
+  END IF;
+
+  UPDATE public.products
+  SET provider_id = v_provider_id
+  WHERE id = v_lodging_product_id
+    AND organization_id = v_org_id
+    AND provider_id IS NULL;
+
+  v_result := public.create_pre_reservation_core(
+    v_org_id,
+    v_request_id,
+    jsonb_build_object(
+      'assigned_operator_id', v_operator_id,
+      'items', jsonb_build_array(
+        jsonb_build_object(
+          'product_id', v_lodging_product_id,
+          'start_date', v_today + 45,
+          'end_date', v_today + 48,
+          'adults', 2, 'children', 0, 'quantity', 1
+        ),
+        jsonb_build_object(
+          'product_id', v_experience_product_id,
+          'start_date', v_today + 45,
+          'adults', 2, 'children', 0, 'quantity', 1
+        ),
+        jsonb_build_object(
+          'product_id', v_experience_product_id,
+          'start_date', v_today + 52,
+          'adults', 2, 'children', 0, 'quantity', 1,
+          'alternative_of', 1
+        )
+      )
+    ),
+    v_agent_id
+  );
+
+  v_pre_reservation_id := (v_result ->> 'pre_reservation_id')::uuid;
+  v_hold := now() + interval '30 days';
+
+  -- Mark the lodging line available so the list shows «Parcialmente verificada».
+  UPDATE public.pre_reservation_items
+  SET verification_status = 'available',
+      verification_started_at = now(),
+      verified_by = v_operator_id,
+      verified_at = now(),
+      provider_contact_person = 'Recepción Villa Caribe',
+      contact_method = 'phone',
+      hold_expires_at = v_hold
+  WHERE pre_reservation_id = v_pre_reservation_id
+    AND position = 0
+  RETURNING id INTO v_item_id;
+
+  PERFORM public.log_availability_event(
+    v_org_id, v_pre_reservation_id, v_item_id,
+    'outcome_recorded'::public.availability_event_kind,
+    'pending'::public.availability_status,
+    'available'::public.availability_status,
+    jsonb_build_object(
+      'provider_contact_person', 'Recepción Villa Caribe',
+      'contact_method', 'phone',
+      'hold_expires_at', v_hold
+    ),
+    v_operator_id
+  );
+
+  UPDATE public.pre_reservations
+  SET status = 'partially_verified',
+      expires_at = v_hold
+  WHERE id = v_pre_reservation_id;
+
+  -- (b) Laura Gómez's request from feature 003, still in received: one experience line
+  -- tied to her catalog interest. The date matches her request travel window when the
+  -- seed runs before it, and stays in the future when it runs after.
+  SELECT cr.id
+  INTO v_request_id
+  FROM public.customer_requests cr
+  JOIN public.customers c ON c.id = cr.customer_id AND c.organization_id = cr.organization_id
+  WHERE cr.organization_id = v_org_id
+    AND cr.status = 'received'
+    AND c.email = 'laura@example.com'
+  ORDER BY cr.created_at
+  LIMIT 1;
+
+  IF v_request_id IS NULL THEN
+    RAISE EXCEPTION 'Demo received request for Laura Gómez is missing';
+  END IF;
+
+  SELECT cri.id
+  INTO v_source_item_id
+  FROM public.customer_request_items cri
+  WHERE cri.request_id = v_request_id
+    AND cri.product_id IS NOT NULL
+  ORDER BY cri.position
+  LIMIT 1;
+
+  PERFORM public.create_pre_reservation_core(
+    v_org_id,
+    v_request_id,
+    jsonb_build_object(
+      'items', jsonb_strip_nulls(jsonb_build_array(
+        jsonb_build_object(
+          'product_id', v_offer_product_id,
+          'start_date', greatest(v_today + 30, date '2027-03-15'),
+          'adults', 2, 'children', 0, 'quantity', 1,
+          'source_request_item_id', v_source_item_id
+        )
+      ))
+    ),
+    v_agent_id
+  );
+END;
+$$;

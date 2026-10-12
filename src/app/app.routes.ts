@@ -84,6 +84,43 @@ const protectedRoutes: Routes = [
             ],
           },
           {
+            path: 'pre-reservations',
+            canActivate: [roleGuard('agent')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/sales/pre-reservations/pre-reservation-list/pre-reservation-list.component').then(
+                    (m) => m.PreReservationListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/sales/pre-reservations/pre-reservation-create/pre-reservation-create.component').then(
+                    (m) => m.PreReservationCreateComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/sales/pre-reservations/pre-reservation-detail/pre-reservation-detail.component').then(
+                    (m) => m.PreReservationDetailComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'verification',
+            canActivate: [roleGuard('operator')],
+            loadComponent: () =>
+              import('./features/sales/verification/verification-queue/verification-queue.component').then(
+                (m) => m.VerificationQueueComponent,
+              ),
+          },
+          {
             path: 'customers',
             children: [
               {

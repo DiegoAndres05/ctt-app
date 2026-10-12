@@ -14,6 +14,8 @@ export interface ListQuery {
   categoryId: string;
   channel: string;
   assignee: string;
+  providerId: string;
+  group: string;
 }
 
 export function emptyListQuery(): ListQuery {
@@ -27,6 +29,8 @@ export function emptyListQuery(): ListQuery {
     categoryId: '',
     channel: '',
     assignee: '',
+    providerId: '',
+    group: '',
   };
 }
 
@@ -44,6 +48,8 @@ export function parseListQuery(params: { get(name: string): string | null }): Li
     categoryId: params.get('categoryId') ?? '',
     channel: params.get('channel') ?? '',
     assignee: params.get('assignee') ?? '',
+    providerId: params.get('providerId') ?? '',
+    group: params.get('group') ?? '',
   };
 }
 
@@ -77,6 +83,12 @@ export function listQueryToParams(query: ListQuery): Record<string, string> {
   if (query.assignee) {
     params['assignee'] = query.assignee;
   }
+  if (query.providerId) {
+    params['providerId'] = query.providerId;
+  }
+  if (query.group) {
+    params['group'] = query.group;
+  }
   return params;
 }
 
@@ -89,6 +101,8 @@ const FILTER_KEYS = [
   'categoryId',
   'channel',
   'assignee',
+  'providerId',
+  'group',
 ] as const satisfies readonly (keyof ListQuery)[];
 
 /** Changing a search or filter returns to the first page unless `page` is set explicitly. */
@@ -110,7 +124,9 @@ export function hasActiveListFilters(query: ListQuery): boolean {
     query.placement ||
     query.categoryId ||
     query.channel ||
-    query.assignee,
+    query.assignee ||
+    query.providerId ||
+    query.group,
   );
 }
 

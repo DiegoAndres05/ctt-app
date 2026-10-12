@@ -19,6 +19,7 @@ import {
   readSidebarCollapsed,
   writeSidebarCollapsed,
 } from './sidebar-nav.component';
+import { VerifiedNoticeComponent } from './verified-notice/verified-notice.component';
 
 const NARROW_QUERY = '(max-width: 959px)';
 
@@ -29,7 +30,7 @@ const NARROW_QUERY = '(max-width: 959px)';
 @Component({
   selector: 'app-admin-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, SidebarNavComponent, AlertComponent],
+  imports: [RouterOutlet, SidebarNavComponent, AlertComponent, VerifiedNoticeComponent],
   template: `
     <div class="shell" [class.collapsed]="collapsed() && !narrow()" [class.narrow]="narrow()">
       @if (narrow() && drawerOpen()) {
@@ -75,6 +76,7 @@ const NARROW_QUERY = '(max-width: 959px)';
         }
 
         <div class="content">
+          <app-verified-notice />
           <router-outlet />
         </div>
       </div>
