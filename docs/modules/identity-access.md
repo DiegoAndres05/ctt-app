@@ -68,6 +68,9 @@ and has no sidebar. Everything else requires a session with `organization_id` an
 | `/sales/quotations` | agent and above | Quotation list |
 | `/sales/quotations/new` | agent and above | Quotation draft create (`?preReservationId=`) |
 | `/sales/quotations/:versionId` | agent and above | Quotation detail / editor |
+| `/sales/reservations` | agent and above | Reservation list |
+| `/sales/reservations/new` | agent and above | Reservation confirm (`?quotationVersionId=`) |
+| `/sales/reservations/:id` | agent and above | Reservation detail: lifecycle, voucher, service orders |
 | `/q/:token` | public, no session | Client quotation view, outside the shell |
 | `/settings/users` | admin | Collaborator list (`?q&page&role&status`) |
 | `/settings/roles` | admin | Read-only role matrix |
@@ -77,7 +80,8 @@ and has no sidebar. Everything else requires a session with `organization_id` an
 `/users` and `/audit` redirect to the settings paths. Last access on the user list is the
 latest `login_success` in `audit.audit_events`, not a new column. `/q/:token` (quotation
 proposals, feature 005) is public like `/login`: no session, no sidebar, no `authGuard`;
-it renders outside the admin shell.
+it renders outside the admin shell. `/sales/reservations` (reservations, feature 006) is
+agent-and-above inside the shell, under Comercial / Reservas (`minRole: 'agent'`).
 
 ## Onboarding flow (US5)
 
