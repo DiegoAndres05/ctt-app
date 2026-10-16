@@ -26,6 +26,10 @@
 # Quotation suites (005):
 #   quotation_pricing_test.sql, quotation_rls_test.sql, quotation_issue_test.sql,
 #   quotation_public_test.sql, quotation_version_test.sql
+# Reservation suites (006):
+#   reservation_confirm_test.sql, reservation_rls_test.sql,
+#   reservation_lifecycle_test.sql, reservation_changes_test.sql,
+#   service_orders_test.sql
 # There is no explicit file list to maintain; adding a `*_test.sql` is enough.
 
 set -euo pipefail

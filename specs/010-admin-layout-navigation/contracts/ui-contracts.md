@@ -19,6 +19,13 @@ All routes below sit under the authenticated shell (`canActivate: authGuard, pas
 | `/sales/requests/:id` | agent | Request detail | — |
 | `/sales/customers` | agent | Customer directory | `?q&page` |
 | `/sales/customers/:id` | agent | Customer profile | — |
+| `/sales/quotations` | agent | Quotation list | — |
+| `/sales/quotations/new` | agent | Quotation draft create | `?preReservationId` |
+| `/sales/quotations/:versionId` | agent | Quotation detail / editor | — |
+| `/sales/reservations` | agent | Reservation list | — |
+| `/sales/reservations/new` | agent | Reservation confirm | `?quotationVersionId` |
+| `/sales/reservations/:id` | agent | Reservation detail (lifecycle, voucher, service orders) | — |
+| `/q/:token` | public (no session, outside the shell) | Client quotation view | — |
 | `/settings/users` | admin | User list | `?q&page&role&status` |
 | `/settings/users/new` | admin | User create | — |
 | `/settings/users/:id` | admin | User detail | — |
@@ -40,6 +47,9 @@ All routes below sit under the authenticated shell (`canActivate: authGuard, pas
 | `/cms/settings/cutover` | admin | Public cutover | — |
 
 Default authenticated path: `/` → `/dashboard`.
+
+Exception (005): `/q/:token` is public like `/login` — no `authGuard`, no sidebar, no
+shell. Every other route above renders inside the authenticated shell.
 
 ### Compatibility redirects (FR-009)
 
@@ -100,6 +110,8 @@ Visible items by role (FR-004):
 | Dashboard | ✓ | ✓ | ✓ |
 | Comercial / Solicitudes | ✓ | ✓ | ✓ |
 | Comercial / Clientes | ✓ | ✓ | ✓ |
+| Comercial / Cotizaciones | ✓ | ✓ | ✓ |
+| Comercial / Reservas | ✓ | ✓ | ✓ |
 | Configuración / Usuarios | ✓ | — | — |
 | Configuración / Roles y permisos | ✓ | — | — |
 | Configuración / Auditoría | ✓ | — | — |
@@ -111,7 +123,11 @@ Visible items by role (FR-004):
 
 Active item: longest matching `path` prefix of the current URL. Parent group stays expanded.
 
-Agregado por 003 (orden: Dashboard → Comercial → Configuración → CMS).
+Agregado por 003 (orden: Dashboard → Comercial → Configuración → CMS). Cotizaciones
+agregada por 005 dentro de Comercial (`minRole: agent`, visible también para operator y
+admin); `/q/:token` no aparece en el menú. Reservas agregada por 006 dentro de Comercial
+(`minRole: agent`, visible también para operator y admin), con las rutas
+`/sales/reservations`, `/sales/reservations/new` y `/sales/reservations/:id`.
 
 ## Preview card contract
 
