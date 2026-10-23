@@ -314,7 +314,7 @@ La evidencia cita archivo y línea del código o del documento. «No verificable
 | R94 | La identidad del tenant es única, estable e independiente del nombre comercial | Cumple | `organizations.id` UUID. El nombre es un atributo (`002_create_organizations.sql`). |
 | R95 | Consultas, storage y auditoría no cruzan el tenant | Cumple | Políticas de tabla y de `storage.objects` (`026_catalog_media_bucket.sql` 68–96). `audit_events.organization_id` es `NOT NULL`. |
 | R96 | El permiso se evalúa con usuario y tenant a la vez | Cumple | Las políticas combinan `app_role` y `organization_id` (`005_create_rls_policies.sql` 70–74). |
-| R97 | La configuración del tenant extiende el comportamiento y no fork ea el producto | Parcial | Existen `quotation_defaults`, `public_sites` y código de país telefónico. No hay branding, notificaciones ni localización como configuración. El código es uno solo: no hay un fork por cliente. |
+| R97 | La configuración del tenant extiende el comportamiento y no bifurca el producto | Parcial | Existen `quotation_defaults`, `public_sites` y código de país telefónico. No hay branding, notificaciones ni localización como configuración. El código es uno solo: no hay un fork por cliente. |
 | R98 | Ciclo de vida: aprovisionar, activar, configurar, operar, suspender, reactivar y dar de baja | Parcial | `register_agency` crea la organización `active`. El enum tiene `suspended` e `inactive` (`001_create_enums.sql` 13) y el intake público lo respeta (`031` líneas 45–49). No hay RPC de suspensión, reactivación ni baja. |
 | R99 | Métricas operativas por tenant sin romper el aislamiento | No cumple | No hay métricas. El dashboard lo dice (`dashboard.component.ts` 14–16). |
 | R100 | La ausencia de planes, cupos, flags y facturación no cierra la puerta a tenerlos | Cumple | `organization_id` en cada fila permite colgar esos conceptos después. No hay un supuesto de una sola organización embebido en las reglas. |
@@ -387,7 +387,7 @@ Una feature solo está terminada cuando todas las puertas aplicables pasan (cons
 | R140 | 12. Pruebas | Parcial | 128/128 en frontend. Suite SQL no corrida. Casi sin pruebas de pantalla. |
 | R141 | 13. Documentación sincronizada | No cumple | README, AGENTS, contrato de navegación y comentario del runner SQL no describen el código (sección 2). |
 | R142 | 14. Preparación operativa | Parcial | `Dockerfile`, `README` y hooks documentados. El despliegue real de los hooks queda como paso manual del README (líneas 57–64). No hay runbook. |
-| R143 | 15. Revisión y aprobación con evidencia | No verificable | No hay aprovisionamiento de reviews en el repo. |
+| R143 | 15. Revisión y aprobación con evidencia | No verificable | No hay una revisión obligatoria configurada en el repositorio. |
 | R144 | 16. Mantenibilidad a largo plazo | Parcial | La estructura por capacidad ayuda. La ausencia de estándares, de CI y de un dominio separable la empeora. |
 
 ### Capítulo 16 — Gobierno del constitution
