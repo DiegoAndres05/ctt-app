@@ -12,8 +12,13 @@ describe('visibleNavItems', () => {
       'sales-requests',
       'sales-pre-reservations',
       'sales-quotations',
+      'sales-reservations',
       'sales-verification',
       'sales-customers',
+      'reports',
+      'reports-funnel',
+      'reports-ops',
+      'reports-products',
       'settings',
       'users',
       'roles',
@@ -35,8 +40,12 @@ describe('visibleNavItems', () => {
     expect(visible).toContain('sales-requests');
     expect(visible).toContain('sales-pre-reservations');
     expect(visible).toContain('sales-quotations');
+    expect(visible).toContain('sales-reservations');
     expect(visible).toContain('sales-verification');
     expect(visible).toContain('sales-customers');
+    expect(visible).toContain('reports-funnel');
+    expect(visible).toContain('reports-ops');
+    expect(visible).toContain('reports-products');
   });
 
   it('hides Configuración and catalog settings from an agent', () => {
@@ -46,7 +55,10 @@ describe('visibleNavItems', () => {
       'sales-requests',
       'sales-pre-reservations',
       'sales-quotations',
+      'sales-reservations',
       'sales-customers',
+      'reports',
+      'reports-funnel',
       'cms',
       'experiences',
       'accommodations',
@@ -70,8 +82,10 @@ describe('activeNavItemId', () => {
     expect(activeNavItemId(items, '/sales/requests/abc')).toBe('sales-requests');
     expect(activeNavItemId(items, '/sales/pre-reservations/abc')).toBe('sales-pre-reservations');
     expect(activeNavItemId(items, '/sales/quotations/abc')).toBe('sales-quotations');
+    expect(activeNavItemId(items, '/sales/reservations/abc')).toBe('sales-reservations');
     expect(activeNavItemId(items, '/sales/verification')).toBe('sales-verification');
     expect(activeNavItemId(items, '/sales/customers/abc')).toBe('sales-customers');
+    expect(activeNavItemId(items, '/reports/funnel')).toBe('reports-funnel');
   });
 
   it('does not treat a sibling path as active', () => {

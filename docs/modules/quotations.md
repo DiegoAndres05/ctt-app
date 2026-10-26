@@ -169,6 +169,7 @@ policies) and the RPC guards are the authorization boundary; `anon` executes onl
 It returns the frozen snapshot (`total`, `party_adults`, reference…) of an `accepted`
 version, or `QUOTATION_NOT_ACCEPTED`/`VALIDATION_ERROR`. Feature 006 will call it to
 create the reservation. 005 never inserts reservation, payment or invoice rows.
+See `docs/modules/reservations.md` for confirmation, lifecycle and vouchers.
 
 ## What this module does not do
 

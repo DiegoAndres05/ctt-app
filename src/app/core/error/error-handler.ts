@@ -118,9 +118,18 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
   QUOTATION_TERMINAL: 'Esta cotización está cerrada.',
   QUOTATION_NOT_ACCEPTED: 'Solo una cotización aceptada puede confirmarse como reserva.',
   QUOTATION_ACCEPTED: 'Una cotización aceptada no se anula.',
+  RESERVATION_ALREADY_EXISTS: 'Esta cotización ya tiene una reserva.',
+  DEPOSIT_REQUIRED: 'Registra un depósito mayor que cero.',
+  CURRENCY_MISMATCH: 'La moneda del pago debe coincidir con la cotización.',
+  PASSENGER_COUNT_MISMATCH: 'El número de pasajeros debe coincidir con la cotización.',
+  INVALID_TRANSITION: 'Ese cambio de estado no está permitido.',
+  ADMIN_REQUIRED: 'Hace falta un administrador y un informe de contingencia.',
+  CONTINGENCY_REQUIRED: 'Indique el informe de contingencia.',
+  RESERVATION_FROZEN: 'Esta reserva no se edita.',
   VOID_REASON_REQUIRED: 'Indique el motivo de la anulación.',
   CONFIRMATION_REQUIRED: 'Confirme la aceptación para continuar.',
   FORBIDDEN: 'No tienes permisos para realizar esta acción.',
+  DATE_RANGE_TOO_LONG: 'El rango no puede superar 366 días.',
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
 };
 

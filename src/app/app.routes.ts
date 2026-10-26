@@ -32,6 +32,13 @@ const publicRoutes: Routes = [
         (m) => m.PublicQuotationComponent,
       ),
   },
+  {
+    path: 'r/:token',
+    loadComponent: () =>
+      import('./features/public-voucher/public-voucher.component').then(
+        (m) => m.PublicVoucherComponent,
+      ),
+  },
 ];
 
 const redirectParam =
@@ -58,6 +65,36 @@ const protectedRoutes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+      {
+        path: 'reports',
+        canActivate: [roleGuard('agent')],
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'funnel' },
+          {
+            path: 'funnel',
+            loadComponent: () =>
+              import('./features/analytics/funnel/funnel-report.component').then(
+                (m) => m.FunnelReportComponent,
+              ),
+          },
+          {
+            path: 'ops',
+            canActivate: [roleGuard('operator')],
+            loadComponent: () =>
+              import('./features/analytics/ops/ops-report.component').then(
+                (m) => m.OpsReportComponent,
+              ),
+          },
+          {
+            path: 'products',
+            canActivate: [roleGuard('operator')],
+            loadComponent: () =>
+              import('./features/analytics/sales/sales-report.component').then(
+                (m) => m.SalesReportComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'sales',
@@ -147,6 +184,35 @@ const protectedRoutes: Routes = [
                 loadComponent: () =>
                   import('./features/sales/quotations/quotation-editor/quotation-editor.component').then(
                     (m) => m.QuotationEditorComponent,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'reservations',
+            canActivate: [roleGuard('agent')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/sales/reservations/reservation-list/reservation-list.component').then(
+                    (m) => m.ReservationListComponent,
+                  ),
+              },
+              {
+                path: 'new',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/sales/reservations/reservation-confirm/reservation-confirm.component').then(
+                    (m) => m.ReservationConfirmComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/sales/reservations/reservation-detail/reservation-detail.component').then(
+                    (m) => m.ReservationDetailComponent,
                   ),
               },
             ],

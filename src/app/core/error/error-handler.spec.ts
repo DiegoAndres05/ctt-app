@@ -122,8 +122,37 @@ describe('toAppError', () => {
     ['CONFIRMATION_REQUIRED', 'Confirme la aceptación para continuar.'],
   ];
 
+  const RESERVATION_MESSAGES: readonly (readonly [string, string])[] = [
+    ['RESERVATION_ALREADY_EXISTS', 'Esta cotización ya tiene una reserva.'],
+    ['DEPOSIT_REQUIRED', 'Registra un depósito mayor que cero.'],
+    ['CURRENCY_MISMATCH', 'La moneda del pago debe coincidir con la cotización.'],
+    ['PASSENGER_COUNT_MISMATCH', 'El número de pasajeros debe coincidir con la cotización.'],
+    ['INVALID_TRANSITION', 'Ese cambio de estado no está permitido.'],
+    ['ADMIN_REQUIRED', 'Hace falta un administrador y un informe de contingencia.'],
+    ['CONTINGENCY_REQUIRED', 'Indique el informe de contingencia.'],
+    ['RESERVATION_FROZEN', 'Esta reserva no se edita.'],
+  ];
+
+  it('maps DATE_RANGE_TOO_LONG from a contract code', () => {
+    const error = toAppError({ message: 'DATE_RANGE_TOO_LONG' });
+    expect(error.code).toBe('DATE_RANGE_TOO_LONG');
+    expect(error.message).toBe('El rango no puede superar 366 días.');
+  });
+
   it('maps every quotation contract code carried in the message to its exact message', () => {
     for (const [code, message] of QUOTATION_MESSAGES) {
+      const fromMessage = toAppError({ message: code });
+      expect(fromMessage.code).toBe(code);
+      expect(fromMessage.message).toBe(message);
+
+      const fromCode = toAppError({ code });
+      expect(fromCode.code).toBe(code);
+      expect(fromCode.message).toBe(message);
+    }
+  });
+
+  it('maps every reservation contract code carried in the message to its exact message', () => {
+    for (const [code, message] of RESERVATION_MESSAGES) {
       const fromMessage = toAppError({ message: code });
       expect(fromMessage.code).toBe(code);
       expect(fromMessage.message).toBe(message);

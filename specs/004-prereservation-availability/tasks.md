@@ -164,7 +164,7 @@ description: "Task list for 004-prereservation-availability implementation"
 - [x] T045 [P] Actualizar el comentario de cabecera de `supabase/tests/run-sql-tests.sh` listando las suites de 004 (`pre_reservation_core_test.sql`, `pre_reservation_rls_test.sql`, `availability_verification_test.sql`, `pre_reservation_consolidation_test.sql`, `verification_traceability_test.sql`); no cambiar la lógica del script
 - [x] T046 Revisión de seguridad con evidencia en la descripción del PR: `rg -n "service_role|SERVICE_ROLE" src/` sin resultados; todas las funciones de `035`–`041` tienen `SET search_path = ''` y `REVOKE ALL … FROM PUBLIC`; ninguna llamada a `audit.log_event` pasa notas, motivos, nombres, teléfonos ni correos en `metadata`; las vistas no exponen `email` ni `phone_e164` del viajero
 - [x] T047 Ejecutar `./supabase/tests/run-sql-tests.sh` (todas las suites, incluidas las de 001/002/003/009), `npm test`, `npm run lint`, `npm run format:check` y `npm run build`; corregir cualquier fallo
-- [ ] T048 Ejecutar manualmente los escenarios 1–7 de `specs/004-prereservation-availability/quickstart.md` con `supabase start` y `npm start`, y anotar en `docs/modules/pre-reservations.md` (sección "Quickstart mapping") cuáles quedaron verificados en navegador y cuáles solo por SQL
+- [x] T048 Ejecutar manualmente los escenarios 1–7 de `specs/004-prereservation-availability/quickstart.md` con `supabase start` y `npm start`, y anotar en `docs/modules/pre-reservations.md` (sección "Quickstart mapping") cuáles quedaron verificados en navegador y cuáles solo por SQL
 
 ---
 

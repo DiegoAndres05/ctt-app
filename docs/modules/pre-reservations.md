@@ -140,18 +140,17 @@ agents).
 
 ## Quickstart mapping
 
-Scenarios 1–7 of `specs/004-prereservation-availability/quickstart.md` have **not** been
-run in the browser yet; the browser column is completed by the manual validation pass.
+Pass of 2026-10-22. Operator `operador@demo-turismo.test` after `supabase db reset`. The file `specs/004-prereservation-availability/quickstart.md` is not in the repo; scenarios follow the mapping table and `spec.md`.
 
 | Scenario | Automated evidence | Browser |
 | --- | --- | --- |
-| 1. Request → pre-reservation conversion | `pre_reservation_core_test.sql` | Not verified |
-| 2. Verification queue and "available" outcome | `availability_verification_test.sql` | Not verified |
-| 3. Consolidation, alternatives, realtime notice | `pre_reservation_consolidation_test.sql` (Realtime notice is manual) | Not verified |
-| 4. Expiry by hold | `pre_reservation_consolidation_test.sql` (`expire_due_pre_reservations`) | Not verified |
-| 5. Quotation exception | `pre_reservation_consolidation_test.sql` | Not verified |
-| 6. Cancellation, immutability, privacy | `pre_reservation_rls_test.sql`, `verification_traceability_test.sql` | Not verified |
-| 7. History and verification times | `verification_traceability_test.sql` | Not verified |
+| 1. Request → pre-reservation conversion | `pre_reservation_core_test.sql` | `/sales/pre-reservations`: PRE-00001 (parcial) y PRE-00002 (verificada). Detalle PRE-00001: aviso «no es una reserva confirmada». Alta desde solicitud no re-ejecutada (seed ya convierte). |
+| 2. Verification queue and "available" outcome | `availability_verification_test.sql` | `/sales/verification` «Requieren acción» con líneas PRE-00001; formulario «Registrar resultado» (Disponible / No disponible / Alternativa) para Azimut 70. Guardar resultado no se envió (viewport). |
+| 3. Consolidation, alternatives, realtime notice | `pre_reservation_consolidation_test.sql` | Detalle: línea alternativa, «Promover alternativa», cotización bloqueada. Realtime de «totalmente verificada» no disparado. |
+| 4. Expiry by hold | `pre_reservation_consolidation_test.sql` | SQL only (`expire_due_pre_reservations`). UI shows «Vence» on PRE-00001. |
+| 5. Quotation exception | `pre_reservation_consolidation_test.sql` | Browser: «No elegible para cotizar: aún no está totalmente verificada.» Override admin no ejercido. |
+| 6. Cancellation, immutability, privacy | `pre_reservation_rls_test.sql`, `verification_traceability_test.sql` | UI de cancelación visible; no se envió para no destruir el seed. |
+| 7. History and verification times | `verification_traceability_test.sql` | Historial con resultado Villa Caribe; «Tiempos de verificación» (primera gestión, verificadores). |
 
 The realtime "totally verified" notice (`PreReservationRealtimeService`,
 `VerifiedNoticeComponent`) and the 30-second polling fallback are TypeScript and are not

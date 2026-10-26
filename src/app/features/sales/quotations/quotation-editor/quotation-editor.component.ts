@@ -111,6 +111,15 @@ const EMPTY_ADJUSTMENT = {
         <header class="heading">
           <h1>{{ current.reference ?? 'Cotización sin emitir' }}</h1>
           <p>{{ statusLabel(current.status) }} · v{{ current.version_number }}</p>
+          @if (current.status === 'accepted') {
+            <a
+              class="primary button-link"
+              [routerLink]="['/sales/reservations/new']"
+              [queryParams]="{ quotationVersionId: current.id }"
+            >
+              Confirmar reserva
+            </a>
+          }
         </header>
 
         @if (errorMessage(); as message) {

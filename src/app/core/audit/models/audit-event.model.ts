@@ -20,7 +20,17 @@ export type AuditEventType =
   | 'password_reset_forced'
   | 'organization_created'
   | 'account_locked'
-  | 'account_unlocked';
+  | 'account_unlocked'
+  | 'price_overridden'
+  | 'product_activated'
+  | 'product_deactivated'
+  | 'public_listing_published'
+  | 'request_received'
+  | 'quotation_issued'
+  | 'quotation_voided'
+  | 'reservation_confirmed'
+  | 'reservation_cancelled'
+  | 'reservation_status_changed';
 
 /** Mirrors the `audit.audit_result` enum. */
 export type AuditResult = 'success' | 'failure' | 'error';

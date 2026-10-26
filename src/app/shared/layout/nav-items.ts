@@ -48,6 +48,12 @@ export const NAV_TREE: readonly NavItem[] = [
         minRole: 'agent',
       },
       {
+        id: 'sales-reservations',
+        label: 'Reservas',
+        path: '/sales/reservations',
+        minRole: 'agent',
+      },
+      {
         id: 'sales-verification',
         label: 'Verificación',
         path: '/sales/verification',
@@ -59,6 +65,34 @@ export const NAV_TREE: readonly NavItem[] = [
         label: 'Clientes',
         path: '/sales/customers',
         minRole: 'agent',
+      },
+    ],
+  },
+  {
+    id: 'reports',
+    label: 'Reportes',
+    path: null,
+    minRole: 'agent',
+    children: [
+      {
+        id: 'reports-funnel',
+        label: 'Embudo',
+        path: '/reports/funnel',
+        minRole: 'agent',
+      },
+      {
+        id: 'reports-ops',
+        label: 'Tiempos',
+        path: '/reports/ops',
+        minRole: 'operator',
+        hideForAgent: true,
+      },
+      {
+        id: 'reports-products',
+        label: 'Productos',
+        path: '/reports/products',
+        minRole: 'operator',
+        hideForAgent: true,
       },
     ],
   },

@@ -29,7 +29,10 @@
 # Reservation suites (006):
 #   reservation_confirm_test.sql, reservation_rls_test.sql,
 #   reservation_lifecycle_test.sql, reservation_changes_test.sql,
-#   service_orders_test.sql
+#   service_orders_test.sql, reservation_public_voucher_test.sql
+# Analytics suites (008):
+#   analytics_funnel_test.sql, analytics_ops_test.sql,
+#   analytics_sales_test.sql, analytics_rls_test.sql,,
 # There is no explicit file list to maintain; adding a `*_test.sql` is enough.
 
 set -euo pipefail

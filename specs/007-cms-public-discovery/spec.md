@@ -4,7 +4,16 @@
 
 **Created**: 2026-09-08
 
-**Status**: Draft
+**Status**: Superseded
+
+Este spec queda repartido en iteraciones implementables, para no tener dos fuentes de verdad:
+
+- Descubrimiento del catálogo: `specs/011-public-catalog-browse/`
+- Solicitud desde la ficha: `specs/012-public-trip-request/`
+- Contenido editorial: `specs/013-editorial-content/`
+- Frescura de lo publicado: `specs/014-public-freshness/`
+
+La consulta de etapa del viajero (principio «una solicitud no es una reserva») está en `specs/015-traveler-case-status/`.
 
 **Input**: User description: "Integración con CMS Headless (WordPress) y portal público de descubrimiento y catálogo derivado de mainspec.md (Capítulos 22, 26, 27)."
 

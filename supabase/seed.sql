@@ -368,3 +368,100 @@ BEGIN
   );
 END;
 $$;
+
+-- Feature 005/006: leave one accepted quotation so the panel can confirm a reservation.
+-- Uses the operator JWT the same way the SQL tests do; never mints a session.
+DO $$
+DECLARE
+  v_org_id uuid := '00000000-0000-4000-a000-000000000001';
+  v_operator_id uuid := '00000000-0000-4000-b000-000000000002';
+  v_pr_id uuid;
+  v_item_id uuid;
+  v_draft jsonb;
+  v_version_id uuid;
+  v_hold timestamptz := now() + interval '14 days';
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM public.quotation_versions qv
+    WHERE qv.organization_id = v_org_id
+      AND qv.status = 'accepted'::public.quotation_status
+  ) THEN
+    RAISE NOTICE 'Demo accepted quotation already seeded; nothing to do.';
+    RETURN;
+  END IF;
+
+  SELECT pr.id
+  INTO v_pr_id
+  FROM public.pre_reservations pr
+  JOIN public.customers c
+    ON c.id = pr.customer_id AND c.organization_id = pr.organization_id
+  WHERE pr.organization_id = v_org_id
+    AND c.email = 'laura@example.com'
+    AND pr.status IN (
+      'pending_verification'::public.pre_reservation_status,
+      'verified'::public.pre_reservation_status
+    )
+  ORDER BY pr.created_at
+  LIMIT 1;
+
+  IF v_pr_id IS NULL THEN
+    RAISE NOTICE 'No Laura Gómez pre-reservation; skip quotation seed.';
+    RETURN;
+  END IF;
+
+  SELECT pri.id
+  INTO v_item_id
+  FROM public.pre_reservation_items pri
+  WHERE pri.pre_reservation_id = v_pr_id
+    AND pri.verification_status = 'pending'::public.availability_status
+  ORDER BY pri.position
+  LIMIT 1;
+
+  IF v_item_id IS NOT NULL THEN
+    UPDATE public.pre_reservation_items
+    SET verification_status = 'available',
+        verification_started_at = now(),
+        verified_by = v_operator_id,
+        verified_at = now(),
+        provider_contact_person = 'Operaciones demo',
+        contact_method = 'phone',
+        hold_expires_at = v_hold
+    WHERE id = v_item_id;
+
+    PERFORM public.log_availability_event(
+      v_org_id, v_pr_id, v_item_id,
+      'outcome_recorded'::public.availability_event_kind,
+      'pending'::public.availability_status,
+      'available'::public.availability_status,
+      jsonb_build_object(
+        'provider_contact_person', 'Operaciones demo',
+        'contact_method', 'phone'
+      ),
+      v_operator_id
+    );
+  END IF;
+
+  PERFORM public.refresh_pre_reservation_status(v_pr_id);
+
+  PERFORM set_config(
+    'request.jwt.claims',
+    jsonb_build_object(
+      'sub', v_operator_id::text,
+      'role', 'authenticated',
+      'app_role', 'operator',
+      'organization_id', v_org_id::text
+    )::text,
+    true
+  );
+  EXECUTE 'SET LOCAL ROLE authenticated';
+
+  v_draft := public.create_quotation_draft(v_pr_id);
+  v_version_id := (v_draft ->> 'version_id')::uuid;
+  PERFORM public.set_quotation_terms(v_version_id, 'Condiciones demo de la agencia.', NULL);
+  PERFORM public.issue_quotation(v_version_id);
+  PERFORM public.record_quotation_response(v_version_id, 'accepted'::public.quotation_response_kind);
+
+  EXECUTE 'RESET ROLE';
+END;
+$$;

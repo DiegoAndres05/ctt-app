@@ -18,6 +18,8 @@ Quotations (commercial proposals, server-side pricing, public token): see docs/m
 
 Reservations (confirmed trips, manual deposit, service orders): see docs/modules/reservations.md.
 
+Analytics (funnel, ops times, product ranking, CSV): see `docs/modules/analytics.md`.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan

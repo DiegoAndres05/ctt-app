@@ -28,9 +28,15 @@ const EVENT_TYPES: readonly AuditEventType[] = [
   'organization_created',
   'account_locked',
   'account_unlocked',
+  'price_overridden',
+  'quotation_issued',
+  'reservation_confirmed',
+  'reservation_cancelled',
+  'reservation_status_changed',
+  'request_received',
 ];
 
-const EVENT_TYPE_LABELS: Readonly<Record<AuditEventType, string>> = {
+const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
   login_success: 'Inicio de sesión',
   login_failure: 'Intento fallido',
   logout: 'Cierre de sesión',
@@ -45,6 +51,12 @@ const EVENT_TYPE_LABELS: Readonly<Record<AuditEventType, string>> = {
   organization_created: 'Organización creada',
   account_locked: 'Cuenta bloqueada',
   account_unlocked: 'Cuenta desbloqueada',
+  price_overridden: 'Modificación de precio',
+  quotation_issued: 'Cotización emitida',
+  reservation_confirmed: 'Reserva confirmada',
+  reservation_cancelled: 'Cancelación de reserva',
+  reservation_status_changed: 'Cambio de estado de reserva',
+  request_received: 'Solicitud recibida',
 };
 
 /**
@@ -208,7 +220,7 @@ export class AuditLogComponent {
   }
 
   protected eventLabel(type: AuditEventType): string {
-    return EVENT_TYPE_LABELS[type];
+    return EVENT_TYPE_LABELS[type] ?? type;
   }
 
   protected pageLabel(): string {
