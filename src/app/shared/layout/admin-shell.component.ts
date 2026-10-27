@@ -44,7 +44,11 @@ const NARROW_QUERY = '(max-width: 959px)';
       <div class="sidebar-slot" [class.open]="!narrow() || drawerOpen()">
         <app-sidebar-nav
           [collapsed]="collapsed() && !narrow()"
+          [collapsible]="!narrow()"
+          [organizationName]="organizationName()"
           (navigated)="drawerOpen.set(false)"
+          (collapseChange)="setCollapsed($event)"
+          (signOut)="onSignOut()"
         />
       </div>
 
@@ -87,11 +91,11 @@ const NARROW_QUERY = '(max-width: 959px)';
       min-height: 100vh;
       display: grid;
       grid-template-columns: 16rem minmax(0, 1fr);
-      background: #f4f1ec;
+      background: #f8f9fd;
     }
 
     .shell.collapsed {
-      grid-template-columns: 4.25rem minmax(0, 1fr);
+      grid-template-columns: 4.75rem minmax(0, 1fr);
     }
 
     .shell.narrow {
@@ -99,14 +103,17 @@ const NARROW_QUERY = '(max-width: 959px)';
     }
 
     .sidebar-slot {
-      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
     }
 
     .narrow .sidebar-slot {
       position: fixed;
       z-index: 30;
       inset: 0 auto 0 0;
-      width: min(18rem, 86vw);
+      width: min(16rem, 92vw);
       transform: translateX(-105%);
       transition: transform 0.2s ease;
     }
@@ -133,9 +140,18 @@ const NARROW_QUERY = '(max-width: 959px)';
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.75rem 1.25rem;
+      padding: 0.45rem 1.25rem;
       background: #fff;
-      border-bottom: 1px solid #e7e5e4;
+      border-bottom: 1px solid #edf0f5;
+      min-height: 2rem;
+    }
+    .topbar button {
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: #1e293b;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      padding: 0.5rem 0.85rem;
     }
 
     .identity {
@@ -144,7 +160,8 @@ const NARROW_QUERY = '(max-width: 959px)';
       gap: 0.35rem 0.8rem;
       margin: 0;
       flex: 1;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
+      color: #536178;
     }
 
     .identity span + span::before {
@@ -155,7 +172,7 @@ const NARROW_QUERY = '(max-width: 959px)';
 
     .denied,
     .content {
-      padding: 1rem 1.25rem 1.5rem;
+      padding: 0.9rem 1.35rem 1.5rem;
     }
 
     .denied {
@@ -212,7 +229,10 @@ export class AdminShellComponent {
   }
 
   protected toggleCollapsed(): void {
-    const next = !this.collapsed();
+    this.setCollapsed(!this.collapsed());
+  }
+
+  protected setCollapsed(next: boolean): void {
     this.collapsed.set(next);
     writeSidebarCollapsed(next);
   }
