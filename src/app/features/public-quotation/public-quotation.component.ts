@@ -260,7 +260,7 @@ type Phase = 'loading' | 'ready' | 'failed';
 
     .meta {
       margin: 0;
-      color: #44403c;
+      color: var(--color-text-muted);
     }
 
     .table-wrap {

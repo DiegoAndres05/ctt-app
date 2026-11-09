@@ -55,7 +55,7 @@ type NoteTarget = { requestId: string } | { customerId: string };
   styles: `
     .hint {
       margin: 0;
-      color: #57534e;
+      color: var(--color-text-muted);
     }
 
     form {
@@ -73,7 +73,7 @@ type NoteTarget = { requestId: string } | { customerId: string };
 
     time {
       margin-left: 0.5rem;
-      color: #57534e;
+      color: var(--color-text-muted);
       font-size: 0.875rem;
     }
   `,

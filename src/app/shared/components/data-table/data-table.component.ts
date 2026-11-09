@@ -67,7 +67,6 @@ import { LIST_PAGE_SIZE, pageCount } from './list-query';
 
     h1 {
       margin: 0;
-      font-size: 1.6rem;
     }
 
     .filters {
@@ -79,16 +78,21 @@ import { LIST_PAGE_SIZE, pageCount } from './list-query';
 
     .empty {
       margin: 0;
+      padding: 1.5rem 1rem;
+      color: var(--color-text-muted);
+      text-align: center;
+      background: var(--color-surface);
+      border: 1px dashed var(--color-border-strong);
+      border-radius: var(--radius-lg);
     }
 
     .pager {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 0.75rem;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
     }
   `,
 })

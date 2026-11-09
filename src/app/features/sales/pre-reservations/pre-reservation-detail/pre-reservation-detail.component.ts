@@ -608,8 +608,8 @@ interface ServiceRow {
       margin-right: 0.35rem;
       padding: 0 0.35rem;
       border-radius: 0.25rem;
-      background: #fef3c7;
-      color: #92400e;
+      background: var(--color-warning-bg);
+      color: var(--color-warning);
       font-size: 0.75rem;
     }
 
@@ -620,7 +620,7 @@ interface ServiceRow {
     }
 
     tr.withdrawn td {
-      color: #78716c;
+      color: var(--color-text-muted);
     }
 
     td.alternative {
@@ -636,13 +636,13 @@ interface ServiceRow {
     }
 
     .outcome-row td {
-      background: #fafaf9;
+      background: var(--color-surface-muted);
     }
 
     .withdraw-prompt {
       margin-top: 0.85rem;
       padding: 0.85rem;
-      border: 1px solid #d6d3d1;
+      border: 1px solid var(--color-border-strong);
       border-radius: 0.5rem;
       display: grid;
       gap: 0.5rem;
@@ -655,7 +655,7 @@ interface ServiceRow {
 
     .item-row {
       padding: 0.75rem;
-      border: 1px solid #e7e5e4;
+      border: 1px solid var(--color-border);
       border-radius: 0.35rem;
     }
 

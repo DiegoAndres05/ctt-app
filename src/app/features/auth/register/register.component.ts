@@ -107,7 +107,7 @@ const MAX_TEXT_LENGTH = 255;
     }
 
     .field-error {
-      color: #b3261e;
+      color: var(--color-danger);
       margin: 0;
     }
 

@@ -23,28 +23,34 @@ export type AlertKind = 'error' | 'info' | 'success' | 'warning';
   styles: `
     .alert {
       margin: 0;
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.25rem;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-size: 0.925rem;
     }
 
     .alert-error {
-      color: #b3261e;
-      background: #fceeee;
+      color: var(--color-danger);
+      background: var(--color-danger-bg);
+      border-color: var(--color-danger-border);
     }
 
     .alert-info {
-      color: #1d4ed8;
-      background: #eef4ff;
+      color: var(--color-info);
+      background: var(--color-info-bg);
+      border-color: var(--color-info-border);
     }
 
     .alert-success {
-      color: #166534;
-      background: #ecfdf3;
+      color: var(--color-success);
+      background: var(--color-success-bg);
+      border-color: var(--color-success-border);
     }
 
     .alert-warning {
-      color: #92400e;
-      background: #fffbeb;
+      color: var(--color-warning);
+      background: var(--color-warning-bg);
+      border-color: var(--color-warning-border);
     }
   `,
 })

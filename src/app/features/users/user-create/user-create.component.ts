@@ -83,7 +83,7 @@ const MIN_PASSWORD_LENGTH = 8;
     }
 
     .field-error {
-      color: #b3261e;
+      color: var(--color-danger);
       margin: 0;
     }
 

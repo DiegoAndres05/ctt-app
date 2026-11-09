@@ -230,7 +230,7 @@ type QueueEntry =
   `,
   styles: `
     .group-row td {
-      background: #f5f5f4;
+      background: var(--color-surface-sunken);
       font-weight: 600;
     }
 
@@ -239,8 +239,8 @@ type QueueEntry =
       margin-right: 0.35rem;
       padding: 0 0.35rem;
       border-radius: 0.25rem;
-      background: #fef3c7;
-      color: #92400e;
+      background: var(--color-warning-bg);
+      color: var(--color-warning);
       font-size: 0.75rem;
     }
 
@@ -253,7 +253,7 @@ type QueueEntry =
     }
 
     .outcome-row td {
-      background: #fafaf9;
+      background: var(--color-surface-muted);
     }
   `,
 })

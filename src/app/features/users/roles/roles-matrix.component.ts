@@ -122,8 +122,8 @@ const ROLE_COPY: Readonly<Record<AppRole, string>> = {
       display: grid;
       gap: 0.35rem;
       padding: 0.9rem;
-      background: #fff;
-      border: 1px solid #e7e5e4;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-radius: 0.5rem;
     }
 

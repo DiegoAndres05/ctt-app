@@ -122,7 +122,7 @@ import type { UnsavedChangesHost } from '../../../shared/components/unsaved-chan
     td {
       text-align: left;
       padding: 0.4rem 0.5rem;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .card {
