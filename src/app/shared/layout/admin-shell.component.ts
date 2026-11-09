@@ -91,7 +91,7 @@ const NARROW_QUERY = '(max-width: 959px)';
       min-height: 100vh;
       display: grid;
       grid-template-columns: 16rem minmax(0, 1fr);
-      background: #f8f9fd;
+      background: var(--color-bg);
     }
 
     .shell.collapsed {
@@ -127,7 +127,7 @@ const NARROW_QUERY = '(max-width: 959px)';
       inset: 0;
       z-index: 20;
       border: 0;
-      background: rgb(28 25 23 / 45%);
+      background: rgb(15 23 42 / 45%);
     }
 
     .main {
@@ -167,7 +167,7 @@ const NARROW_QUERY = '(max-width: 959px)';
     .identity span + span::before {
       content: '·';
       margin-right: 0.8rem;
-      color: #a8a29e;
+      color: #cbd5e1;
     }
 
     .denied,

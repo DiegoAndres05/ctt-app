@@ -55,7 +55,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
     .stack { display: grid; gap: 1rem; max-width: 40rem; }
     .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end; }
     .funnel { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
-    .bar { height: 0.5rem; background: #44403c; margin-top: 0.25rem; }
+    .bar { height: 0.5rem; background: var(--color-primary); margin-top: 0.25rem; }
   `,
 })
 export class FunnelReportComponent {

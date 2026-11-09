@@ -266,7 +266,7 @@ import {
 
     .item-row {
       padding: 0.75rem;
-      border: 1px solid #e7e5e4;
+      border: 1px solid var(--color-border);
       border-radius: 0.35rem;
     }
   `,

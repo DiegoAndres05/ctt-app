@@ -174,7 +174,7 @@ function buildPayload(draft: OutcomeDraft): VerificationOutcomePayload {
   styles: `
     legend.req::after {
       content: ' *';
-      color: #b3261e;
+      color: var(--color-danger);
     }
   `,
 })

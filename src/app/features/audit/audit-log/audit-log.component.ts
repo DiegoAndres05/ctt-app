@@ -182,7 +182,7 @@ const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
     td {
       text-align: left;
       padding: 0.4rem 0.5rem;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .pager {

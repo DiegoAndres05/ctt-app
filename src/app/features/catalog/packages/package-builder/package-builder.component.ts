@@ -203,7 +203,7 @@ interface BuilderItem {
     }
 
     fieldset {
-      border: 1px solid #ddd;
+      border: 1px solid var(--color-border);
       padding: 0.75rem;
       display: grid;
       gap: 0.35rem;
@@ -215,7 +215,7 @@ interface BuilderItem {
     }
 
     .field-error {
-      color: #b3261e;
+      color: var(--color-danger);
       margin: 0;
     }
 

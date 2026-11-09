@@ -56,8 +56,8 @@ import type { PreviewListing } from './preview-listing.model';
       gap: 0.35rem;
       width: min(18rem, 100%);
       padding: 0.75rem;
-      background: #fff;
-      border: 1px solid #e7e5e4;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-radius: 0.75rem;
     }
 
@@ -67,8 +67,8 @@ import type { PreviewListing } from './preview-listing.model';
       place-items: center;
       min-height: 8.5rem;
       border-radius: 0.5rem;
-      background: #e7e5e4;
-      color: #57534e;
+      background: var(--color-border);
+      color: var(--color-text-muted);
       overflow: hidden;
     }
 
@@ -85,21 +85,21 @@ import type { PreviewListing } from './preview-listing.model';
 
     .summary.missing,
     .badge {
-      color: #9a3412;
+      color: var(--color-attention);
     }
 
     .badge {
       position: absolute;
       top: 0.4rem;
       left: 0.4rem;
-      background: #fff7ed;
+      background: var(--color-warning-bg);
       border-radius: 999px;
       padding: 0.1rem 0.45rem;
       font-size: 0.75rem;
     }
 
     .meta {
-      color: #57534e;
+      color: var(--color-text-muted);
       font-size: 0.9rem;
     }
 
@@ -108,7 +108,7 @@ import type { PreviewListing } from './preview-listing.model';
     }
 
     .yacht {
-      border-color: #0f766e;
+      border-color: var(--color-primary);
     }
   `,
 })

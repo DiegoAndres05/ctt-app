@@ -96,7 +96,7 @@ import type { UnsavedChangesHost } from '../../../../shared/components/unsaved-c
     }
 
     .field-error {
-      color: #b3261e;
+      color: var(--color-danger);
       margin: 0;
     }
 

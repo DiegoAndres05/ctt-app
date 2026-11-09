@@ -201,7 +201,7 @@ type PricingKind = 'base' | 'season';
     td {
       text-align: left;
       padding: 0.35rem 0.4rem;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--color-border);
     }
   `,
 })

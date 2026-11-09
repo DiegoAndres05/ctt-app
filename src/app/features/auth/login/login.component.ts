@@ -86,7 +86,7 @@ const REDIRECT_MESSAGES: Readonly<Record<LoginRedirectReason, string>> = {
     }
 
     .field-error {
-      color: #b3261e;
+      color: var(--color-danger);
       margin: 0;
     }
 
