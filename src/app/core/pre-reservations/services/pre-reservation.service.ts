@@ -26,10 +26,13 @@ export interface PreReservationPageQuery {
 
 /** A line payload accepted by `create_pre_reservation` (contracts §1). */
 export interface PreReservationItemInput {
-  /** XOR with `addon_id`. */
-  product_id: string | null;
-  /** XOR with `product_id`. */
-  addon_id: string | null;
+  /**
+   * XOR with `addon_id`. Omit the key when the line is an add-on: the server checks that
+   * exactly one identifier has a value.
+   */
+  product_id?: string;
+  /** XOR with `product_id`. Omit the key when the line is a product. */
+  addon_id?: string;
   start_date: string;
   end_date: string | null;
   adults: number;

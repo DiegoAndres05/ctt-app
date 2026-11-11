@@ -45,6 +45,9 @@ SELECT
 FROM generate_series(1, 5000) AS g;
 
 -- One priced product so resolve_price has a current base + season to choose from.
+-- Both tariffs carry an explicit, fixed validity window (valid_from 2026-01-01, open-ended
+-- valid_to) so the probe dates below resolve regardless of the execution date. Without it
+-- valid_from defaulted to now() and any probe date earlier than the run resolved to NULL.
 UPDATE public.products
 SET name = 'Probe priced'
 WHERE id = (
@@ -55,18 +58,20 @@ WHERE id = (
 );
 
 INSERT INTO public.pricing_schemes (
-  organization_id, product_id, currency, base_amount, charge_type
+  organization_id, product_id, currency, base_amount, charge_type, valid_from, valid_to
 )
-SELECT :'probe_org'::uuid, id, 'COP', 150000, 'per_person'
+SELECT :'probe_org'::uuid, id, 'COP', 150000, 'per_person',
+       TIMESTAMPTZ '2026-01-01 00:00:00+00', NULL
 FROM public.products
 WHERE organization_id = :'probe_org'::uuid AND name = 'Probe priced';
 
 INSERT INTO public.pricing_schemes (
   organization_id, product_id, currency, base_amount, charge_type,
-  season_start, season_end
+  season_start, season_end, valid_from, valid_to
 )
 SELECT :'probe_org'::uuid, id, 'COP', 180000, 'per_person',
-       DATE '2026-12-01', DATE '2027-01-15'
+       DATE '2026-12-01', DATE '2027-01-15',
+       TIMESTAMPTZ '2026-01-01 00:00:00+00', NULL
 FROM public.products
 WHERE organization_id = :'probe_org'::uuid AND name = 'Probe priced';
 

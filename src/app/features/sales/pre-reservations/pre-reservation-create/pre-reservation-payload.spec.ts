@@ -166,6 +166,37 @@ describe('buildCreatePayload', () => {
     expect(payload.items[0].provider_email).toBe('isla@test.co');
   });
 
+  // D1 (stabilization 2026-11-11): the server rejected `"addon_id": null` next to a product.
+  it('sends only product_id on product lines (no addon_id key, not even null)', () => {
+    const [row] = buildCreatePayload([mainItem({ addonId: 'addon-stale' })], null).items;
+    expect(row.product_id).toBe('prod-1');
+    expect(row).not.toHaveProperty('addon_id');
+    expect(JSON.parse(JSON.stringify(row))).not.toHaveProperty('addon_id');
+  });
+
+  it('sends only addon_id on add-on lines (no product_id key, not even null)', () => {
+    const addon = {
+      ...emptyItemDraft('addon'),
+      addonId: 'addon-1',
+      productId: 'prod-stale',
+      itemKind: 'addon' as const,
+      startDate: '2026-12-02',
+    };
+    const [row] = buildCreatePayload([addon], null).items;
+    expect(row.addon_id).toBe('addon-1');
+    expect(row).not.toHaveProperty('product_id');
+    expect(JSON.parse(JSON.stringify(row))).not.toHaveProperty('product_id');
+  });
+
+  it('keeps exactly one identifier per line in a mixed payload', () => {
+    const addon = { ...emptyItemDraft('addon'), addonId: 'addon-1', startDate: '2026-12-02' };
+    const payload = buildCreatePayload([mainItem(), addon], null);
+    for (const row of payload.items) {
+      const ids = ['product_id', 'addon_id'].filter((key) => key in row);
+      expect(ids).toHaveLength(1);
+    }
+  });
+
   it('passes the assigned operator through', () => {
     expect(buildCreatePayload([mainItem()], 'op-1').assigned_operator_id).toBe('op-1');
     expect(buildCreatePayload([mainItem()], null).assigned_operator_id).toBeNull();

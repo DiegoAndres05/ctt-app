@@ -19,6 +19,7 @@ import {
   RESERVATION_OPS_STATUS_LABELS,
   RESERVATION_STATUS_LABELS,
   isReservationTerminal,
+  publicVoucherUrl,
   type PaymentMethod,
   type ReservationDetail,
   type ReservationItem,
@@ -93,7 +94,10 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
             <h2>Cancelar</h2>
             <label>
               Motivo
-              <textarea [value]="cancelReason()" (input)="cancelReason.set($any($event.target).value)"></textarea>
+              <textarea
+                [value]="cancelReason()"
+                (input)="cancelReason.set($any($event.target).value)"
+              ></textarea>
             </label>
             @if (current.status === 'in_progress') {
               <label>
@@ -104,7 +108,9 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
                 ></textarea>
               </label>
             }
-            <button type="button" (click)="onCancel()" [disabled]="saving()">Cancelar reserva</button>
+            <button type="button" (click)="onCancel()" [disabled]="saving()">
+              Cancelar reserva
+            </button>
           </section>
         }
 
@@ -113,8 +119,8 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
           <ul>
             @for (pax of current.passengers; track pax.id) {
               <li>
-                {{ pax.first_name }} {{ pax.last_name }} ·
-                {{ documentLabel(pax.document_type) }} {{ pax.document_number }}
+                {{ pax.first_name }} {{ pax.last_name }} · {{ documentLabel(pax.document_type) }}
+                {{ pax.document_number }}
               </li>
             }
           </ul>
@@ -148,7 +154,10 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
                   </label>
                   <label>
                     Motivo de reasignación
-                    <input [value]="reassignReason()" (input)="reassignReason.set($any($event.target).value)" />
+                    <input
+                      [value]="reassignReason()"
+                      (input)="reassignReason.set($any($event.target).value)"
+                    />
                   </label>
                   <button type="button" (click)="onReassign(item.id)" [disabled]="saving()">
                     Reasignar
@@ -173,7 +182,9 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
                 />
               </label>
             }
-            <button type="button" (click)="onNewVersion()" [disabled]="saving()">Crear versión</button>
+            <button type="button" (click)="onNewVersion()" [disabled]="saving()">
+              Crear versión
+            </button>
           </section>
         }
 
@@ -181,7 +192,13 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
           <h2>Abono extra</h2>
           <label>
             Monto
-            <input type="number" min="0.01" step="0.01" [value]="payAmount()" (input)="payAmount.set($any($event.target).value)" />
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              [value]="payAmount()"
+              (input)="payAmount.set($any($event.target).value)"
+            />
           </label>
           <label>
             Fecha
@@ -203,23 +220,34 @@ import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.
             Comprobante
             <input type="file" (change)="onReceipt($event)" />
           </label>
-          <button type="button" (click)="onRecordPayment()" [disabled]="saving()">Registrar abono</button>
+          <button type="button" (click)="onRecordPayment()" [disabled]="saving()">
+            Registrar abono
+          </button>
         </section>
 
         <section>
           <h2>Voucher</h2>
           @if (voucherToken(); as token) {
-            <p>Enlace: <a [href]="publicLink(token)" target="_blank" rel="noopener">{{ publicLink(token) }}</a></p>
+            <p>
+              Enlace:
+              <a [href]="publicLink(token)" target="_blank" rel="noopener">{{
+                publicLink(token)
+              }}</a>
+            </p>
           } @else {
             <app-alert kind="info">
               El voucher se mostró al confirmar. Un administrador puede reemitirlo.
             </app-alert>
             @if (isAdmin()) {
-              <button type="button" (click)="onRotate()" [disabled]="saving()">Reemitir voucher</button>
+              <button type="button" (click)="onRotate()" [disabled]="saving()">
+                Reemitir voucher
+              </button>
             }
           }
           <div class="actions">
-            <button type="button" (click)="onCopyWhatsapp()" [disabled]="saving()">Copiar para WhatsApp</button>
+            <button type="button" (click)="onCopyWhatsapp()" [disabled]="saving()">
+              Copiar para WhatsApp
+            </button>
             <button type="button" (click)="onPrint()">Imprimir</button>
             @if (isAdmin()) {
               <button type="button" (click)="onVoid()" [disabled]="saving()">Anular voucher</button>
@@ -278,7 +306,8 @@ export class ReservationDetailComponent {
   protected readonly voucherToken = signal<string | null>(null);
   protected readonly methods: PaymentMethod[] = ['bank_transfer', 'cash', 'card_manual', 'other'];
   protected readonly statusLabel = (s: ReservationStatus) => RESERVATION_STATUS_LABELS[s];
-  protected readonly opsLabel = (s: ReservationItem['ops_status']) => RESERVATION_OPS_STATUS_LABELS[s];
+  protected readonly opsLabel = (s: ReservationItem['ops_status']) =>
+    RESERVATION_OPS_STATUS_LABELS[s];
   protected readonly methodLabel = (m: PaymentMethod) => PAYMENT_METHOD_LABELS[m];
   protected readonly documentLabel = (d: keyof typeof ID_DOCUMENT_TYPE_LABELS) =>
     ID_DOCUMENT_TYPE_LABELS[d];
@@ -301,7 +330,7 @@ export class ReservationDetailComponent {
   }
 
   protected publicLink(token: string): string {
-    return `${window.location.origin}/r/${encodeURIComponent(token)}`;
+    return publicVoucherUrl(window.location.origin, token);
   }
 
   protected patchItemDate(index: number, field: 'start_date' | 'end_date', value: string): void {

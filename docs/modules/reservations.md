@@ -19,7 +19,8 @@ or email.
 | Status transitions | `supabase/migrations/052_us2_reservation_lifecycle.sql` |
 | Cancel and new version | `supabase/migrations/053_us3_cancel_and_version.sql` |
 | Provider orders and public voucher | `supabase/migrations/054_us4_provider_orders_voucher.sql` |
-| SQL verification | `supabase/tests/reservation_rls_test.sql`, `reservation_confirm_test.sql`, `reservation_lifecycle_test.sql`, `reservation_changes_test.sql`, `service_orders_test.sql`, `reservation_public_voucher_test.sql` |
+| Voucher token base64url (fix D2, 2026-11-11) | `supabase/migrations/057_fix_voucher_token_base64url.sql` |
+| SQL verification | `supabase/tests/reservation_rls_test.sql`, `reservation_confirm_test.sql`, `reservation_lifecycle_test.sql`, `reservation_changes_test.sql`, `service_orders_test.sql`, `reservation_public_voucher_test.sql`, `reservation_voucher_token_test.sql` |
 | Domain models and services | `src/app/core/reservations/` |
 | Panel UI | `src/app/features/sales/reservations/` |
 | Public voucher | `src/app/features/public-voucher/` (`/r/:token`) |
@@ -41,7 +42,7 @@ or email.
 
 | RPC | Who | Behavior |
 | --- | --- | --- |
-| `confirm_reservation` | member | Calls `assert_quotation_confirmable` (005/048). Returns voucher token once. |
+| `confirm_reservation` | member | Calls `assert_quotation_confirmable` (005/048). Returns voucher token once: 32 random bytes in base64url without padding (43 chars, `[A-Za-z0-9_-]`, since 057); only its SHA-256 is stored. |
 | `record_reservation_payment` | member | Extra deposit; `CURRENCY_MISMATCH` / `DEPOSIT_REQUIRED`. |
 | `transition_reservation_status` | operator/admin | `confirmed` → `in_progress` → `completed`. |
 | `cancel_reservation` | member; `in_progress` needs admin + contingency | Reason 1–500. |
@@ -50,7 +51,7 @@ or email.
 | `reservation_provider_order_text` | operator/admin | No sale prices, no other providers. |
 | `reservation_whatsapp_text` | member | Copy body; no API send. |
 | `get_public_voucher` | `anon` + authenticated | Hash lookup; `{ available: false }` if unknown/voided. |
-| `void_reservation_voucher` / `rotate_reservation_voucher` | admin | Rotate returns a new clear token once. |
+| `void_reservation_voucher` / `rotate_reservation_voucher` | admin | Rotate returns a new clear token once (base64url since 057) and revokes the previous one. Tokens issued before 057 are standard base64 and still resolve, but only through a percent-encoded link (`publicVoucherUrl` uses `encodeURIComponent`). |
 
 ## State machine
 
