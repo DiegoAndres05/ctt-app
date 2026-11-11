@@ -89,8 +89,10 @@ export class ReservationService {
     }
 
     const row = data as VersionRow;
-    const family = Array.isArray(row.family) ? (row.family[0] ?? null) : row.family;
-    if (!family) {
+    const reservationFamily = Array.isArray(row.family)
+      ? (row.family[0] ?? null)
+      : row.family;
+    if (!reservationFamily) {
       return null;
     }
 
@@ -129,11 +131,12 @@ export class ReservationService {
       throw toAppError(list.error);
     }
 
-    const { family: _embed, ...version } = row;
+    const { family: embeddedFamily, ...version } = row;
+    void embeddedFamily;
     return {
       ...(version as ReservationVersion),
-      reference: family.reference,
-      quotation_version_id: family.quotation_version_id,
+      reference: reservationFamily.reference,
+      quotation_version_id: reservationFamily.quotation_version_id,
       quotation_reference: list.data?.quotation_reference ?? null,
       paid_total: Number(list.data?.paid_total ?? 0),
       balance: Number(list.data?.balance ?? 0),
@@ -179,7 +182,7 @@ export class ReservationService {
   }
 
   async uploadReceipt(organizationId: string, familyId: string, file: File): Promise<string> {
-    const safeName = file.name.replace(/[^\w.\-]+/g, '_');
+    const safeName = file.name.replace(/[^\w.-]+/g, '_');
     const path = `${organizationId}/${familyId}/${Date.now()}-${safeName}`;
     const { error } = await this.supabase.client.storage
       .from('reservation-receipts')
