@@ -15,6 +15,7 @@ import { QuotationService } from '../../../../core/quotations/services/quotation
 import {
   ID_DOCUMENT_TYPE_LABELS,
   PAYMENT_METHOD_LABELS,
+  publicVoucherUrl,
   type IdDocumentType,
   type PaymentMethod,
   type ReservationPassengerInput,
@@ -49,8 +50,10 @@ interface PassengerDraft {
           <app-alert kind="success">
             Reserva {{ result.reference }} confirmada. El voucher se muestra una sola vez.
           </app-alert>
-          <p>Token del voucher (cópielo ahora):</p>
-          <pre>{{ result.voucher_token }}</pre>
+          <p>Enlace público del voucher (cópielo ahora):</p>
+          <pre><a [href]="publicLink(result.voucher_token)" target="_blank" rel="noopener">{{
+            publicLink(result.voucher_token)
+          }}</a></pre>
           <a class="primary button-link" [routerLink]="['/sales/reservations', result.version_id]">
             Ir al detalle
           </a>
@@ -64,11 +67,21 @@ interface PassengerDraft {
           <form (submit)="onSubmit($event)" class="stack">
             <label>
               Monto del depósito
-              <input type="number" min="0.01" step="0.01" [value]="amount()" (input)="amount.set($any($event.target).value)" />
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                [value]="amount()"
+                (input)="amount.set($any($event.target).value)"
+              />
             </label>
             <label>
               Fecha de pago
-              <input type="date" [value]="paidOn()" (input)="paidOn.set($any($event.target).value)" />
+              <input
+                type="date"
+                [value]="paidOn()"
+                (input)="paidOn.set($any($event.target).value)"
+              />
             </label>
             <label>
               Método
@@ -93,11 +106,17 @@ interface PassengerDraft {
                 <legend>Pasajero {{ i + 1 }}</legend>
                 <label>
                   Nombre
-                  <input [value]="pax.first_name" (input)="patchPax(i, 'first_name', $any($event.target).value)" />
+                  <input
+                    [value]="pax.first_name"
+                    (input)="patchPax(i, 'first_name', $any($event.target).value)"
+                  />
                 </label>
                 <label>
                   Apellido
-                  <input [value]="pax.last_name" (input)="patchPax(i, 'last_name', $any($event.target).value)" />
+                  <input
+                    [value]="pax.last_name"
+                    (input)="patchPax(i, 'last_name', $any($event.target).value)"
+                  />
                 </label>
                 <label>
                   Documento
@@ -176,6 +195,11 @@ export class ReservationConfirmComponent implements UnsavedChangesHost {
         void this.load(id);
       });
     });
+  }
+
+  /** Full `/r/<token>` link shown once after confirming (D2, stabilization 2026-11-11). */
+  protected publicLink(token: string): string {
+    return publicVoucherUrl(window.location.origin, token);
   }
 
   hasUnsavedChanges(): boolean {

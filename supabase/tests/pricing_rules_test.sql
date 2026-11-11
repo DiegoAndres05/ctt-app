@@ -109,25 +109,25 @@ SELECT (public.create_product(
   NULL
 ) ->> 'id') AS product_id \gset
 
-SELECT public.upsert_pricing_scheme(
-  :'product_id'::uuid,
-  NULL,
-  'COP',
-  150000,
-  'per_person',
-  NULL,
-  NULL
-);
+-- Base and seasonal tariffs are fixtures with an explicit, fixed validity window
+-- (valid_from 2026-01-01, open-ended valid_to). upsert_pricing_scheme stamps valid_from with
+-- clock_timestamp() and the table is append-only, so tariffs created through the RPC cannot
+-- answer resolve_price for dates earlier than the run (the suite failed from 2026-10-15 on).
+-- The RPC path itself stays covered below (SEASON_OVERLAP, INVALID_SEASON_RANGE, adjacent
+-- season, RBAC).
+RESET ROLE;
 
-SELECT public.upsert_pricing_scheme(
-  :'product_id'::uuid,
-  NULL,
-  'COP',
-  180000,
-  'per_person',
-  '2026-12-01',
-  '2027-01-15'
-);
+INSERT INTO public.pricing_schemes (
+  organization_id, product_id, currency, base_amount, charge_type,
+  season_start, season_end, valid_from, valid_to
+) VALUES
+  (:'org_id'::uuid, :'product_id'::uuid, 'COP', 150000, 'per_person',
+   NULL, NULL, TIMESTAMPTZ '2026-01-01 00:00:00+00', NULL),
+  (:'org_id'::uuid, :'product_id'::uuid, 'COP', 180000, 'per_person',
+   DATE '2026-12-01', DATE '2027-01-15', TIMESTAMPTZ '2026-01-01 00:00:00+00', NULL);
+
+SELECT pg_temp.act_as(:'operator_id'::uuid, :'org_id'::uuid, 'operator');
+SET LOCAL ROLE authenticated;
 
 SELECT tests.assert_true(
   format(
@@ -344,13 +344,24 @@ SELECT tests.assert_true(
   'apply_price_override writes price_overridden with actor, org, previous/new amounts, currency and reason'
 );
 
+-- The override version starts at clock_timestamp() (append-only), so it answers for dates
+-- from the run onwards: a fixed far-future date outside every season keeps this deterministic.
 SELECT tests.assert_true(
   format(
     $sql$SELECT amount = 175000 AND source = 'base'
-         FROM public.resolve_price(%L::uuid, '2026-10-15', 'per_person')$sql$,
+         FROM public.resolve_price(%L::uuid, '2099-10-15', 'per_person')$sql$,
     :'product_id'
   ),
   'after override, resolve_price returns the new base amount outside the season'
+);
+
+SELECT tests.assert_true(
+  format(
+    $sql$SELECT amount = 150000 AND source = 'base'
+         FROM public.resolve_price(%L::uuid, '2026-10-15', 'per_person')$sql$,
+    :'product_id'
+  ),
+  'after override, a date before the override still resolves the previous (closed) base version'
 );
 
 RESET ROLE;

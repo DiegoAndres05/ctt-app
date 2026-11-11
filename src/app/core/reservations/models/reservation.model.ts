@@ -7,18 +7,10 @@
  */
 
 export type ReservationStatus =
-  | 'confirmed'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-  | 'superseded';
+  'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'superseded';
 
 export type ReservationItemOpsStatus =
-  | 'pending_provider'
-  | 'confirmed_with_provider'
-  | 'in_service'
-  | 'completed'
-  | 'provider_failed';
+  'pending_provider' | 'confirmed_with_provider' | 'in_service' | 'completed' | 'provider_failed';
 
 export type PaymentMethod = 'bank_transfer' | 'cash' | 'card_manual' | 'other';
 
@@ -236,4 +228,13 @@ export function isReservationTerminal(status: ReservationStatus): boolean {
 
 export function reservationTokenStorageKey(familyId: string): string {
   return `reservation-token:${familyId}`;
+}
+
+/**
+ * Public voucher link (`/r/<token>`). Tokens issued since migration 057 are base64url and need
+ * no escaping; tokens issued before it are standard base64 and may contain `/`, `+` or `=`, so
+ * the token is always percent-encoded to keep it in a single route segment.
+ */
+export function publicVoucherUrl(origin: string, token: string): string {
+  return `${origin}/r/${encodeURIComponent(token)}`;
 }

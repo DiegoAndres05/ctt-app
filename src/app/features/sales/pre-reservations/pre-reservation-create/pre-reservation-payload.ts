@@ -196,7 +196,9 @@ export function validateItemDrafts(
 /**
  * Normalizes the drafts into the `create_pre_reservation` body: trimmed text, blanks as
  * `null`, `alternative_of` only on alternative rows, and the manual provider omitted when
- * the product already carries its own provider snapshot.
+ * the product already carries its own provider snapshot. Only the identifier of the chosen
+ * kind is sent (`product_id` XOR `addon_id`); the unused key is omitted rather than `null`
+ * (stabilization 2026-11-11, D1).
  */
 export function buildCreatePayload(
   items: PreReservationItemDraft[],
@@ -208,8 +210,6 @@ export function buildCreatePayload(
       const sourceRequestItemId = item.sourceRequestItemId?.trim() || null;
 
       const row: PreReservationItemInput = {
-        product_id: item.kind === 'product' ? item.productId : null,
-        addon_id: item.kind === 'addon' ? item.addonId : null,
         start_date: item.startDate.trim(),
         end_date: emptyToNull(item.endDate),
         adults: item.adults,
@@ -220,6 +220,11 @@ export function buildCreatePayload(
         provider_phone: keepsCatalogProvider ? null : emptyToNull(item.providerPhone),
         provider_email: keepsCatalogProvider ? null : emptyToNull(item.providerEmail),
       };
+      if (item.kind === 'product' && item.productId) {
+        row.product_id = item.productId;
+      } else if (item.kind === 'addon' && item.addonId) {
+        row.addon_id = item.addonId;
+      }
       if (item.alternativeOf !== null) {
         row.alternative_of = item.alternativeOf;
       }

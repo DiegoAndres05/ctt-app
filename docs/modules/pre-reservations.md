@@ -12,8 +12,8 @@ quotes only what this module declares eligible.
 
 | Concern | Location |
 | --- | --- |
-| Enums, tables, RLS, views, RPCs | `supabase/migrations/035_…` … `041_…` |
-| SQL verification | `supabase/tests/pre_reservation_core_test.sql`, `pre_reservation_rls_test.sql`, `availability_verification_test.sql`, `pre_reservation_consolidation_test.sql`, `verification_traceability_test.sql` |
+| Enums, tables, RLS, views, RPCs | `supabase/migrations/035_…` … `041_…`; `056_fix_pre_reservation_item_identifiers.sql` (XOR `product_id`/`addon_id` on effective values: absent, JSON null or blank = not provided; fix D1, 2026-11-11) |
+| SQL verification | `supabase/tests/pre_reservation_core_test.sql`, `pre_reservation_rls_test.sql`, `availability_verification_test.sql`, `pre_reservation_consolidation_test.sql`, `verification_traceability_test.sql`, `pre_reservation_item_identifiers_test.sql` |
 | Domain models and services | `src/app/core/pre-reservations/` |
 | Panel UI | `src/app/features/sales/pre-reservations/`, `src/app/features/sales/verification/` |
 | "Totally verified" shell notice | `src/app/shared/layout/verified-notice/` |
