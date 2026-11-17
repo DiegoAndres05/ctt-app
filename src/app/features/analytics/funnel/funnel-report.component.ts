@@ -12,9 +12,15 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   template: `
     <div class="stack">
       <h1>Embudo comercial</h1>
-      <form class="filters" (submit)="onLoad($event)">
-        <label>Desde <input type="date" [value]="from()" (input)="from.set($any($event.target).value)" /></label>
-        <label>Hasta <input type="date" [value]="to()" (input)="to.set($any($event.target).value)" /></label>
+      <form class="filters-bar" (submit)="onLoad($event)">
+        <label>
+          Desde
+          <input type="date" [value]="from()" (input)="from.set($any($event.target).value)"
+        /></label>
+        <label>
+          Hasta
+          <input type="date" [value]="to()" (input)="to.set($any($event.target).value)"
+        /></label>
         <label>
           Canal
           <select [value]="channel()" (change)="channel.set($any($event.target).value)">
@@ -39,11 +45,17 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
           <ol class="funnel">
             @for (stage of data.stages; track stage.stage) {
               <li>
-                <strong>{{ stage.label }}</strong>
-                <span>{{ stage.count }}</span>
-                <span>vs anterior {{ formatRate(stage.conversion_from_previous) }}</span>
-                <span>vs solicitudes {{ formatRate(stage.conversion_from_top) }}</span>
-                <div class="bar" [style.width.%]="barWidth(stage.conversion_from_top)"></div>
+                <div class="stage-head">
+                  <strong>{{ stage.label }}</strong>
+                  <span class="count">{{ stage.count }}</span>
+                </div>
+                <div class="track">
+                  <div class="bar" [style.width.%]="barWidth(stage.conversion_from_top)"></div>
+                </div>
+                <p class="rates">
+                  <span>vs etapa anterior: {{ formatRate(stage.conversion_from_previous) }}</span>
+                  <span>vs solicitudes: {{ formatRate(stage.conversion_from_top) }}</span>
+                </p>
               </li>
             }
           </ol>
@@ -52,10 +64,60 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
     </div>
   `,
   styles: `
-    .stack { display: grid; gap: 1rem; max-width: 40rem; }
-    .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end; }
-    .funnel { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
-    .bar { height: 0.5rem; background: var(--color-primary); margin-top: 0.25rem; }
+    .stack {
+      display: grid;
+      gap: 1rem;
+      max-width: 40rem;
+    }
+    .stack {
+      display: grid;
+      gap: 1rem;
+    }
+    .funnel {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.6rem;
+      max-width: 44rem;
+    }
+    .funnel li {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.75rem 0.9rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    .count {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .track {
+      height: 0.5rem;
+      border-radius: 999px;
+      background: var(--color-surface-sunken);
+      overflow: hidden;
+    }
+    .bar {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--color-primary);
+    }
+    .rates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 1rem;
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+    }
   `,
 })
 export class FunnelReportComponent {
@@ -96,9 +158,7 @@ export class FunnelReportComponent {
     this.loading.set(true);
     this.error.set(null);
     try {
-      this.report.set(
-        await this.analytics.funnel(this.from(), this.to(), this.channel() || null),
-      );
+      this.report.set(await this.analytics.funnel(this.from(), this.to(), this.channel() || null));
     } catch (failure) {
       this.error.set(toAppError(failure));
     } finally {

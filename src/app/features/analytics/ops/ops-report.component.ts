@@ -13,9 +13,15 @@ import { monthStart, today } from '../funnel/funnel-report.component';
   template: `
     <div class="stack">
       <h1>Tiempos operativos</h1>
-      <form class="filters" (submit)="onLoad($event)">
-        <label>Desde <input type="date" [value]="from()" (input)="from.set($any($event.target).value)" /></label>
-        <label>Hasta <input type="date" [value]="to()" (input)="to.set($any($event.target).value)" /></label>
+      <form class="filters-bar" (submit)="onLoad($event)">
+        <label>
+          Desde
+          <input type="date" [value]="from()" (input)="from.set($any($event.target).value)"
+        /></label>
+        <label>
+          Hasta
+          <input type="date" [value]="to()" (input)="to.set($any($event.target).value)"
+        /></label>
         <button class="primary" type="submit" [disabled]="loading()">Consultar</button>
       </form>
       @if (loading()) {
@@ -24,9 +30,18 @@ import { monthStart, today } from '../funnel/funnel-report.component';
         <app-alert kind="error">{{ failure.message }}</app-alert>
       } @else if (times(); as t) {
         <dl>
-          <div><dt>Respuesta a solicitud (h)</dt><dd>{{ t.avg_request_response_hours ?? '—' }}</dd></div>
-          <div><dt>Verificación (h)</dt><dd>{{ t.avg_verification_hours ?? '—' }}</dd></div>
-          <div><dt>Emisión de cotización (h)</dt><dd>{{ t.avg_quotation_issue_hours ?? '—' }}</dd></div>
+          <div>
+            <dt>Respuesta a solicitud (h)</dt>
+            <dd>{{ t.avg_request_response_hours ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Verificación (h)</dt>
+            <dd>{{ t.avg_verification_hours ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Emisión de cotización (h)</dt>
+            <dd>{{ t.avg_quotation_issue_hours ?? '—' }}</dd>
+          </div>
         </dl>
         <h2>Atención requerida</h2>
         @if (stale().length === 0) {
@@ -34,7 +49,9 @@ import { monthStart, today } from '../funnel/funnel-report.component';
         } @else {
           <ul>
             @for (item of stale(); track item.id) {
-              <li>{{ item.reference }} · {{ item.kind }} · {{ item.age_hours }} h · {{ item.status }}</li>
+              <li>
+                {{ item.reference }} · {{ item.kind }} · {{ item.age_hours }} h · {{ item.status }}
+              </li>
             }
           </ul>
         }
@@ -42,8 +59,15 @@ import { monthStart, today } from '../funnel/funnel-report.component';
     </div>
   `,
   styles: `
-    .stack { display: grid; gap: 1rem; max-width: 40rem; }
-    dl div { display: flex; justify-content: space-between; }
+    .stack {
+      display: grid;
+      gap: 1rem;
+      max-width: 40rem;
+    }
+    dl div {
+      display: flex;
+      justify-content: space-between;
+    }
   `,
 })
 export class OpsReportComponent {

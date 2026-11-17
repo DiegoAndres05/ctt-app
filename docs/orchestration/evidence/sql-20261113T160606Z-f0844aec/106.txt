@@ -1,0 +1,62 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                       set_quotation_terms                                                       
+---------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Términos.", "version_id": "a39cf54d-3442-4a1a-8930-44ad80c0c962", "valid_until": "2026-11-15T16:07:10.278669+00:00"}
+(1 row)
+
+                                                                                                                                issue_quotation                                                                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"total": 80.00, "status": "issued", "currency": "COP", "reference": "COT-00001", "version_id": "a39cf54d-3442-4a1a-8930-44ad80c0c962", "valid_until": "2026-11-15T16:07:10.278669+00:00", "public_token": "A6FWoaWAOSptcnRoRd0W4tydC0e2MobZoDhlm1Jl5zg", "version_number": 1}
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "a39cf54d-3442-4a1a-8930-44ad80c0c962"}
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   agent cannot transition
+ act_as 
+--------
+ 
+(1 row)
+
+                          transition_reservation_status                          
+---------------------------------------------------------------------------------
+ {"status": "in_progress", "version_id": "4c20e7c8-18b3-4188-91c2-69154b02fc17"}
+(1 row)
+
+                         transition_reservation_status                         
+-------------------------------------------------------------------------------
+ {"status": "completed", "version_id": "4c20e7c8-18b3-4188-91c2-69154b02fc17"}
+(1 row)
+
+NOTICE:  ok   cannot go back
+ assert_raises 
+---------------
+ 
+(1 row)
+

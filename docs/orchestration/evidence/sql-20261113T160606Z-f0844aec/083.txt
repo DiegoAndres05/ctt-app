@@ -1,0 +1,138 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                           add_request_note                                            
+-------------------------------------------------------------------------------------------------------
+ {"note_id": "acc8e015-3b6e-407a-a9ff-e8ec803de04d", "created_at": "2026-11-13T16:06:52.456758+00:00"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot anonymize a customer
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an operator cannot anonymize a customer
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   anonymization requires a reason
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an admin cannot anonymize a customer from another organization
+ assert_raises 
+---------------
+ 
+(1 row)
+
+                                           anonymize_customer                                            
+---------------------------------------------------------------------------------------------------------
+ {"customer_id": "211e15aa-fca3-4356-b87c-ff8145250e6f", "messages_scrubbed": 1, "requests_scrubbed": 1}
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a customer cannot be anonymized twice
+NOTICE:  ok   an anonymized customer cannot be edited
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+               submit_public_request               
+---------------------------------------------------
+ {"reference": "SOL-00002", "deduplicated": false}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anonymization clears identity fields and marks the customer
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   commercial fields stay and customer-authored text is replaced
+NOTICE:  ok   inbound message text and profile fields are scrubbed
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   internal notes are kept
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the original email can register a new customer after anonymization
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anonymization writes a single audit event
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anonymization audit metadata omits contact, name, and the reason text

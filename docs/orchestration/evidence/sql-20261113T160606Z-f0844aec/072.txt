@@ -1,0 +1,73 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+               ?column?               
+--------------------------------------
+ 86bec98b-72bf-40aa-87a2-ffc79297ff2e
+(1 row)
+
+               ?column?               
+--------------------------------------
+ 30573b8f-b19e-4d7c-89cb-86a6982aff54
+(1 row)
+
+               ?column?               
+--------------------------------------
+ 40e15b97-7741-48b6-a778-d8c5c4b778c5
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   three requests
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   top is 100%
+NOTICE:  ok   no pre-reservations
+NOTICE:  ok   zero over three
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   whatsapp only
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   empty period
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   null conversion when no requests
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   range cap

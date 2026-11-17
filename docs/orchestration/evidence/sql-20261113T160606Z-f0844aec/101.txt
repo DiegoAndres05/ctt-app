@@ -1,0 +1,176 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT quotation_families
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT quotation_versions
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT quotation_lines
+NOTICE:  ok   anon cannot SELECT quotation_adjustments
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT quotation_responses
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT quotation_defaults
+NOTICE:  ok   anon cannot SELECT quotation_list
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon has no EXECUTE privilege on the 044 internal functions
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_families
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_versions
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_adjustments
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_responses
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_defaults
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero quotation_list rows
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent A sees its quotation_families
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent A sees its quotation_versions
+NOTICE:  ok   agent A sees its quotation_lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent A sees its quotation_adjustments
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent A sees its quotation_responses
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent A sees its quotation_defaults
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent A sees its quotation_list row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated has no EXECUTE privilege on the 044 internal functions
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot INSERT quotation_versions
+NOTICE:  ok   authenticated cannot UPDATE quotation_versions
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot DELETE quotation_adjustments

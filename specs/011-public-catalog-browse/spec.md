@@ -4,7 +4,9 @@
 
 **Created**: 2026-10-26
 
-**Status**: Draft
+**Status**: Superseded
+
+> **Nota de alcance (2026-11-13)**: El catálogo que ve el viajero vive en el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/), no en esta app. Ese sitio lee lo publicado con `get_public_site` (009). Esta app no construye una segunda vitrina. Lo que queda en este repositorio es la lectura tipada `parsePublicSite` y el contrato documentado en `docs/modules/catalog-pricing.md` («Sitio público externo»). Las tareas de `tasks.md` no se implementan aquí.
 
 **Input**: Iteración 1 de 5. El viajero descubre experiencias, alojamientos y yates publicados por la agencia, en español e inglés, sin cuenta. Cierra el tramo «Discover» de `.specify/mainspec.md` (capítulos 15 y 30) sobre las fichas que ya publica el panel (009).
 

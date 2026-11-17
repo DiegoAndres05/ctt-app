@@ -30,7 +30,13 @@ export type AuditEventType =
   | 'quotation_voided'
   | 'reservation_confirmed'
   | 'reservation_cancelled'
-  | 'reservation_status_changed';
+  | 'reservation_status_changed'
+  | 'public_taxonomy_changed'
+  | 'public_profile_updated'
+  | 'public_key_generated'
+  | 'public_key_revoked'
+  | 'public_source_config_changed'
+  | 'traveler_case_lookup';
 
 /** Mirrors the `audit.audit_result` enum. */
 export type AuditResult = 'success' | 'failure' | 'error';

@@ -1,0 +1,220 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   draft breakdown has the four pre-reservation lines
+NOTICE:  ok   draft breakdown reports status draft
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation currency comes from the tenant default (COP)
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   per_person uses adults + children: (2 + 1) x 100.00 = 300.00
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   per_night uses nights x quantity: 3 nights x 2 x 80.00 = 480.00
+NOTICE:  ok   package keeps its own per_group tariff: 500.00, not the 700.00 sum of its components
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   per_service add-on uses base 1: 40.00 even with quantity 3
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   header equals the sum of the four rounded lines: 1320.00
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   no pending currencies when every tariff matches the quotation currency
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   party size is the max across lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   draft copies the Spanish inclusions of the published public listing
+NOTICE:  ok   draft without a quotation_defaults row uses the fixed R-009 conditions text
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   odd line bases round to 100.13 each
+NOTICE:  ok   each line rounds its own tax: round(100.13 x 19 %, 2) = 19.02
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   tax_total is the sum of per-line rounded taxes: 19.02 + 19.02 = 38.04
+NOTICE:  ok   tax_total is not the single rounding of the raw sum (38.05)
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   total = 200.26 of lines + 38.04 of tax = 238.30
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent 10 % discount applies: impact 132.00 under the 198.00 cap, total 1188.00
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   agent 16 % discount is rejected with ADJUSTMENT_REQUIRES_ADMIN
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the same 16 % discount applies as admin: 132.00 + 211.20 = 343.20, total 976.80
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_created audit carries ids only, no label, terms, notes or contact data
+NOTICE:  ok   quotation_adjustment_applied audit has direction/kind but never the label or value
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   the USD tariff without a rate is reported in pending_currencies
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the pending USD line keeps a zero amount instead of an invented conversion
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the total only adds the convertible COP line: 100.00, no invented USD total
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a non-positive exchange rate is rejected with EXCHANGE_RATE_INVALID
+NOTICE:  ok   after the rate is stored the draft has no pending currencies
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the rate converts the USD line: 50.00 x 4100 = 205000.00 and total 205100.00
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE create_quotation_draft
+NOTICE:  ok   anon cannot EXECUTE recalculate_quotation
+ assert_raises 
+---------------
+ 
+(1 row)
+

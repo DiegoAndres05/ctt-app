@@ -1,0 +1,34 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot funnel
+NOTICE:  ok   anon cannot sales
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot bounds helper
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent cannot sales summary
+ assert_raises 
+---------------
+ 
+(1 row)
+

@@ -1,0 +1,394 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                                                   set_request_status                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "discarded", "closed_at": "2026-11-13T16:06:59.358991+00:00", "request_id": "d9218123-16e7-4c83-9b01-dc5abb7d4076", "first_handled_at": "2026-11-13T16:06:59.358991+00:00"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   first reference is PRE-00001
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   status is pending_verification
+NOTICE:  ok   request status converted to pre_reservation
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   pre_reservation header has correct fields
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   one line inserted
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   pre_reservation_created audit emitted
+NOTICE:  ok   request_status_changed audit emitted with pre_reservation_id
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   item_added event logged
+NOTICE:  ok   request stays pre_reservation
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   two pre-reservations linked to same request
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   discarded request rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anonymized customer rejected
+NOTICE:  ok   no main items rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   31 items rejected
+NOTICE:  ok   inactive product rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   past date rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   accommodation without nights rejected
+NOTICE:  ok   alternative_of out of range rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   source_request_item_id from another request rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   provider snapshot taken from product
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   manual provider fields preserved when product has no provider
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   initial status pending_verification
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   one available -> partially_verified
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   all available -> verified
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   verified_at and first_verified_at set on verified
+NOTICE:  ok   one unavailable -> requires_adjustment
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   hold expired -> expired
+NOTICE:  ok   re-verify with future hold -> verified
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   no status audit emitted when status unchanged
+ refresh_pre_reservation_status 
+--------------------------------
+ expired
+(1 row)
+
+NOTICE:  ok   status audit emitted when status changes
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   org A reference continues its own sequence
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   org A reference increments by one per creation
+NOTICE:  ok   org B starts at PRE-00001
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE create_pre_reservation
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE cancel_pre_reservation
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent create returns status pending_verification
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   agent create converts the request to pre_reservation
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   agent create returns pre_reservation_id and a PRE-##### reference
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the creating agent becomes the responsible agent
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   operator can create a pre-reservation
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a valid assigned_operator_id is persisted
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   admin can create an additional pre-reservation on the same request
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a request from another organization returns VALIDATION_ERROR
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot be the assigned operator
+NOTICE:  ok   an inactive operator cannot be the assigned operator
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel without a reason is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel with a blank reason is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel reason longer than 500 is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel returns status cancelled
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel fixes cancelled_at, cancel_reason and cancelled_by
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel writes a pre_reservation_cancelled event with the reason in notes
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   cancel audit stores {from} without the reason
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the source request keeps its pre_reservation status
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a cancelled pre-reservation cannot be cancelled again

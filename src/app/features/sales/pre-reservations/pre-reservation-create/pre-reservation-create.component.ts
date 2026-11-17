@@ -68,185 +68,212 @@ import {
             <h2>Servicios</h2>
             @for (item of draft().items; track $index) {
               <fieldset class="plain item-row">
-                <legend>Servicio {{ $index + 1 }}</legend>
+                <div class="item-head">
+                  <legend>Servicio {{ $index + 1 }}</legend>
+                  <button type="button" class="danger" (click)="removeItem($index)">Quitar</button>
+                </div>
 
-                <label [attr.for]="'pr-kind-' + $index">Tipo</label>
-                <select
-                  [id]="'pr-kind-' + $index"
-                  [value]="item.kind"
-                  (change)="onKind($index, $event)"
-                >
-                  <option value="product">Producto</option>
-                  <option value="addon">Complemento</option>
-                </select>
+                <div class="form-grid">
+                  <div class="field">
+                    <label [attr.for]="'pr-kind-' + $index">Tipo</label>
+                    <select
+                      [id]="'pr-kind-' + $index"
+                      [value]="item.kind"
+                      (change)="onKind($index, $event)"
+                    >
+                      <option value="product">Producto</option>
+                      <option value="addon">Complemento</option>
+                    </select>
+                  </div>
+                  <div class="field req wide">
+                    <label [attr.for]="'pr-bookable-' + $index">
+                      {{ item.kind === 'product' ? 'Producto' : 'Complemento' }}
+                    </label>
+                    <select
+                      [id]="'pr-bookable-' + $index"
+                      [value]="bookableValue(item)"
+                      (change)="onBookable($index, $event)"
+                    >
+                      <option value="">Elige…</option>
+                      @for (option of optionsFor(item.kind); track option.id) {
+                        <option [value]="option.id">{{ option.name }}</option>
+                      }
+                    </select>
+                    @if (issue('item-' + $index + '.bookable'); as message) {
+                      <p class="field-error">{{ message }}</p>
+                    }
+                  </div>
+                </div>
 
-                <label class="req" [attr.for]="'pr-bookable-' + $index">
-                  {{ item.kind === 'product' ? 'Producto' : 'Complemento' }}
-                </label>
-                <select
-                  [id]="'pr-bookable-' + $index"
-                  [value]="bookableValue(item)"
-                  (change)="onBookable($index, $event)"
-                >
-                  <option value="">Elige…</option>
-                  @for (option of optionsFor(item.kind); track option.id) {
-                    <option [value]="option.id">{{ option.name }}</option>
-                  }
-                </select>
-                @if (issue('item-' + $index + '.bookable'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
-
-                <label class="req" [attr.for]="'pr-start-' + $index">Desde</label>
-                <input
-                  [id]="'pr-start-' + $index"
-                  type="date"
-                  [min]="today"
-                  [value]="item.startDate"
-                  (change)="onDate($index, 'startDate', $event)"
-                />
-                @if (issue('item-' + $index + '.startDate'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
-
-                <label [class.req]="isAccommodation(item)" [attr.for]="'pr-end-' + $index">
-                  Hasta
-                </label>
-                <input
-                  [id]="'pr-end-' + $index"
-                  type="date"
-                  [min]="item.startDate || today"
-                  [value]="item.endDate"
-                  (change)="onDate($index, 'endDate', $event)"
-                />
-                @if (issue('item-' + $index + '.endDate'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
-
-                <label class="req" [attr.for]="'pr-adults-' + $index">Adultos</label>
-                <input
-                  [id]="'pr-adults-' + $index"
-                  type="number"
-                  min="1"
-                  max="99"
-                  [value]="item.adults"
-                  (input)="onNumber($index, 'adults', $event)"
-                />
-                @if (issue('item-' + $index + '.adults'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
-
-                <label [attr.for]="'pr-children-' + $index">Niños</label>
-                <input
-                  [id]="'pr-children-' + $index"
-                  type="number"
-                  min="0"
-                  max="99"
-                  [value]="item.children"
-                  (input)="onNumber($index, 'children', $event)"
-                />
-                @if (issue('item-' + $index + '.children'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
-
-                <label [attr.for]="'pr-quantity-' + $index">Cantidad</label>
-                <input
-                  [id]="'pr-quantity-' + $index"
-                  type="number"
-                  min="1"
-                  max="99"
-                  [value]="item.quantity"
-                  (input)="onNumber($index, 'quantity', $event)"
-                />
-                @if (issue('item-' + $index + '.quantity'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
+                <div class="form-grid compact">
+                  <div class="field req">
+                    <label [attr.for]="'pr-start-' + $index">Desde</label>
+                    <input
+                      [id]="'pr-start-' + $index"
+                      type="date"
+                      [min]="today"
+                      [value]="item.startDate"
+                      (change)="onDate($index, 'startDate', $event)"
+                    />
+                    @if (issue('item-' + $index + '.startDate'); as message) {
+                      <p class="field-error">{{ message }}</p>
+                    }
+                  </div>
+                  <div class="field" [class.req]="isAccommodation(item)">
+                    <label [attr.for]="'pr-end-' + $index">Hasta</label>
+                    <input
+                      [id]="'pr-end-' + $index"
+                      type="date"
+                      [min]="item.startDate || today"
+                      [value]="item.endDate"
+                      (change)="onDate($index, 'endDate', $event)"
+                    />
+                    @if (issue('item-' + $index + '.endDate'); as message) {
+                      <p class="field-error">{{ message }}</p>
+                    }
+                  </div>
+                  <div class="field req">
+                    <label [attr.for]="'pr-adults-' + $index">Adultos</label>
+                    <input
+                      [id]="'pr-adults-' + $index"
+                      type="number"
+                      min="1"
+                      max="99"
+                      [value]="item.adults"
+                      (input)="onNumber($index, 'adults', $event)"
+                    />
+                    @if (issue('item-' + $index + '.adults'); as message) {
+                      <p class="field-error">{{ message }}</p>
+                    }
+                  </div>
+                  <div class="field">
+                    <label [attr.for]="'pr-children-' + $index">Niños</label>
+                    <input
+                      [id]="'pr-children-' + $index"
+                      type="number"
+                      min="0"
+                      max="99"
+                      [value]="item.children"
+                      (input)="onNumber($index, 'children', $event)"
+                    />
+                    @if (issue('item-' + $index + '.children'); as message) {
+                      <p class="field-error">{{ message }}</p>
+                    }
+                  </div>
+                  <div class="field">
+                    <label [attr.for]="'pr-quantity-' + $index">Cantidad</label>
+                    <input
+                      [id]="'pr-quantity-' + $index"
+                      type="number"
+                      min="1"
+                      max="99"
+                      [value]="item.quantity"
+                      (input)="onNumber($index, 'quantity', $event)"
+                    />
+                    @if (issue('item-' + $index + '.quantity'); as message) {
+                      <p class="field-error">{{ message }}</p>
+                    }
+                  </div>
+                </div>
 
                 @if (providerOf(item); as provider) {
-                  <p class="notice">
-                    Proveedor: {{ provider.name }} ·
-                    {{ provider.contact_phone || 'sin teléfono' }} ·
-                    {{ provider.contact_email || 'sin correo' }}
+                  <p class="provider">
+                    <span class="hint">Proveedor</span>
+                    <strong>{{ provider.name }}</strong>
+                    <span class="hint">
+                      {{ provider.contact_phone || 'sin teléfono' }} ·
+                      {{ provider.contact_email || 'sin correo' }}
+                    </span>
                   </p>
                 } @else {
-                  <label [attr.for]="'pr-provider-' + $index">Proveedor</label>
-                  <input
-                    [id]="'pr-provider-' + $index"
-                    type="text"
-                    [value]="item.providerName"
-                    (input)="onProvider($index, 'providerName', $event)"
-                  />
-                  <label [attr.for]="'pr-phone-' + $index">Teléfono del proveedor</label>
-                  <input
-                    [id]="'pr-phone-' + $index"
-                    type="tel"
-                    [value]="item.providerPhone"
-                    (input)="onProvider($index, 'providerPhone', $event)"
-                  />
-                  <label [attr.for]="'pr-email-' + $index">Correo del proveedor</label>
-                  <input
-                    [id]="'pr-email-' + $index"
-                    type="email"
-                    [value]="item.providerEmail"
-                    (input)="onProvider($index, 'providerEmail', $event)"
-                  />
+                  <div class="form-grid">
+                    <div class="field">
+                      <label [attr.for]="'pr-provider-' + $index">Proveedor</label>
+                      <input
+                        [id]="'pr-provider-' + $index"
+                        type="text"
+                        [value]="item.providerName"
+                        (input)="onProvider($index, 'providerName', $event)"
+                      />
+                    </div>
+                    <div class="field">
+                      <label [attr.for]="'pr-phone-' + $index">Teléfono del proveedor</label>
+                      <input
+                        [id]="'pr-phone-' + $index"
+                        type="tel"
+                        [value]="item.providerPhone"
+                        (input)="onProvider($index, 'providerPhone', $event)"
+                      />
+                    </div>
+                    <div class="field">
+                      <label [attr.for]="'pr-email-' + $index">Correo del proveedor</label>
+                      <input
+                        [id]="'pr-email-' + $index"
+                        type="email"
+                        [value]="item.providerEmail"
+                        (input)="onProvider($index, 'providerEmail', $event)"
+                      />
+                    </div>
+                  </div>
                 }
 
-                <label [attr.for]="'pr-alt-' + $index">Es alternativa de</label>
-                <select
-                  [id]="'pr-alt-' + $index"
-                  [value]="item.alternativeOf ?? ''"
-                  (change)="onAlternative($index, $event)"
-                >
-                  <option value="">No es alternativa</option>
-                  @for (principal of principalOptions($index); track principal.index) {
-                    <option [value]="principal.index">{{ principal.label }}</option>
+                <div class="field alt">
+                  <label [attr.for]="'pr-alt-' + $index">Es alternativa de</label>
+                  <select
+                    [id]="'pr-alt-' + $index"
+                    [value]="item.alternativeOf ?? ''"
+                    (change)="onAlternative($index, $event)"
+                  >
+                    <option value="">No es alternativa</option>
+                    @for (principal of principalOptions($index); track principal.index) {
+                      <option [value]="principal.index">{{ principal.label }}</option>
+                    }
+                  </select>
+                  @if (issue('item-' + $index + '.alternativeOf'); as message) {
+                    <p class="field-error">{{ message }}</p>
+                  } @else {
+                    <p class="hint">
+                      Las alternativas se verifican, pero no cuentan para el estado de la
+                      pre-reserva.
+                    </p>
                   }
-                </select>
-                <p class="hint">
-                  Las alternativas se verifican, pero no cuentan para el estado de la pre-reserva.
-                </p>
-                @if (issue('item-' + $index + '.alternativeOf'); as message) {
-                  <p class="field-error">{{ message }}</p>
-                }
-
-                <div class="actions">
-                  <button type="button" (click)="removeItem($index)">Quitar</button>
                 </div>
               </fieldset>
             }
             @if (issue('items'); as message) {
               <p class="field-error">{{ message }}</p>
             }
-            <div class="actions">
-              <button type="button" (click)="addItem()">Agregar servicio</button>
+            <div>
+              <button type="button" (click)="addItem()">+ Agregar servicio</button>
             </div>
           </section>
 
           <section class="section">
             <h2>Verificación</h2>
-            <label for="assigned-operator">Operador asignado</label>
-            <select id="assigned-operator" [formField]="createForm.assignedOperatorId">
-              <option value="">Sin asignar</option>
-              @for (person of operators(); track person.id) {
-                <option [value]="person.id">{{ person.full_name }}</option>
-              }
-            </select>
-            <p class="hint">
-              Puedes dejarlo sin asignar; quien gestione la verificación aparecerá en el detalle.
-            </p>
+            <div class="field alt">
+              <label for="assigned-operator">Operador asignado</label>
+              <select id="assigned-operator" [formField]="createForm.assignedOperatorId">
+                <option value="">Sin asignar</option>
+                @for (person of operators(); track person.id) {
+                  <option [value]="person.id">{{ person.full_name }}</option>
+                }
+              </select>
+              <p class="hint">
+                Puedes dejarlo sin asignar; quien gestione la verificación aparecerá en el detalle.
+              </p>
+            </div>
           </section>
 
-          <div class="actions">
+          @if (error(); as failure) {
+            <app-alert kind="error">{{ failure.message }}</app-alert>
+          }
+
+          <div class="form-actions">
             <button class="primary" type="submit" [disabled]="saving()">
               {{ saving() ? 'Creando…' : 'Crear pre-reserva' }}
             </button>
             <a class="button-link" [routerLink]="['/sales/requests', current.id]">Cancelar</a>
           </div>
-
-          @if (error(); as failure) {
-            <app-alert kind="error">{{ failure.message }}</app-alert>
-          }
         </form>
       } @else if (error(); as failure) {
         <app-alert kind="error">{{ failure.message }}</app-alert>
@@ -264,10 +291,63 @@ import {
       gap: 0.85rem;
     }
 
+    .section {
+      gap: 0.85rem;
+    }
+
     .item-row {
-      padding: 0.75rem;
+      gap: 0.85rem;
+      padding: 0.9rem 1rem 1rem;
       border: 1px solid var(--color-border);
-      border-radius: 0.35rem;
+      border-radius: var(--radius-md);
+      background: var(--color-surface-muted);
+    }
+
+    .item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .item-head legend {
+      float: left;
+      padding: 0;
+      font-size: 0.95rem;
+    }
+
+    .form-grid {
+      max-width: none;
+    }
+
+    .form-grid .wide {
+      grid-column: span 2;
+    }
+
+    .form-grid.compact {
+      grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr));
+    }
+
+    .alt {
+      max-width: 28rem;
+    }
+
+    .provider {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.6rem;
+      align-items: baseline;
+      margin: 0;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+    }
+
+    @media (max-width: 640px) {
+      .form-grid .wide {
+        grid-column: auto;
+      }
     }
   `,
 })

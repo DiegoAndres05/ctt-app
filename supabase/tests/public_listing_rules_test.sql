@@ -94,6 +94,9 @@ VALUES (
   jsonb_build_object('default_currency', 'COP')
 );
 
+-- Feature 016: this agency models CTT (its eight categories, migration manifest rules).
+SELECT public.mark_public_site_as_migrated(:'org_id'::uuid);
+
 SELECT pg_temp.add_collaborator(
   :'operator_id'::uuid, :'org_id'::uuid,
   'operador-public-rules@test.invalid', 'Operador Public Rules', 'operator'

@@ -1,0 +1,170 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a valid token returns the issued proposal with can_accept true
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the public payload carries the frozen breakdown: 2 adults x 100.00 = 200.00
+NOTICE:  ok   the public payload has no customer_id, email, phone, token, notes or pre-reservation keys
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the public payload never contains the customer email, phone or the clear token
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an empty token answers available false
+NOTICE:  ok   an unknown token answers available false without lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a tampered token answers available false without lines
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   the WhatsApp body carries the reference and the frozen total
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the WhatsApp body has no URL and never the clear token
+ assert_true 
+-------------
+ 
+(1 row)
+
+ force_valid_until 
+-------------------
+ 
+(1 row)
+
+NOTICE:  ok   an expired proposal is readable but can_accept is false
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the public acceptance with confirmation succeeds
+NOTICE:  ok   an accepted proposal is readable but can_accept is false
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   a voided proposal answers available false without lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon holds EXECUTE only on get_public_quotation and accept_public_quotation
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE create_quotation_draft
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE issue_quotation
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE quotation_whatsapp_text
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE record_quotation_response
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE the 004 gate assert_pre_reservation_quotable
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT quotation_versions

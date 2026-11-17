@@ -1,0 +1,10 @@
+                                                                        set_config                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"sub": "77777777-7777-4000-b000-000000000077", "role": "authenticated", "app_role": "admin", "organization_id": "77777777-7777-4000-a000-000000000077"}
+(1 row)
+
+NOTICE:  T045 catalog count (5000, RLS): 2.715000 ms (budget SC-004 < 1000 ms)
+NOTICE:  T045 catalog list LIMIT 50 (of 5000, RLS): 69.689000 ms (budget SC-004 < 1000 ms)
+NOTICE:  T045 catalog list all 5000 (RLS): 100.253000 ms (budget SC-004 < 1000 ms)
+NOTICE:  T045 resolve_price season: 45.658000 ms (amount=180000.00, source=season)
+NOTICE:  T045 resolve_price base: 13.898000 ms (amount=150000.00, source=base)

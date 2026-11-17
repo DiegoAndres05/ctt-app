@@ -23,113 +23,158 @@
       <fieldset class="plain" [disabled]="!canEdit()">
         <section class="section" [class.incomplete]="basicIncomplete()">
           <h2>Información básica</h2>
-          <label class="req" for="name">Nombre</label>
-          <input id="name" type="text" [formField]="attrForm.name" />
-          @if (attrForm.name().touched() && attrForm.name().invalid()) {
-            <p class="field-error">Ingresa el nombre.</p>
-          }
-          <label for="description">Descripción interna</label>
-          <textarea id="description" rows="3" [formField]="attrForm.description"></textarea>
+          <div class="field req">
+            <label for="name">Nombre</label>
+            <input id="name" type="text" [formField]="attrForm.name" />
+            @if (attrForm.name().touched() && attrForm.name().invalid()) {
+              <p class="field-error">Ingresa el nombre.</p>
+            }
+          </div>
+          <div class="field">
+            <label for="description">Descripción interna</label>
+            <textarea id="description" rows="3" [formField]="attrForm.description"></textarea>
+            <p class="hint">Solo la ve el equipo. El texto público va en «Contenido público».</p>
+          </div>
         </section>
 
         <section class="section" [class.incomplete]="operativeIncomplete()">
           <h2>Detalles operativos</h2>
           @if ((product()?.type ?? productType()) === 'experience') {
-            <label for="duration">Duración (minutos)</label>
-            <input id="duration" type="number" [formField]="attrForm.durationMinutes" />
-            <label for="difficulty">Dificultad</label>
-            <select id="difficulty" [formField]="attrForm.difficulty">
-              <option value="">Sin especificar</option>
-              <option value="easy">Fácil</option>
-              <option value="moderate">Moderada</option>
-              <option value="hard">Difícil</option>
-            </select>
-            <label for="meeting-point">Punto de encuentro</label>
-            <input id="meeting-point" type="text" [formField]="attrForm.meetingPoint" />
-            <label for="min-capacity">Capacidad mínima</label>
-            <input id="min-capacity" type="number" [formField]="attrForm.minCapacity" />
-            <label for="max-capacity">Capacidad máxima</label>
-            <input id="max-capacity" type="number" [formField]="attrForm.maxCapacity" />
+            <div class="form-grid">
+              <div class="field">
+                <label for="duration">Duración (minutos)</label>
+                <input id="duration" type="number" [formField]="attrForm.durationMinutes" />
+              </div>
+              <div class="field">
+                <label for="difficulty">Dificultad</label>
+                <select id="difficulty" [formField]="attrForm.difficulty">
+                  <option value="">Sin especificar</option>
+                  <option value="easy">Fácil</option>
+                  <option value="moderate">Moderada</option>
+                  <option value="hard">Difícil</option>
+                </select>
+              </div>
+              <div class="field span-all">
+                <label for="meeting-point">Punto de encuentro</label>
+                <input id="meeting-point" type="text" [formField]="attrForm.meetingPoint" />
+              </div>
+              <div class="field">
+                <label for="min-capacity">Capacidad mínima</label>
+                <input id="min-capacity" type="number" [formField]="attrForm.minCapacity" />
+              </div>
+              <div class="field">
+                <label for="max-capacity">Capacidad máxima</label>
+                <input id="max-capacity" type="number" [formField]="attrForm.maxCapacity" />
+              </div>
+            </div>
           } @else {
-            <label class="req" for="property-type">Tipo de inmueble</label>
-            <input id="property-type" type="text" [formField]="attrForm.propertyType" />
+            <div class="form-grid">
+              <div class="field req">
+                <label for="property-type">Tipo de inmueble</label>
+                <input id="property-type" type="text" [formField]="attrForm.propertyType" />
+              </div>
+              <div class="field req">
+                <label for="ops-location">Ubicación</label>
+                <input id="ops-location" type="text" [formField]="attrForm.location" />
+              </div>
+              <div class="field">
+                <label for="check-in">Check-in</label>
+                <input id="check-in" type="time" [formField]="attrForm.checkIn" />
+              </div>
+              <div class="field">
+                <label for="check-out">Check-out</label>
+                <input id="check-out" type="time" [formField]="attrForm.checkOut" />
+              </div>
+              <div class="field">
+                <label for="max-occupancy">Ocupación máxima</label>
+                <input id="max-occupancy" type="number" [formField]="attrForm.maxOccupancy" />
+              </div>
+            </div>
             @if (operativeIncomplete()) {
               <p class="field-error">Ingresa el tipo de inmueble y la ubicación.</p>
             }
-            <label class="req" for="ops-location">Ubicación</label>
-            <input id="ops-location" type="text" [formField]="attrForm.location" />
-            <label for="check-in">Check-in</label>
-            <input id="check-in" type="time" [formField]="attrForm.checkIn" />
-            <label for="check-out">Check-out</label>
-            <input id="check-out" type="time" [formField]="attrForm.checkOut" />
-            <label for="max-occupancy">Ocupación máxima</label>
-            <input id="max-occupancy" type="number" [formField]="attrForm.maxOccupancy" />
           }
         </section>
 
         <section class="section">
           <h2>Categorías y adicionales</h2>
-          @for (category of categories(); track category.id) {
-            <label class="check">
-              <input
-                type="checkbox"
-                [checked]="selectedCategoryIds().includes(category.id)"
-                (change)="toggleCategory(category.id)"
-              />
-              {{ category.name }}
-            </label>
+          @if (categories().length > 0) {
+            <div class="chips" role="group" aria-label="Categorías">
+              @for (category of categories(); track category.id) {
+                <label class="chip">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedCategoryIds().includes(category.id)"
+                    (change)="toggleCategory(category.id)"
+                  />
+                  {{ category.name }}
+                </label>
+              }
+            </div>
           }
           @if (saved()) {
             @if (linkedAddons().length === 0) {
               <p class="notice">Este producto no tiene complementos vinculados.</p>
             } @else {
-              <table class="data">
-                <thead>
-                  <tr>
-                    <th>Complemento</th>
-                    <th>Obligatorio</th>
-                    <th>Cantidad máx.</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (link of linkedAddons(); track link.id) {
+              <div class="table-wrap">
+                <table class="data">
+                  <thead>
                     <tr>
-                      <td>{{ link.add_ons?.name ?? link.addon_id }}</td>
-                      <td>{{ link.is_mandatory ? 'Sí' : 'No' }}</td>
-                      <td>{{ link.max_quantity ?? '—' }}</td>
-                      <td>
-                        @if (canEdit()) {
-                          <button type="button" (click)="onUnlinkAddon(link.id)">Quitar</button>
-                        }
-                      </td>
+                      <th>Complemento</th>
+                      <th>Obligatorio</th>
+                      <th>Cantidad máx.</th>
+                      <th></th>
                     </tr>
-                  }
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    @for (link of linkedAddons(); track link.id) {
+                      <tr>
+                        <td>{{ link.add_ons?.name ?? link.addon_id }}</td>
+                        <td>{{ link.is_mandatory ? 'Sí' : 'No' }}</td>
+                        <td>{{ link.max_quantity ?? '—' }}</td>
+                        <td>
+                          @if (canEdit()) {
+                            <button type="button" (click)="onUnlinkAddon(link.id)">Quitar</button>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
             }
             @if (canEdit()) {
-              <h3>Vincular complemento</h3>
-              <label for="addon">Complemento</label>
-              <select id="addon" [formField]="linkForm.addonId">
-                <option value="">Selecciona un complemento</option>
-                @for (addon of availableAddons(); track addon.id) {
-                  <option [value]="addon.id">{{ addon.name }}</option>
-                }
-              </select>
-              <label class="check" for="mandatory">
-                <input id="mandatory" type="checkbox" [formField]="linkForm.isMandatory" />
-                Obligatorio
-              </label>
-              <label for="max-quantity">Cantidad máxima (opcional)</label>
-              <input id="max-quantity" type="number" [formField]="linkForm.maxQuantity" />
-              <button
-                type="button"
-                [disabled]="availableAddons().length === 0"
-                (click)="onLinkAddon($event)"
-              >
-                Vincular
-              </button>
+              <div class="subform">
+                <h3>Vincular complemento</h3>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="addon">Complemento</label>
+                    <select id="addon" [formField]="linkForm.addonId">
+                      <option value="">Selecciona un complemento</option>
+                      @for (addon of availableAddons(); track addon.id) {
+                        <option [value]="addon.id">{{ addon.name }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="max-quantity">Cantidad máxima (opcional)</label>
+                    <input id="max-quantity" type="number" [formField]="linkForm.maxQuantity" />
+                  </div>
+                </div>
+                <label class="check" for="mandatory">
+                  <input id="mandatory" type="checkbox" [formField]="linkForm.isMandatory" />
+                  Obligatorio
+                </label>
+                <div>
+                  <button
+                    type="button"
+                    [disabled]="availableAddons().length === 0"
+                    (click)="onLinkAddon($event)"
+                  >
+                    Vincular
+                  </button>
+                </div>
+              </div>
             }
           }
         </section>
@@ -139,132 +184,238 @@
           <p class="notice">
             Español e inglés. La vista previa no sustituye un idioma por el otro.
           </p>
-          <label for="pub-placement">Sección pública</label>
-          @if (slugLocked()) {
-            <p class="notice">{{ placementLabel(publicDraft().placement) }} (fija tras publicar)</p>
-          } @else {
-            <select id="pub-placement" [formField]="publicForm.placement">
-              @for (option of options(); track option) {
-                <option [value]="option">{{ placementLabel(option) }}</option>
+          <div class="form-grid">
+            <div class="field">
+              <label for="pub-placement">Sección pública</label>
+              @if (slugLocked()) {
+                <p class="locked">
+                  {{ placementLabel(publicDraft().placement) }}
+                  <span class="hint">fija tras publicar</span>
+                </p>
+              } @else {
+                <select id="pub-placement" [formField]="publicForm.placement">
+                  @for (option of options(); track option) {
+                    <option [value]="option">{{ placementLabel(option) }}</option>
+                  }
+                </select>
               }
-            </select>
-          }
-          <label for="pub-slug">Slug público</label>
-          @if (slugLocked()) {
-            <p class="notice">{{ publicDraft().publicSlug }} (inmutable tras publicar)</p>
-          } @else {
-            <input id="pub-slug" type="text" [formField]="publicForm.publicSlug" />
-          }
-          <label class="req" for="name-es">Nombre (ES)</label>
-          <input id="name-es" type="text" [formField]="publicForm.nameEs" />
-          <label class="req" for="name-en">Nombre (EN)</label>
-          <input id="name-en" type="text" [formField]="publicForm.nameEn" />
-          <label class="req" for="desc-es">Descripción (ES)</label>
-          <textarea id="desc-es" rows="3" [formField]="publicForm.descriptionEs"></textarea>
-          <label class="req" for="desc-en">Descripción (EN)</label>
-          <textarea id="desc-en" rows="3" [formField]="publicForm.descriptionEn"></textarea>
+            </div>
+            <div class="field">
+              <label for="pub-slug">Slug público</label>
+              @if (slugLocked()) {
+                <p class="locked">
+                  {{ publicDraft().publicSlug }}
+                  <span class="hint">inmutable tras publicar</span>
+                </p>
+              } @else {
+                <input id="pub-slug" type="text" [formField]="publicForm.publicSlug" />
+              }
+            </div>
+          </div>
+
+          <div class="bilingual">
+            <div class="lang-col">
+              <p class="lang-tag">Español</p>
+              <div class="field req">
+                <label for="name-es">Nombre (ES)</label>
+                <input id="name-es" type="text" [formField]="publicForm.nameEs" />
+              </div>
+              <div class="field req">
+                <label for="desc-es">Descripción (ES)</label>
+                <textarea id="desc-es" rows="4" [formField]="publicForm.descriptionEs"></textarea>
+              </div>
+            </div>
+            <div class="lang-col">
+              <p class="lang-tag">English</p>
+              <div class="field req">
+                <label for="name-en">Nombre (EN)</label>
+                <input id="name-en" type="text" [formField]="publicForm.nameEn" />
+              </div>
+              <div class="field req">
+                <label for="desc-en">Descripción (EN)</label>
+                <textarea id="desc-en" rows="4" [formField]="publicForm.descriptionEn"></textarea>
+              </div>
+            </div>
+          </div>
           <label class="check" for="featured">
             <input id="featured" type="checkbox" [formField]="publicForm.featured" />
             Destacada
           </label>
 
           @if (publicDraft().placement === 'catalog') {
-            <label for="pub-category">Categoría pública</label>
-            <select id="pub-category" [formField]="publicForm.publicCategoryId">
-              <option value="">Selecciona</option>
-              @for (category of publicCategories(); track category.id) {
-                <option [value]="category.id">
-                  {{ category.name_es }} / {{ category.name_en }}
-                </option>
-              }
-            </select>
-            <label for="pub-location">Ubicación</label>
-            <input id="pub-location" type="text" [formField]="publicForm.location" />
-            <label for="pub-meeting">Punto de encuentro</label>
-            <input id="pub-meeting" type="text" [formField]="publicForm.meetingPoint" />
-            <label for="pub-schedule">Horario</label>
-            <input id="pub-schedule" type="text" [formField]="publicForm.schedule" />
-            <label for="pub-duration">Duración (texto)</label>
-            <input id="pub-duration" type="text" [formField]="publicForm.duration" />
-            <label for="pub-includes">Inclusiones (una por línea: ES ||| EN)</label>
-            <textarea id="pub-includes" rows="4" [formField]="publicForm.includesText"></textarea>
+            <h3>Datos de la experiencia</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="pub-category">Categoría pública</label>
+                <select id="pub-category" [formField]="publicForm.publicCategoryId">
+                  <option value="">Selecciona</option>
+                  @for (category of publicCategories(); track category.id) {
+                    <option [value]="category.id">
+                      {{ category.name_es }} / {{ category.name_en }}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="field">
+                <label for="pub-location">Ubicación</label>
+                <input id="pub-location" type="text" [formField]="publicForm.location" />
+              </div>
+              <div class="field">
+                <label for="pub-meeting">Punto de encuentro</label>
+                <input id="pub-meeting" type="text" [formField]="publicForm.meetingPoint" />
+              </div>
+              <div class="field">
+                <label for="pub-schedule">Horario</label>
+                <input id="pub-schedule" type="text" [formField]="publicForm.schedule" />
+              </div>
+              <div class="field">
+                <label for="pub-duration">Duración (texto)</label>
+                <input id="pub-duration" type="text" [formField]="publicForm.duration" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="pub-includes">Inclusiones</label>
+              <textarea
+                id="pub-includes"
+                rows="4"
+                placeholder="Almuerzo ||| Lunch"
+                [formField]="publicForm.includesText"
+              ></textarea>
+              <p class="hint">Una por línea, español y luego inglés separados por «|||».</p>
+            </div>
           }
 
           @if (publicDraft().placement === 'lodging') {
-            <label for="lodging-type">Tipo de hospedaje</label>
-            <select id="lodging-type" [formField]="publicForm.lodgingType">
-              @for (type of lodgingTypes; track type) {
-                <option [value]="type">{{ type }}</option>
-              }
-            </select>
-            <label for="loc-es">Ubicación (ES)</label>
-            <input id="loc-es" type="text" [formField]="publicForm.locationEs" />
-            <label for="loc-en">Ubicación (EN)</label>
-            <input id="loc-en" type="text" [formField]="publicForm.locationEn" />
-            <label for="hood-es">Barrio (ES)</label>
-            <input id="hood-es" type="text" [formField]="publicForm.neighborhoodEs" />
-            <label for="hood-en">Barrio (EN)</label>
-            <input id="hood-en" type="text" [formField]="publicForm.neighborhoodEn" />
-            <label for="bedrooms">Habitaciones</label>
-            <input id="bedrooms" type="number" [formField]="publicForm.bedrooms" />
-            <label for="bathrooms">Baños</label>
-            <input id="bathrooms" type="number" [formField]="publicForm.bathrooms" />
-            <label for="max-guests">Huéspedes máx.</label>
-            <input id="max-guests" type="number" [formField]="publicForm.maxGuests" />
-            <label for="map-url">Mapa (https)</label>
-            <input id="map-url" type="url" [formField]="publicForm.mapUrl" />
-            <label for="tags">Etiquetas (separadas por coma)</label>
-            <input id="tags" type="text" [formField]="publicForm.tagsText" />
+            <h3>Datos del hospedaje</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="lodging-type">Tipo de hospedaje</label>
+                <select id="lodging-type" [formField]="publicForm.lodgingType">
+                  @for (type of lodgingTypes(); track type.code) {
+                    <option [value]="type.code">
+                      {{ type.name_es }}{{ type.is_active ? '' : ' (inactivo)' }}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="field">
+                <label for="loc-es">Ubicación (ES)</label>
+                <input id="loc-es" type="text" [formField]="publicForm.locationEs" />
+              </div>
+              <div class="field">
+                <label for="loc-en">Ubicación (EN)</label>
+                <input id="loc-en" type="text" [formField]="publicForm.locationEn" />
+              </div>
+              <div class="field">
+                <label for="hood-es">Barrio (ES)</label>
+                <input id="hood-es" type="text" [formField]="publicForm.neighborhoodEs" />
+              </div>
+              <div class="field">
+                <label for="hood-en">Barrio (EN)</label>
+                <input id="hood-en" type="text" [formField]="publicForm.neighborhoodEn" />
+              </div>
+            </div>
+            <div class="form-grid compact">
+              <div class="field">
+                <label for="bedrooms">Habitaciones</label>
+                <input id="bedrooms" type="number" [formField]="publicForm.bedrooms" />
+              </div>
+              <div class="field">
+                <label for="bathrooms">Baños</label>
+                <input id="bathrooms" type="number" [formField]="publicForm.bathrooms" />
+              </div>
+              <div class="field">
+                <label for="max-guests">Huéspedes máx.</label>
+                <input id="max-guests" type="number" [formField]="publicForm.maxGuests" />
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="map-url">Mapa (https)</label>
+                <input id="map-url" type="url" [formField]="publicForm.mapUrl" />
+              </div>
+              <div class="field">
+                <label for="tags">Etiquetas</label>
+                <input id="tags" type="text" [formField]="publicForm.tagsText" />
+                <p class="hint">Separadas por coma.</p>
+              </div>
+            </div>
             <fieldset class="plain">
               <legend>Amenidades</legend>
-              @for (amenity of lodgingAmenities; track amenity) {
-                <label class="check">
-                  <input
-                    type="checkbox"
-                    [checked]="selectedAmenities().includes(amenity)"
-                    (change)="toggleAmenity(amenity)"
-                  />
-                  {{ amenity }}
-                </label>
-              }
+              <div class="chips">
+                @for (amenity of lodgingAmenities(); track amenity.code) {
+                  <label class="chip" [class.inactive]="!amenity.is_active">
+                    <input
+                      type="checkbox"
+                      [checked]="selectedAmenities().includes(amenity.code)"
+                      (change)="toggleAmenity(amenity.code)"
+                    />
+                    {{ amenity.name_es }}{{ amenity.is_active ? '' : ' (inactiva)' }}
+                  </label>
+                } @empty {
+                  <p class="hint">
+                    Tu agencia no tiene amenidades activas. Agrégalas en Ajustes del catálogo ›
+                    Tipos y amenidades.
+                  </p>
+                }
+              </div>
             </fieldset>
           }
 
           @if (publicDraft().placement === 'yacht') {
-            <label for="yacht-lines">Líneas de yate (una por línea: kind|icon|ES|||EN)</label>
-            <textarea
-              id="yacht-lines"
-              rows="5"
-              [formField]="publicForm.yachtLinesText"
-              placeholder="capacity|people|Hasta 12|||Up to 12"
-            ></textarea>
-            <p class="hint">
-              kind: capacity o feature. icon opcional ({{ yachtIcons.join(', ') }}).
-            </p>
+            <h3>Datos del yate</h3>
+            <div class="field">
+              <label for="yacht-lines">Líneas de yate</label>
+              <textarea
+                id="yacht-lines"
+                rows="5"
+                [formField]="publicForm.yachtLinesText"
+                placeholder="capacity|people|Hasta 12|||Up to 12"
+              ></textarea>
+              <p class="hint">
+                Una por línea: kind|icon|ES|||EN. kind: capacity o feature. icon opcional ({{
+                  yachtIcons.join(', ')
+                }}).
+              </p>
+            </div>
           }
 
-          <label [class.req]="publicDraft().placement !== 'yacht'" for="display-price">
-            Precio de vitrina {{ publicDraft().placement === 'yacht' ? '(opcional)' : '' }}
-          </label>
-          <input
-            id="display-price"
-            type="number"
-            step="0.01"
-            [formField]="publicForm.displayPrice"
-          />
-          <label for="original-price">Precio anterior (opcional)</label>
-          <input
-            id="original-price"
-            type="number"
-            step="0.01"
-            [formField]="publicForm.originalPrice"
-          />
-          <label for="pub-currency">Moneda</label>
-          <input id="pub-currency" type="text" [formField]="publicForm.currency" />
-          <label for="rating">Valoración (0–5)</label>
-          <input id="rating" type="number" step="0.1" [formField]="publicForm.rating" />
-          <label for="warnings">Avisos (una por línea: ES ||| EN)</label>
-          <textarea id="warnings" rows="3" [formField]="publicForm.warningsText"></textarea>
+          <h3>Precio de vitrina y avisos</h3>
+          <div class="form-grid compact">
+            <div class="field" [class.req]="publicDraft().placement !== 'yacht'">
+              <label for="display-price">
+                Precio de vitrina {{ publicDraft().placement === 'yacht' ? '(opcional)' : '' }}
+              </label>
+              <input
+                id="display-price"
+                type="number"
+                step="0.01"
+                [formField]="publicForm.displayPrice"
+              />
+            </div>
+            <div class="field">
+              <label for="original-price">Precio anterior (opcional)</label>
+              <input
+                id="original-price"
+                type="number"
+                step="0.01"
+                [formField]="publicForm.originalPrice"
+              />
+            </div>
+            <div class="field">
+              <label for="pub-currency">Moneda</label>
+              <input id="pub-currency" type="text" [formField]="publicForm.currency" />
+            </div>
+            <div class="field">
+              <label for="rating">Valoración (0–5)</label>
+              <input id="rating" type="number" step="0.1" [formField]="publicForm.rating" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="warnings">Avisos</label>
+            <textarea id="warnings" rows="3" [formField]="publicForm.warningsText"></textarea>
+            <p class="hint">Una por línea, español y luego inglés separados por «|||».</p>
+          </div>
         </section>
       </fieldset>
 
@@ -352,22 +503,28 @@
         } @else {
           <p class="notice">Aún no hay ficha pública. El primer guardado la crea en borrador.</p>
         }
-        <ul>
+        <ul class="gates">
           @for (gate of gates(); track gate.id) {
-            <li>{{ gate.ok ? 'Listo' : 'Pendiente' }}: {{ gate.label }}</li>
+            <li [class.ok]="gate.ok">
+              <span class="gate-mark" aria-hidden="true">{{ gate.ok ? '✓' : '•' }}</span>
+              <span class="visually-hidden">{{ gate.ok ? 'Listo' : 'Pendiente' }}:</span>
+              {{ gate.label }}
+            </li>
           }
         </ul>
         @if (canEdit() && saved()) {
-          <form (submit)="onSaveStatus($event)" novalidate>
-            <label for="status">Estado comercial</label>
-            <p class="notice">
+          <form class="inline-form" (submit)="onSaveStatus($event)" novalidate>
+            <div class="field">
+              <label for="status">Estado comercial</label>
+              <select id="status" [formField]="statusForm.status">
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+              </select>
+            </div>
+            <button type="submit" [disabled]="statusForm().submitting()">Actualizar estado</button>
+            <p class="hint span-all">
               Un producto solo puede activarse si tiene un esquema de precio vigente.
             </p>
-            <select id="status" [formField]="statusForm.status">
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-            </select>
-            <button type="submit" [disabled]="statusForm().submitting()">Actualizar estado</button>
           </form>
           @if (canPublish()) {
             <div class="actions">
@@ -412,16 +569,30 @@
               </ul>
             }
             @if (canEdit()) {
-              <label for="rev-author">Autor</label>
-              <input id="rev-author" type="text" [formField]="reviewForm.author" />
-              <label for="rev-rating">Valoración (1–5)</label>
-              <input id="rev-rating" type="number" [formField]="reviewForm.rating" />
-              <label for="rev-date">Fecha</label>
-              <input id="rev-date" type="date" [formField]="reviewForm.reviewedOn" />
-              <label for="rev-es">Texto (ES)</label>
-              <textarea id="rev-es" rows="2" [formField]="reviewForm.textEs"></textarea>
-              <label for="rev-en">Texto (EN)</label>
-              <textarea id="rev-en" rows="2" [formField]="reviewForm.textEn"></textarea>
+              <div class="form-grid compact">
+                <div class="field">
+                  <label for="rev-author">Autor</label>
+                  <input id="rev-author" type="text" [formField]="reviewForm.author" />
+                </div>
+                <div class="field">
+                  <label for="rev-rating">Valoración (1–5)</label>
+                  <input id="rev-rating" type="number" [formField]="reviewForm.rating" />
+                </div>
+                <div class="field">
+                  <label for="rev-date">Fecha</label>
+                  <input id="rev-date" type="date" [formField]="reviewForm.reviewedOn" />
+                </div>
+              </div>
+              <div class="bilingual">
+                <div class="field">
+                  <label for="rev-es">Texto (ES)</label>
+                  <textarea id="rev-es" rows="2" [formField]="reviewForm.textEs"></textarea>
+                </div>
+                <div class="field">
+                  <label for="rev-en">Texto (EN)</label>
+                  <textarea id="rev-en" rows="2" [formField]="reviewForm.textEn"></textarea>
+                </div>
+              </div>
               <button type="button" (click)="onSaveReview($event)">Añadir opinión</button>
             }
           }

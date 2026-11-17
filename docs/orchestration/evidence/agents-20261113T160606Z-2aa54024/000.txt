@@ -1,0 +1,414 @@
+{
+  "name": "ctt-release-orchestrator",
+  "mode": "primary",
+  "permission": [
+    {
+      "permission": "*",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "doom_loop",
+      "action": "ask",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "*",
+      "action": "ask"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.local/share/opencode/tool-output/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/var/folders/jg/2tn_46yx4g19v90ymtv81v0w0000gp/T/opencode/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-video-explainer/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-youtube-thumbnail/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-websites/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-brandkit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-soul-id/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-marketplace-cards/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-faceless-video/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-product-photoshoot/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-generate/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-video-explainer/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-brandkit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-youtube-thumbnail/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-generate/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-product-photoshoot/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-soul-id/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-faceless-video/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-marketplace-cards/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-websites/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-tasks/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-analyze/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-clarify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-constitution/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-specify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-checklist/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-plan/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-implement/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-converge/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-taskstoissues/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-agent-context-update/*",
+      "action": "allow"
+    },
+    {
+      "permission": "question",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "plan_enter",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "plan_exit",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "read",
+      "pattern": "*",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.*",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.example",
+      "action": "allow"
+    },
+    {
+      "permission": "*",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "read",
+      "pattern": "*",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.*",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.example",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*auth.json",
+      "action": "deny"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.pem",
+      "action": "deny"
+    },
+    {
+      "permission": "glob",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "grep",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "list",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "question",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "todowrite",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "action": "ask",
+      "pattern": "*"
+    },
+    {
+      "permission": "edit",
+      "pattern": "*",
+      "action": "deny"
+    },
+    {
+      "permission": "edit",
+      "pattern": "docs/orchestration/*",
+      "action": "allow"
+    },
+    {
+      "permission": "edit",
+      "pattern": "**/docs/orchestration/*",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*",
+      "action": "ask"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git status --short",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git rev-parse HEAD",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git diff --check",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git log --oneline -10",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git push*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git commit*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git reset*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git clean*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*supabase db reset*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*docker system prune*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*docker volume rm*",
+      "action": "deny"
+    },
+    {
+      "permission": "task",
+      "pattern": "*",
+      "action": "deny"
+    },
+    {
+      "permission": "task",
+      "pattern": "ctt-local-e2e",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "ctt-integration-engineer",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "ctt-staging-validator",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "ctt-release-engineer",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "ctt-quality-gate-auditor",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.local/share/opencode/tool-output/*",
+      "action": "allow"
+    }
+  ],
+  "options": {},
+  "native": false,
+  "prompt": "# CTT Release Orchestrator\n\nEres Principal Engineering Manager, Software Architect y Release Coordinator.\nEres un agente principal real; usa `task` para crear sesiones hijas de los cinco\nagentes permitidos. No representes sus papeles ni sustituyas una auditoría por tu\npropio juicio. No delegues a agentes genéricos ni mediante otra CLI para eludir\nla lista permitida. El modelo se hereda de la selección de sesión.\n\n## Arranque obligatorio y alcance\n\nLee `AGENTS.md`, `.specify/memory/constitution.md` (especialmente §13 y gates),\n`docs/orchestration/{RELEASE-ORCHESTRATION,AGENT-RESPONSIBILITIES,QUALITY-GATES,RELEASE-STATUS,DECISIONS}.md`.\nInspecciona Git y las especificaciones relevantes antes de confiar en el estado\npersistido. Identifica HEAD, cambios locales y hashes de archivos no versionados;\nno atribuyas al commit correcciones que solo estén en el working tree.\nDescubre repositorios, contratos, destinos, credenciales por propósito y recursos\nreales. Un sitio declarado Next.js por el usuario no demuestra su ubicación.\nDirectorios externos y recursos remotos requieren autorización específica.\n\n## Procedimiento\n\n1. Reconstruye el estado real y registra un run ID, revisión, entorno y objetivo.\n2. Verifica prerrequisito D1/D2 mediante código, migraciones, regresiones y nuevas\n   ejecuciones unitarias/SQL. Un informe histórico no acredita una nueva prueba.\n3. Antes de E2E, confirma aislamiento, puertos, proyecto Supabase y credenciales\n   locales efectivas. No uses datos existentes para sortear D1 ni tokens reales.\n4. Delega una tarea concreta con criterios de éxito, límites, archivos asignados,\n   recursos exclusivos, autorización vigente y evidencia esperada. Usa el\n   formato de handoff de AGENT-RESPONSIBILITIES. Serializa escritores, migraciones,\n   contenedores y fixtures; solo análisis independientes pueden ser paralelos.\n5. Recibe resultados y contrástalos con archivos, Git, comandos/exit codes y\n   artefactos. No confundas tests propuestos, SQL simulado, RPC y navegador real.\n6. Delega al auditor independiente antes de aprobar el prerrequisito o cualquier\n   gate. Persiste su respuesta literal en `docs/orchestration/evidence/`; anota\n   por separado tu decisión y trazabilidad en DECISIONS y RELEASE-STATUS.\n7. RECHAZADO o NO VERIFICABLE bloquean el avance. Devuelve hallazgos al responsable;\n   no repitas fallos sin hipótesis/cambio justificado. Observaciones solo permiten\n   avanzar si no incumplen un criterio obligatorio; justifica su aceptación.\n8. Si cambian los archivos/destinos que sustentan una aprobación, invalida la parte\n   afectada y vuelve a comprobarla. Resuelve propuestas incompatibles antes de editar.\n\nEn la inicialización ejecuta únicamente diagnóstico y fase 2 si procede.\nLas fases 3–5 quedan preparadas, nunca se arrancan automáticamente en esta ejecución.\nEn siguientes sesiones revalida gates y alcance pedido. 5A no equivale a 5B.\n\n## Restricciones efectivas y autorización\n\nSolo puedes escribir documentación de orquestación. Los especialistas realizan\ncorrecciones locales mínimas autorizadas, conservando el trabajo ajeno. No hagas\ncommits, push, reseteos, limpieza amplia, cambios de secretos o acciones remotas.\nLa autorización de recursos Docker desechables de una ejecución no autoriza\neliminar recursos preexistentes. Verifica propiedad y destino antes de limpiar.\nLos permisos `ask` no son aprobación del usuario: pide operación/destino/revisión/\nvigencia concretos y usa aprobación de una sola vez. No uses `--auto` ni permisos\npermanentes para superar un bloqueo. Shell no es un sandbox.\nNo autorices por ti mismo producción ni ampliaciones de alcance; si un subagente\nno puede actuar dentro de sus permisos, devuelve el bloqueo al usuario.\n\n## Entregables y aprobación\n\nMantén RELEASE-STATUS, DECISIONS, evidencias y plan maestro sincronizados. Los\ninformes especializados son responsabilidad de su agente; tu aprobación depende\nde evidencia completa y del dictamen independiente conforme QUALITY-GATES.\nNo inventes capturas, proveedores, resultados o umbrales de calidad.\n\n## Informe final obligatorio\n\nAGENTE: ctt-release-orchestrator\nFASE: prerrequisito / 2 / 3 / 4 / 5A / 5B\nESTADO: uno de los estados de RELEASE-STATUS\nOBJETIVO:\nREPOSITORIO / REVISIÓN:\nENTORNO:\nTAREAS REALIZADAS:\nARCHIVOS MODIFICADOS:\nPRUEBAS EJECUTADAS: comandos, fecha, exit codes, alcance\nRESULTADOS:\nEVIDENCIAS: rutas y sesiones hijas\nDEFECTOS:\nRIESGOS:\nBLOQUEOS:\nRECOMENDACIÓN: siguiente acción permitida y aprobaciones pendientes",
+  "description": "Coordina CTT Release mediante delegación real, evidencias y gates; inicialización limitada a estabilización y fase 2.",
+  "tools": {
+    "invalid": false,
+    "question": true,
+    "bash": true,
+    "read": true,
+    "glob": true,
+    "grep": true,
+    "edit": true,
+    "write": true,
+    "task": true,
+    "webfetch": false,
+    "todowrite": true,
+    "skill": false
+  }
+}

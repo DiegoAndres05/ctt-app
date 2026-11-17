@@ -1,0 +1,190 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT availability_verification_history
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT pre_reservation_verification_times
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon has no SELECT privilege on either view
+ act_as 
+--------
+ 
+(1 row)
+
+                                                                                 record_item_verification                                                                                  
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "43107846-3ec9-460f-852d-4d7a79ca0cf7", "expires_at": "2026-11-16T16:07:14.643034+00:00", "verification_status": "available", "pre_reservation_status": "partially_verified"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                                            record_item_verification                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "0b95f76a-d117-4369-b1f6-98557ee28d66", "expires_at": "2026-11-16T16:07:14.643034+00:00", "verification_status": "available", "pre_reservation_status": "verified"}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   verification times compute hours, item_count and two verifiers
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot read the history view after the data exists
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   another tenant sees no history rows
+NOTICE:  ok   another tenant sees no verification times
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   the owning tenant reads only its own history rows
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   every history row carries the actor name and the line label
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the history resolves the verifier name, the line label and the transition
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the owning tenant reads its verification times
+ act_as 
+--------
+ 
+(1 row)
+
+                                                                              start_item_verification                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "9f6853b4-13c8-4fcd-b02a-254f881e4b4b", "assigned_operator_id": "07000000-0000-4000-b000-000000000002", "verification_started_at": "2026-11-13T16:07:14.643034+00:00"}
+(1 row)
+
+                                                                                 record_item_verification                                                                                  
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "9f6853b4-13c8-4fcd-b02a-254f881e4b4b", "expires_at": "2026-11-16T16:07:14.643034+00:00", "verification_status": "available", "pre_reservation_status": "partially_verified"}
+(1 row)
+
+                                                                            record_item_verification                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "2faba8c9-6fa3-449a-9182-2f692538283e", "expires_at": "2026-11-16T16:07:14.643034+00:00", "verification_status": "available", "pre_reservation_status": "verified"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                     withdraw_pre_reservation_item                                      
+--------------------------------------------------------------------------------------------------------
+ {"withdrawn_item_ids": ["2faba8c9-6fa3-449a-9182-2f692538283e"], "pre_reservation_status": "verified"}
+(1 row)
+
+                                                                     promote_alternative_item                                                                      
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "f57b0c3b-a628-4f3d-94d6-f001a6abdb29", "replaced_item_id": "9f6853b4-13c8-4fcd-b02a-254f881e4b4b", "pre_reservation_status": "pending_verification"}
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the full sequence writes exactly one event per action
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   ordering by created_at, id yields the sequence of actions
+NOTICE:  ok   every event carries a coherent from_status/to_status pair
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the promoted event keeps metadata.replaced_item_id

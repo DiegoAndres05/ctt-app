@@ -1,0 +1,119 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                       set_quotation_terms                                                       
+---------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Términos.", "version_id": "e1000f69-6d5c-4c92-ad8c-3c4ac983234e", "valid_until": "2026-11-15T16:07:08.946938+00:00"}
+(1 row)
+
+                                                                                                                                issue_quotation                                                                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"total": 90.00, "status": "issued", "currency": "COP", "reference": "COT-00001", "version_id": "e1000f69-6d5c-4c92-ad8c-3c4ac983234e", "valid_until": "2026-11-15T16:07:08.946938+00:00", "public_token": "kszShWP6ldJcQ1yyXG94vEb9QuOJhfDR2-Avz-68rJU", "version_number": 1}
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "e1000f69-6d5c-4c92-ad8c-3c4ac983234e"}
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   v1 superseded
+NOTICE:  ok   payments kept
+ assert_equals 
+---------------
+ 
+(1 row)
+
+                              cancel_reservation                               
+-------------------------------------------------------------------------------
+ {"status": "cancelled", "version_id": "939fb2c1-1089-4acc-a165-8fb384a56c8a"}
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                       set_quotation_terms                                                       
+---------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Términos.", "version_id": "85166f26-45ee-4888-a8fb-8595daf01641", "valid_until": "2026-11-15T16:07:08.946938+00:00"}
+(1 row)
+
+                                                                                                                                issue_quotation                                                                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"total": 90.00, "status": "issued", "currency": "COP", "reference": "COT-00002", "version_id": "85166f26-45ee-4888-a8fb-8595daf01641", "valid_until": "2026-11-15T16:07:08.946938+00:00", "public_token": "b_xhEuuzWGFT7WNvNCXynBz3kBwkBQkXyw5PyW4IdRg", "version_number": 1}
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "85166f26-45ee-4888-a8fb-8595daf01641"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                          transition_reservation_status                          
+---------------------------------------------------------------------------------
+ {"status": "in_progress", "version_id": "d34a73fb-264b-4ec1-817d-d3ef6b7272d7"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent cannot cancel in progress
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   admin needs report
+ assert_raises 
+---------------
+ 
+(1 row)
+
+                              cancel_reservation                               
+-------------------------------------------------------------------------------
+ {"status": "cancelled", "version_id": "d34a73fb-264b-4ec1-817d-d3ef6b7272d7"}
+(1 row)
+

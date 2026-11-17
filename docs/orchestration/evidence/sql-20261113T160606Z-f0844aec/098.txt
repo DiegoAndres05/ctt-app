@@ -1,0 +1,210 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   set_quotation_terms rejects empty terms with TERMS_REQUIRED
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   validity past the 3-day pre-reservation hold raises VALIDITY_EXCEEDS_HOLD
+NOTICE:  ok   validity past 30 days raises VALIDITY_EXCEEDS_30_DAYS
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   first issue assigns the COT-00001 reference
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   issue_quotation reports status issued
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   issue returns the clear public token exactly once
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   default validity is issued_at + 48 hours (within a minute)
+NOTICE:  ok   issuing stores the pre-reservation fingerprint
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_issued audit carries version_number/currency and never the token or terms
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the family stores only the SHA-256 hex of the returned token
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   issuing twice is rejected: only a draft can be issued
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   terms of an issued version cannot be edited
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the freeze trigger rejects a unit_price UPDATE on an issued version
+NOTICE:  ok   changing the catalog tariff does not alter the issued total: 2 adults x 100.00 = 200.00
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   set_quotation_terms stores terms and a validity within the bounds
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   issue rejects a draft with empty terms
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ force_valid_until 
+-------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   the sweep expires exactly the overdue issued version
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the overdue version is now expired
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_expired audit carries reason_code due, never notes, terms or labels
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot save the organization terms template
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the terms template cannot be empty
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an admin saves the organization terms template
+NOTICE:  ok   anon has no EXECUTE privilege on the US2 functions
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE issue_quotation
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE expire_due_quotations

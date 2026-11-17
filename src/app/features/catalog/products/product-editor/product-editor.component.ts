@@ -21,8 +21,6 @@ import type {
   ProductType,
 } from '../../../../core/catalog/models/product.model';
 import {
-  LODGING_AMENITIES,
-  LODGING_TYPES,
   YACHT_ICONS,
   type GuestReview,
   type LodgingAmenity,
@@ -39,6 +37,8 @@ import {
   type ProductDetail,
 } from '../../../../core/catalog/services/product.service';
 import { PublicListingService } from '../../../../core/catalog/services/public-listing.service';
+import { PublicAgencyConfigService } from '../../../../core/catalog/services/public-agency-config.service';
+import type { PublicTaxonomyValue } from '../../../../core/catalog/models/public-agency-config.model';
 import { toAppError, type AppError } from '../../../../core/error/error-handler';
 import { AlertComponent } from '../../../../shared/components/alert/alert.component';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
@@ -103,6 +103,7 @@ export class ProductEditorComponent implements UnsavedChangesHost {
   private readonly categoriesApi = inject(CategoryService);
   private readonly addonsApi = inject(AddonService);
   private readonly publicApi = inject(PublicListingService);
+  private readonly publicConfigApi = inject(PublicAgencyConfigService);
   private readonly pricingApi = inject(PricingService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
@@ -111,8 +112,20 @@ export class ProductEditorComponent implements UnsavedChangesHost {
   readonly id = input<string | undefined>();
   readonly productType = input<EditorType>('experience');
 
-  protected readonly lodgingTypes = LODGING_TYPES;
-  protected readonly lodgingAmenities = LODGING_AMENITIES;
+  /** Agency taxonomy (feature 016): active values plus inactive ones the listing already uses. */
+  protected readonly taxonomy = signal<PublicTaxonomyValue[]>([]);
+  protected readonly lodgingTypes = computed(() => {
+    const current = this.publicDraft().lodgingType;
+    return this.taxonomy().filter(
+      (value) => value.kind === 'lodging_type' && (value.is_active || value.code === current),
+    );
+  });
+  protected readonly lodgingAmenities = computed(() => {
+    const selected = this.selectedAmenities();
+    return this.taxonomy().filter(
+      (value) => value.kind === 'amenity' && (value.is_active || selected.includes(value.code)),
+    );
+  });
   protected readonly yachtIcons = YACHT_ICONS;
   protected readonly placementLabel = placementLabel;
 
@@ -572,14 +585,16 @@ export class ProductEditorComponent implements UnsavedChangesHost {
     this.ready = false;
     this.error.set(null);
     try {
-      const [taxonomy, addons, publicCats] = await Promise.all([
+      const [taxonomy, addons, publicCats, publicTaxonomy] = await Promise.all([
         this.categoriesApi.list(),
         this.addonsApi.list(),
         this.publicApi.listCategories(true),
+        this.publicConfigApi.listTaxonomy(),
       ]);
       this.categories.set(taxonomy);
       this.catalogAddons.set(addons);
       this.publicCategories.set(publicCats);
+      this.taxonomy.set(publicTaxonomy);
       if (!id) {
         this.product.set(null);
         this.listing.set(null);

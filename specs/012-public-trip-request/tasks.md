@@ -1,5 +1,7 @@
 # Tasks: Solicitud pública desde la ficha
 
+> **Nota de alcance (2026-11-13)**: El formulario de solicitud vive en el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). El sitio llama a `submit_public_request` (003), que ya cubre consentimiento, deduplicación, límites y `LISTING_NOT_AVAILABLE`. La solicitud llega a `/sales/requests` con canal `web`. Esta app no construye la pantalla `/solicitar/:slug`. Las tareas de `tasks.md` no se implementan aquí.
+
 **Input**: `specs/012-public-trip-request/spec.md`. Contrato existente: `docs/modules/customer-requests.md` sección «Public web contract». Códigos ya traducidos en `src/app/core/error/error-handler.ts`.
 
 **Prerequisites**: spec.md y la ruta `/catalogo` de 011. El RPC `submit_public_request` ya está en `supabase/migrations/031_us1_public_request_intake.sql`.

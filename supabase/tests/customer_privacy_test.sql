@@ -80,6 +80,9 @@ VALUES
     '{"default_phone_country_code":"57"}'::jsonb
   );
 
+-- Feature 016: these agencies model CTT, so the organization-identifier transition is open.
+SELECT public.mark_public_site_as_migrated(o) FROM unnest(ARRAY[:'org_id'::uuid, :'org_b_id'::uuid]) AS o;
+
 SELECT pg_temp.add_collaborator(
   :'admin_id'::uuid, :'org_id'::uuid, 'admin-priv@test.invalid', 'Admin Priv', 'admin'
 );

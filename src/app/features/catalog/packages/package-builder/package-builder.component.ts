@@ -105,37 +105,47 @@ interface BuilderItem {
               <label for="description">Descripción</label>
               <textarea id="description" rows="3" [formField]="builderForm.description"></textarea>
 
-              <label for="total-days">Días de itinerario</label>
-              <input id="total-days" type="number" [formField]="builderForm.totalDays" />
+              <div class="form-grid compact">
+                <div class="field">
+                  <label for="total-days">Días de itinerario</label>
+                  <input id="total-days" type="number" [formField]="builderForm.totalDays" />
+                </div>
+                <div class="field">
+                  <label for="total-nights">Noches de itinerario</label>
+                  <input id="total-nights" type="number" [formField]="builderForm.totalNights" />
+                </div>
+              </div>
 
-              <label for="total-nights">Noches de itinerario</label>
-              <input id="total-nights" type="number" [formField]="builderForm.totalNights" />
-
-              <fieldset>
+              <fieldset class="plain subform">
                 <legend>Componentes</legend>
-                <p class="notice">
-                  Selecciona experiencias o alojamientos y el día del itinerario.
-                </p>
-
-                <label for="component">Producto</label>
-                <select id="component" [formField]="builderForm.pickerProductId">
-                  <option value="">Selecciona un componente</option>
-                  @for (product of candidates(); track product.id) {
-                    <option [value]="product.id">
-                      {{ product.name }} ({{ typeLabel(product.type) }})
-                    </option>
-                  }
-                </select>
-
-                <label for="day-number">Día</label>
-                <input id="day-number" type="number" [formField]="builderForm.pickerDayNumber" />
-
-                <button type="button" (click)="addItem()">Añadir al itinerario</button>
+                <p class="hint">Selecciona experiencias o alojamientos y el día del itinerario.</p>
+                <div class="picker">
+                  <div class="field">
+                    <label for="component">Producto</label>
+                    <select id="component" [formField]="builderForm.pickerProductId">
+                      <option value="">Selecciona un componente</option>
+                      @for (product of candidates(); track product.id) {
+                        <option [value]="product.id">
+                          {{ product.name }} ({{ typeLabel(product.type) }})
+                        </option>
+                      }
+                    </select>
+                  </div>
+                  <div class="field day">
+                    <label for="day-number">Día</label>
+                    <input
+                      id="day-number"
+                      type="number"
+                      [formField]="builderForm.pickerDayNumber"
+                    />
+                  </div>
+                  <button type="button" (click)="addItem()">+ Añadir</button>
+                </div>
 
                 @if (items().length === 0) {
                   <p class="notice">Aún no hay componentes en el paquete.</p>
                 } @else {
-                  <ul>
+                  <ul class="itinerary">
                     @for (item of items(); track item.sort_order + item.component_product_id) {
                       <li>
                         Día {{ item.day_number ?? '—' }} · {{ item.name }} ({{
@@ -148,16 +158,16 @@ interface BuilderItem {
                 }
               </fieldset>
 
-              <div class="actions">
+              @if (error(); as failure) {
+                <app-alert kind="error">{{ failure.message }}</app-alert>
+              }
+
+              <div class="form-actions">
                 <button class="primary" type="submit" [disabled]="builderForm().submitting()">
                   {{ builderForm().submitting() ? 'Guardando…' : 'Guardar borrador' }}
                 </button>
                 <a class="button-link" routerLink="/cms/packages">Cancelar</a>
               </div>
-
-              @if (error(); as failure) {
-                <app-alert kind="error">{{ failure.message }}</app-alert>
-              }
             </form>
           }
         }
@@ -193,30 +203,44 @@ interface BuilderItem {
 
     .card {
       display: grid;
-      gap: 0.5rem;
-      width: min(36rem, 100%);
+      gap: 0.6rem;
+      width: min(44rem, 100%);
     }
 
-    label,
-    legend {
-      font-weight: 600;
+    .card h1 {
+      margin: 0;
+      font-size: 1.35rem;
     }
 
-    fieldset {
-      border: 1px solid var(--color-border);
-      padding: 0.75rem;
+    .subform legend {
+      float: left;
+      padding: 0;
+    }
+
+    .picker {
       display: grid;
-      gap: 0.35rem;
+      grid-template-columns: minmax(0, 1fr) 6rem auto;
+      gap: 0.6rem;
+      align-items: end;
+    }
+
+    .itinerary li {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 640px) {
+      .picker {
+        grid-template-columns: 1fr;
+      }
     }
 
     .notice {
       margin: 0;
       font-weight: 400;
-    }
-
-    .field-error {
-      color: var(--color-danger);
-      margin: 0;
     }
 
     ul {
@@ -240,9 +264,8 @@ interface BuilderItem {
       margin: 0;
     }
 
-    button {
-      margin-top: 0.5rem;
-      padding: 0.6rem 1rem;
+    .itinerary button {
+      padding: 0.3rem 0.65rem;
     }
   `,
 })

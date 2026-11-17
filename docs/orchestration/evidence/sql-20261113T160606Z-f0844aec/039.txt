@@ -1,0 +1,4 @@
+NOTICE:  policy "catalog_media_public_read" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "catalog_media_operator_insert" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "catalog_media_operator_update" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "catalog_media_operator_delete" for relation "storage.objects" does not exist, skipping

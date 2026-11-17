@@ -97,6 +97,9 @@ VALUES
     '{"default_phone_country_code":"57"}'::jsonb
   );
 
+-- Feature 016: these agencies model CTT, so the organization-identifier transition is open.
+SELECT public.mark_public_site_as_migrated(o) FROM unnest(ARRAY[:'org_id'::uuid, :'org_off_id'::uuid]) AS o;
+
 SELECT pg_temp.add_collaborator(
   :'operator_id'::uuid, :'org_id'::uuid,
   'operador-web@test.invalid', 'Operador Web', 'operator'
@@ -361,8 +364,8 @@ SELECT tests.assert_raises(
         'interest_text', 'Tour'
       )
     )$$,
-  'VALIDATION_ERROR',
-  'an unknown organization is rejected'
+  'PUBLIC_ACCESS_UNAVAILABLE',
+  'an unknown organization is rejected with the generic public denial'
 );
 
 SELECT tests.assert_raises(
@@ -374,8 +377,8 @@ SELECT tests.assert_raises(
       ))$$,
     :'org_off_id'
   ),
-  'VALIDATION_ERROR',
-  'an inactive organization is rejected'
+  'PUBLIC_ACCESS_UNAVAILABLE',
+  'an inactive organization is rejected with the generic public denial'
 );
 
 SELECT tests.assert_raises(

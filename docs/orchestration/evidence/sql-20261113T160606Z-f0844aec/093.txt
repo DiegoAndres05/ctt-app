@@ -1,0 +1,152 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+--- incomplete cutover ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   complete_public_cutover fails while manifesto items lack published active listings
+NOTICE:  ok   source stays legacy after incomplete cutover attempt
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- publish manifesto items ---
+ act_as 
+--------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                         attach_public_image                                         
+-----------------------------------------------------------------------------------------------------
+ {"id": "6a4166ef-9f1c-4f68-95b9-a912957b2a83", "ref": "/images/cutover-offer.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:02.287494+00:00"}
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                         attach_public_image                                         
+-----------------------------------------------------------------------------------------------------
+ {"id": "1cfd92a7-847d-4595-b387-bc7e66a72196", "ref": "/images/cutover-villa.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:02.287494+00:00"}
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   yacht listing has no invented display_price
+                                         attach_public_image                                         
+-----------------------------------------------------------------------------------------------------
+ {"id": "9f5782bc-9c15-42ed-b90d-0e2fdaaf3375", "ref": "/images/cutover-yacht.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:02.287494+00:00"}
+(1 row)
+
+--- successful cutover ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   complete_public_cutover switches source to panel
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   second cutover call is rejected
+NOTICE:  ok   panel projection includes the three published manifesto listings
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- tariff vs later display_price ---
+ act_as 
+--------
+ 
+(1 row)
+
+                          save_public_listing                          
+-----------------------------------------------------------------------
+ {"id": "dc7eb195-9afe-4855-accd-2ed6ac2149e2", "status": "published"}
+(1 row)
+
+NOTICE:  ok   later display_price edit does not version pricing_schemes
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   initial tariff remains the copied current price (500950)

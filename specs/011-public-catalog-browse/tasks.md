@@ -1,5 +1,7 @@
 # Tasks: Portal público del catálogo
 
+> **Nota de alcance (2026-11-13)**: El catálogo que ve el viajero vive en el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/), no en esta app. Ese sitio lee lo publicado con `get_public_site` (009). Esta app no construye una segunda vitrina. Lo que queda en este repositorio es la lectura tipada `parsePublicSite` y el contrato documentado en `docs/modules/catalog-pricing.md` («Sitio público externo»). Las tareas de `tasks.md` no se implementan aquí.
+
 **Input**: `specs/011-public-catalog-browse/spec.md`. Diseño de apoyo: `docs/modules/catalog-pricing.md` (RPC `get_public_site`) y `src/app/core/catalog/models/public-listing.model.ts`.
 
 **Prerequisites**: spec.md. No hace falta plan.md nuevo: la proyección pública ya existe en 009.

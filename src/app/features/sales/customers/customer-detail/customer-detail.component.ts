@@ -72,51 +72,99 @@ const DOCUMENT_TYPES = Object.keys(DOCUMENT_TYPE_LABELS) as DocumentType[];
           >
             <h2>Datos de contacto</h2>
             @if (locked()) {
-              <p>Nombre: {{ draft().firstName }}</p>
-              <p>Apellido: {{ draft().lastName || '—' }}</p>
-              <p>Correo: {{ draft().email || '—' }}</p>
-              <p>Teléfono: {{ draft().phone || '—' }}</p>
-              <p>País: {{ draft().countryCode || '—' }}</p>
+              <dl class="facts">
+                <div>
+                  <dt>Nombre</dt>
+                  <dd>{{ draft().firstName }}</dd>
+                </div>
+                <div>
+                  <dt>Apellido</dt>
+                  <dd>{{ draft().lastName || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Correo</dt>
+                  <dd>{{ draft().email || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Teléfono</dt>
+                  <dd>{{ draft().phone || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>País</dt>
+                  <dd>{{ draft().countryCode || '—' }}</dd>
+                </div>
+              </dl>
             } @else {
-              <label class="req" for="first-name">Nombre</label>
-              <input id="first-name" type="text" [formField]="customerForm.firstName" />
-              <label for="last-name">Apellido</label>
-              <input id="last-name" type="text" [formField]="customerForm.lastName" />
-              <label for="email">Correo</label>
-              <input id="email" type="email" [formField]="customerForm.email" />
-              <label for="phone">Teléfono</label>
-              <input id="phone" type="tel" [formField]="customerForm.phone" />
-              <p>Ingresa correo o teléfono.</p>
+              <div class="form-grid">
+                <div class="field req">
+                  <label for="first-name">Nombre</label>
+                  <input id="first-name" type="text" [formField]="customerForm.firstName" />
+                </div>
+                <div class="field">
+                  <label for="last-name">Apellido</label>
+                  <input id="last-name" type="text" [formField]="customerForm.lastName" />
+                </div>
+                <div class="field" [class.has-error]="contactInvalid">
+                  <label for="email">Correo</label>
+                  <input id="email" type="email" [formField]="customerForm.email" />
+                </div>
+                <div class="field" [class.has-error]="contactInvalid">
+                  <label for="phone">Teléfono</label>
+                  <input id="phone" type="tel" [formField]="customerForm.phone" />
+                </div>
+                <div class="field">
+                  <label for="country">País</label>
+                  <input id="country" type="text" [formField]="customerForm.countryCode" />
+                </div>
+              </div>
               @if (contactInvalid) {
                 <p class="field-error">Ingresa correo o teléfono.</p>
+              } @else {
+                <p class="hint">Necesitamos al menos un correo o un teléfono.</p>
               }
-              <label for="country">País</label>
-              <input id="country" type="text" [formField]="customerForm.countryCode" />
             }
           </section>
 
           <section class="section" [class.is-disabled]="locked()">
             <h2>Documento</h2>
             @if (locked()) {
-              <p>Tipo: {{ draft().documentType ? documentLabel(draft().documentType) : '—' }}</p>
-              <p>Número: {{ draft().documentNumber || '—' }}</p>
+              <dl class="facts">
+                <div>
+                  <dt>Tipo</dt>
+                  <dd>{{ draft().documentType ? documentLabel(draft().documentType) : '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Número</dt>
+                  <dd>{{ draft().documentNumber || '—' }}</dd>
+                </div>
+              </dl>
             } @else {
-              <label for="document-type">Tipo</label>
-              <select id="document-type" [formField]="customerForm.documentType">
-                <option value="">Sin documento</option>
-                @for (type of documentTypes; track type) {
-                  <option [value]="type">{{ documentLabel(type) }}</option>
-                }
-              </select>
-              <label for="document-number">Número</label>
-              <input id="document-number" type="text" [formField]="customerForm.documentNumber" />
+              <div class="form-grid">
+                <div class="field">
+                  <label for="document-type">Tipo</label>
+                  <select id="document-type" [formField]="customerForm.documentType">
+                    <option value="">Sin documento</option>
+                    @for (type of documentTypes; track type) {
+                      <option [value]="type">{{ documentLabel(type) }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="document-number">Número</label>
+                  <input
+                    id="document-number"
+                    type="text"
+                    [formField]="customerForm.documentNumber"
+                  />
+                </div>
+              </div>
             }
           </section>
 
           @if (!locked()) {
-            <div class="actions">
+            <div class="form-actions">
               <button class="primary" type="submit" [disabled]="saving()">
-                {{ saving() ? 'Guardando…' : 'Guardar' }}
+                {{ saving() ? 'Guardando…' : 'Guardar cambios' }}
               </button>
             </div>
           }
@@ -127,28 +175,30 @@ const DOCUMENT_TYPES = Object.keys(DOCUMENT_TYPE_LABELS) as DocumentType[];
           @if (history().length === 0) {
             <p>Este cliente todavía no tiene solicitudes.</p>
           } @else {
-            <table class="data">
-              <thead>
-                <tr>
-                  <th>Referencia</th>
-                  <th>Canal</th>
-                  <th>Estado</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (row of history(); track row.id) {
+            <div class="table-wrap">
+              <table class="data">
+                <thead>
                   <tr>
-                    <td>
-                      <a [routerLink]="['/sales/requests', row.id]">{{ row.reference }}</a>
-                    </td>
-                    <td>{{ channelLabel(row.channel) }}</td>
-                    <td>{{ statusLabel(row.status) }}</td>
-                    <td>{{ row.created_at | date: 'short' }}</td>
+                    <th>Referencia</th>
+                    <th>Canal</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
                   </tr>
-                }
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  @for (row of history(); track row.id) {
+                    <tr>
+                      <td>
+                        <a [routerLink]="['/sales/requests', row.id]">{{ row.reference }}</a>
+                      </td>
+                      <td>{{ channelLabel(row.channel) }}</td>
+                      <td>{{ statusLabel(row.status) }}</td>
+                      <td>{{ row.created_at | date: 'short' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
           }
           @if (!current.is_anonymized) {
             <a

@@ -1,0 +1,69 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                            set_quotation_terms                                                            
+-------------------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Términos del viaje.", "version_id": "02f54357-965a-4a64-bbf8-44886d13db83", "valid_until": "2026-11-15T16:07:10.922906+00:00"}
+(1 row)
+
+                                                                                                                                issue_quotation                                                                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"total": 70.00, "status": "issued", "currency": "COP", "reference": "COT-00001", "version_id": "02f54357-965a-4a64-bbf8-44886d13db83", "valid_until": "2026-11-15T16:07:10.922906+00:00", "public_token": "g21fqhzZeaTz50BnWiziwd64pTbNT96mrbHeycZBXnY", "version_number": 1}
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "02f54357-965a-4a64-bbf8-44886d13db83"}
+(1 row)
+
+NOTICE:  ok   public voucher is redacted
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   unknown token
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                         void_reservation_voucher                          
+---------------------------------------------------------------------------
+ {"available": false, "family_id": "66325ead-2aad-4408-b948-1aa2dbbc3fa0"}
+(1 row)
+
+NOTICE:  ok   voided token
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon still cannot select families

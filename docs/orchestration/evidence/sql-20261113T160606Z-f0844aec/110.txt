@@ -1,0 +1,215 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+NOTICE:  ok   fixture: Beta owns audit events that Alpha must never see
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- Alpha reads only Alpha ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   organizations: an Alpha admin lists only its own agency
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: an Alpha admin lists only Alpha collaborators
+NOTICE:  ok   audit_events: an Alpha admin reads only Alpha history
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- direct access by foreign id ---
+NOTICE:  ok   organizations: fetching Beta by its own id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: fetching a Beta collaborator by id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: a Beta collaborator cannot be found by email either
+NOTICE:  ok   audit_events: filtering explicitly by the Beta tenant returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a foreign id and a non-existent id are indistinguishable
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- cross-tenant writes ---
+NOTICE:  ok   organizations: an Alpha admin cannot rename Beta
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: an Alpha admin cannot demote a Beta administrator
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: DELETE reaches no collaborator of another tenant
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: DELETE reaches no collaborator of the caller's own tenant either
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   organizations: DELETE reaches no agency at all
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: an Alpha admin cannot create a collaborator inside Beta
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: an Alpha admin cannot move a collaborator into Beta
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   audit_events: an authenticated session cannot forge history for any tenant
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- role scope inside a tenant ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   audit_events: a non-admin collaborator reads no history, not even its own tenant's
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: a non-admin still sees its own agency roster
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   organizations: a non-admin cannot modify its own agency
+--- sessions with no tenant claim ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   organizations: a session with no organization_id claim reads nothing
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: a session with no organization_id claim reads nothing
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   audit_events: a session with no organization_id claim reads nothing
+ set_config 
+------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   organizations: anon holds no privilege on the table
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   user_profiles: anon holds no privilege on the table
+NOTICE:  ok   audit_events: anon holds no privilege on the table
+--- Beta is intact ---
+NOTICE:  ok   Beta's name is unchanged after every attempt
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   Beta's roster is unchanged after every attempt
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- rls_isolation_test: all assertions passed ---

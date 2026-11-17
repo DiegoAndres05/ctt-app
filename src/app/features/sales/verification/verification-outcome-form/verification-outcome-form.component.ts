@@ -93,12 +93,14 @@ function buildPayload(draft: OutcomeDraft): VerificationOutcomePayload {
 
       <fieldset class="plain">
         <legend class="req">Resultado</legend>
-        @for (option of outcomeStatuses; track option) {
-          <label class="check">
-            <input type="radio" [formField]="outcomeForm.status" [value]="option" />
-            {{ statusLabel(option) }}
-          </label>
-        }
+        <div class="choices">
+          @for (option of outcomeStatuses; track option) {
+            <label class="choice">
+              <input type="radio" [formField]="outcomeForm.status" [value]="option" />
+              {{ statusLabel(option) }}
+            </label>
+          }
+        </div>
         @if (outcomeForm.status().touched()) {
           @for (failure of outcomeForm.status().errors(); track failure.kind) {
             <p class="field-error">{{ failure.message }}</p>
@@ -106,26 +108,31 @@ function buildPayload(draft: OutcomeDraft): VerificationOutcomePayload {
         }
       </fieldset>
 
-      <label class="req" for="contact-person">Persona de contacto en el proveedor</label>
-      <input id="contact-person" type="text" [formField]="outcomeForm.contactPerson" />
-      @if (outcomeForm.contactPerson().touched()) {
-        @for (failure of outcomeForm.contactPerson().errors(); track failure.kind) {
-          <p class="field-error">{{ failure.message }}</p>
-        }
-      }
-
-      <label class="req" for="contact-method">Medio de contacto</label>
-      <select id="contact-method" [formField]="outcomeForm.contactMethod">
-        <option value="">Selecciona un medio</option>
-        @for (method of contactMethods; track method) {
-          <option [value]="method">{{ methodLabel(method) }}</option>
-        }
-      </select>
-      @if (outcomeForm.contactMethod().touched()) {
-        @for (failure of outcomeForm.contactMethod().errors(); track failure.kind) {
-          <p class="field-error">{{ failure.message }}</p>
-        }
-      }
+      <div class="form-grid">
+        <div class="field req">
+          <label for="contact-person">Persona de contacto en el proveedor</label>
+          <input id="contact-person" type="text" [formField]="outcomeForm.contactPerson" />
+          @if (outcomeForm.contactPerson().touched()) {
+            @for (failure of outcomeForm.contactPerson().errors(); track failure.kind) {
+              <p class="field-error">{{ failure.message }}</p>
+            }
+          }
+        </div>
+        <div class="field req">
+          <label for="contact-method">Medio de contacto</label>
+          <select id="contact-method" [formField]="outcomeForm.contactMethod">
+            <option value="">Selecciona un medio</option>
+            @for (method of contactMethods; track method) {
+              <option [value]="method">{{ methodLabel(method) }}</option>
+            }
+          </select>
+          @if (outcomeForm.contactMethod().touched()) {
+            @for (failure of outcomeForm.contactMethod().errors(); track failure.kind) {
+              <p class="field-error">{{ failure.message }}</p>
+            }
+          }
+        </div>
+      </div>
 
       @if (outcomeForm.status().value() === 'available') {
         <label for="hold-expires">Retención hasta</label>
@@ -159,22 +166,51 @@ function buildPayload(draft: OutcomeDraft): VerificationOutcomePayload {
         }
       }
 
-      <div class="actions">
+      @if (error(); as failure) {
+        <app-alert kind="error">{{ failure.message }}</app-alert>
+      }
+
+      <div class="form-actions">
         <button class="primary" type="submit" [disabled]="outcomeForm().submitting()">
           {{ outcomeForm().submitting() ? 'Guardando…' : 'Guardar resultado' }}
         </button>
         <button type="button" (click)="cancelled.emit()">Cancelar</button>
       </div>
-
-      @if (error(); as failure) {
-        <app-alert kind="error">{{ failure.message }}</app-alert>
-      }
     </form>
   `,
   styles: `
     legend.req::after {
       content: ' *';
       color: var(--color-danger);
+    }
+
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 0.8rem;
+      border: 1px solid var(--color-border-strong);
+      border-radius: 999px;
+      background: var(--color-surface);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .choice:has(input:checked) {
+      border-color: var(--color-primary);
+      background: var(--color-primary-tint);
+      color: var(--color-primary-hover);
+    }
+
+    .choice:has(input:focus-visible) {
+      outline: var(--focus-ring);
+      outline-offset: 2px;
     }
   `,
 })

@@ -1,0 +1,2 @@
+NOTICE:  T050 register_agency: 42.561000 ms (budget auth < 2000 ms)
+NOTICE:  T050 audit.log_event: 3.567000 ms (budget < 500 ms)

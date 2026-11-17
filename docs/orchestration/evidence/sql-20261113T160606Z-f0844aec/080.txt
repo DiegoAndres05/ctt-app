@@ -1,0 +1,210 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+--- Alpha operator creates a product ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   create_product stores a draft experience in the caller's tenant
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the experience subtype row is created atomically
+NOTICE:  ok   products: an Alpha operator lists only Alpha products
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   experiences: an Alpha operator lists only Alpha subtypes
+NOTICE:  ok   accommodations: an Alpha operator sees no Beta accommodations
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- direct access by foreign id ---
+NOTICE:  ok   categories: an Alpha operator lists only Alpha taxonomies
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   products: fetching Beta by its own id returns no row
+NOTICE:  ok   experiences: fetching a Beta subtype by id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   accommodations: fetching a Beta subtype by id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   categories: fetching a Beta category by id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   product_categories: fetching Beta tags by product id returns no row
+NOTICE:  ok   a foreign product id and a non-existent id are indistinguishable
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- cross-tenant writes ---
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   products: an Alpha operator cannot rename a Beta product
+NOTICE:  ok   experiences: an Alpha operator cannot mutate a Beta subtype
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   categories: an Alpha operator cannot rename a Beta category
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   set_product_status on a foreign id does not disclose that the product exists
+NOTICE:  ok   create_product rejects a category that belongs to another tenant
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- activation requires a valid price ---
+NOTICE:  ok   set_product_status refuses to activate a product without a current pricing scheme
+ assert_raises 
+---------------
+ 
+(1 row)
+
+                          set_product_status                          
+----------------------------------------------------------------------
+ {"id": "c6559891-98ff-4e17-9df1-754977765a67", "status": "inactive"}
+(1 row)
+
+NOTICE:  ok   set_product_status can deactivate a draft product
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   deactivating a product emits product_deactivated attributed to the operator
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- agent is read-only ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   products: an agent can read its own tenant catalog
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot create a product
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- sessions with no tenant claim ---
+NOTICE:  ok   categories: an agent cannot insert a taxonomy
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   products: a session with no organization_id claim reads nothing
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- Beta is intact ---
+NOTICE:  ok   categories: a session with no organization_id claim reads nothing
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   Beta's product name is unchanged after every attempt
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- catalog_rls_test: all assertions passed ---
+NOTICE:  ok   Beta's category name is unchanged after every attempt

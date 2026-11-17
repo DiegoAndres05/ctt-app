@@ -1,0 +1,90 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                         attach_public_image                                          
+------------------------------------------------------------------------------------------------------
+ {"id": "f2113ac0-66dc-4311-89cc-bc14078c9982", "ref": "/images/sold-out-offer.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:04.387699+00:00"}
+(1 row)
+
+ set_public_listing_sold_out 
+-----------------------------
+ {"sold_out": true}
+(1 row)
+
+NOTICE:  ok   sold_out flag is set while listing stays published
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   product status remains active when marking sold out
+NOTICE:  ok   pricing_schemes is unchanged by sold_out toggle
+ assert_true 
+-------------
+ 
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   public projection shows soldOut=true and acceptsRequests=false
+ act_as 
+--------
+ 
+(1 row)
+
+ set_public_listing_sold_out 
+-----------------------------
+ {"sold_out": false}
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   clearing sold_out restores acceptsRequests=true

@@ -6,6 +6,8 @@
 
 **Status**: Draft
 
+> **Nota de alcance (2026-11-13)**: La pantalla «Consultar mi solicitud» vive en el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). En este repositorio solo corresponde el RPC `get_traveler_case_status`, sus pruebas SQL y su documentación (tareas T001–T007 y T017–T018, sin la carpeta Angular). Las tareas de pantalla (T008–T016) las implementa el sitio.
+
 **Input**: Iteración 5 de 5. Quien ya tiene una referencia puede ver en qué etapa va su caso, demostrando que es el contacto, sin cuenta y sin ver el expediente interno. Una solicitud no se presenta como reserva (`.specify/mainspec.md`, principios 1 y 5, criterio de éxito 5–9).
 
 ## User Scenarios & Testing *(mandatory)*

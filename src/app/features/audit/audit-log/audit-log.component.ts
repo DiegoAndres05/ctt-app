@@ -34,6 +34,12 @@ const EVENT_TYPES: readonly AuditEventType[] = [
   'reservation_cancelled',
   'reservation_status_changed',
   'request_received',
+  'public_taxonomy_changed',
+  'public_profile_updated',
+  'public_key_generated',
+  'public_key_revoked',
+  'public_source_config_changed',
+  'traveler_case_lookup',
 ];
 
 const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
@@ -57,6 +63,12 @@ const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
   reservation_cancelled: 'Cancelación de reserva',
   reservation_status_changed: 'Cambio de estado de reserva',
   request_received: 'Solicitud recibida',
+  public_taxonomy_changed: 'Categoría, tipo o amenidad pública',
+  public_profile_updated: 'Perfil público actualizado',
+  public_key_generated: 'Clave pública generada',
+  public_key_revoked: 'Clave pública revocada',
+  public_source_config_changed: 'Fuente del sitio público',
+  traveler_case_lookup: 'Consulta de etapa por el viajero',
 };
 
 /**
@@ -72,30 +84,34 @@ const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
         <h1>Auditoría</h1>
       </header>
 
-      <form class="filters" (submit)="onFilter($event)" novalidate>
-        <label for="event-type">Tipo de evento</label>
-        <select id="event-type" [formField]="filterForm.eventType">
-          <option value="">Todos</option>
-          @for (type of eventTypes; track type) {
-            <option [value]="type">{{ eventLabel(type) }}</option>
-          }
-        </select>
-
-        <label for="actor">Actor</label>
-        <select id="actor" [formField]="filterForm.actorId">
-          <option value="">Todos</option>
-          @for (actor of actors(); track actor.id) {
-            <option [value]="actor.id">{{ actor.full_name }}</option>
-          }
-        </select>
-
-        <label for="from">Desde</label>
-        <input id="from" type="date" [formField]="filterForm.from" />
-
-        <label for="to">Hasta</label>
-        <input id="to" type="date" [formField]="filterForm.to" />
-
-        <button type="submit">Filtrar</button>
+      <form class="filters-bar" (submit)="onFilter($event)" novalidate>
+        <label for="event-type">
+          Tipo de evento
+          <select id="event-type" [formField]="filterForm.eventType">
+            <option value="">Todos</option>
+            @for (type of eventTypes; track type) {
+              <option [value]="type">{{ eventLabel(type) }}</option>
+            }
+          </select>
+        </label>
+        <label for="actor">
+          Actor
+          <select id="actor" [formField]="filterForm.actorId">
+            <option value="">Todos</option>
+            @for (actor of actors(); track actor.id) {
+              <option [value]="actor.id">{{ actor.full_name }}</option>
+            }
+          </select>
+        </label>
+        <label for="from">
+          Desde
+          <input id="from" type="date" [formField]="filterForm.from" />
+        </label>
+        <label for="to">
+          Hasta
+          <input id="to" type="date" [formField]="filterForm.to" />
+        </label>
+        <button class="primary" type="submit">Filtrar</button>
       </form>
 
       @if (loading()) {
@@ -105,28 +121,30 @@ const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
       } @else if (events().length === 0) {
         <p>No hay eventos para los filtros seleccionados.</p>
       } @else {
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Evento</th>
-              <th>Actor</th>
-              <th>Resultado</th>
-              <th>Recurso</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (event of events(); track event.id) {
+        <div class="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td>{{ event.created_at | date: 'short' }}</td>
-                <td>{{ eventLabel(event.event_type) }}</td>
-                <td>{{ event.actor_name ?? 'Sistema' }}</td>
-                <td>{{ event.result }}</td>
-                <td>{{ event.resource_type ?? '—' }}</td>
+                <th>Fecha</th>
+                <th>Evento</th>
+                <th>Actor</th>
+                <th>Resultado</th>
+                <th>Recurso</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (event of events(); track event.id) {
+                <tr>
+                  <td>{{ event.created_at | date: 'short' }}</td>
+                  <td>{{ eventLabel(event.event_type) }}</td>
+                  <td>{{ event.actor_name ?? 'Sistema' }}</td>
+                  <td>{{ event.result }}</td>
+                  <td>{{ event.resource_type ?? '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
 
         <nav class="pager">
           <button type="button" [disabled]="offset() === 0" (click)="goTo(offset() - limit())">
@@ -160,13 +178,6 @@ const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
 
     h1 {
       margin: 0.25rem 0 0;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-      gap: 0.5rem 1rem;
-      align-items: end;
     }
 
     label {

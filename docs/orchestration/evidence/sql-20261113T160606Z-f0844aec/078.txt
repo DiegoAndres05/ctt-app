@@ -1,0 +1,84 @@
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.providers
+NOTICE:  ok   RLS enabled on public.products
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.experiences
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.accommodations
+NOTICE:  ok   RLS enabled on public.categories
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.product_categories
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.pricing_schemes
+NOTICE:  ok   RLS enabled on public.add_ons
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.product_addons
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.packages
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.package_items
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   EXCLUDE constraint pricing_schemes_product_season_no_overlap is active
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   EXCLUDE constraint pricing_schemes_addon_season_no_overlap is active
+NOTICE:  ok   overlapping current seasons are rejected by EXCLUDE
+ assert_raises 
+---------------
+ 
+(1 row)
+

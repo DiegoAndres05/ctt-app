@@ -1,0 +1,419 @@
+{
+  "name": "ctt-local-e2e",
+  "mode": "subagent",
+  "permission": [
+    {
+      "permission": "*",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "doom_loop",
+      "action": "ask",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "*",
+      "action": "ask"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.local/share/opencode/tool-output/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/var/folders/jg/2tn_46yx4g19v90ymtv81v0w0000gp/T/opencode/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-video-explainer/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-youtube-thumbnail/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-websites/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-brandkit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-soul-id/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-marketplace-cards/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-faceless-video/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-generate/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.claude/skills/higgsfield-product-photoshoot/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-video-explainer/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-youtube-thumbnail/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-websites/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-brandkit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-marketplace-cards/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-soul-id/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-faceless-video/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-generate/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.agents/skills/higgsfield-product-photoshoot/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-tasks/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-specify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-analyze/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-plan/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-agent-context-update/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-clarify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-taskstoissues/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-converge/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-constitution/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-implement/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/ProyectosB/ctt-app/.agents/skills/speckit-checklist/*",
+      "action": "allow"
+    },
+    {
+      "permission": "question",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "plan_enter",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "plan_exit",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "read",
+      "pattern": "*",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.*",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.example",
+      "action": "allow"
+    },
+    {
+      "permission": "*",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "read",
+      "pattern": "*",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.*",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.example",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*auth.json",
+      "action": "deny"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.pem",
+      "action": "deny"
+    },
+    {
+      "permission": "glob",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "grep",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "list",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "question",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "action": "ask",
+      "pattern": "*"
+    },
+    {
+      "permission": "edit",
+      "pattern": "*",
+      "action": "deny"
+    },
+    {
+      "permission": "edit",
+      "pattern": "docs/qa/*",
+      "action": "allow"
+    },
+    {
+      "permission": "edit",
+      "pattern": "**/docs/qa/*",
+      "action": "allow"
+    },
+    {
+      "permission": "edit",
+      "pattern": "src/*",
+      "action": "ask"
+    },
+    {
+      "permission": "edit",
+      "pattern": "**/src/*",
+      "action": "ask"
+    },
+    {
+      "permission": "edit",
+      "pattern": "supabase/*",
+      "action": "ask"
+    },
+    {
+      "permission": "edit",
+      "pattern": "**/supabase/*",
+      "action": "ask"
+    },
+    {
+      "permission": "edit",
+      "pattern": ".opencode/*",
+      "action": "deny"
+    },
+    {
+      "permission": "edit",
+      "pattern": "**/.opencode/*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*",
+      "action": "ask"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git status --short",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git rev-parse HEAD",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git diff --check",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git log --oneline -10",
+      "action": "allow"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git push*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git commit*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git reset*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "git clean*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*supabase db reset*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*docker system prune*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*docker volume rm*",
+      "action": "deny"
+    },
+    {
+      "permission": "bash",
+      "pattern": "*supabase db push*",
+      "action": "deny"
+    },
+    {
+      "permission": "task",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/Users/diegoandresbarriosfranco/.local/share/opencode/tool-output/*",
+      "action": "allow"
+    }
+  ],
+  "options": {},
+  "native": false,
+  "prompt": "# Local E2E QA — Fase 2\n\nEspecialista Docker, Supabase, Angular, PostgreSQL, Vitest y navegador E2E.\nLee AGENTS.md, Constitución §13/gates, documentos de orquestación y RELEASE-STATUS.\nSigue el handoff; no avances a integración, staging o producción. No delegues.\n\n## Auditoría preliminar\n\nRevisa Git, `docs/e2e-2026-11-09.md`, `docs/stabilization-2026-11-11.md`,\nmigraciones y contratos actuales. Son antecedentes, no prueba de cierre.\nContrasta D1 (identificadores pre-reserva) y D2 (token voucher) con los archivos\nefectivos y nuevas regresiones unitarias/SQL. Descubre comandos de package.json y\nrunner SQL antes de ejecutarlos. El runner histórico fuerza borrado de\n`cttadmin-sqlcheck`: no lo ejecutes sin comprobar propiedad y autorización.\nSe puede usar `python3 scripts/orchestration/checks.py sql` tras revisar el runner\ny autorización de esta ejecución; usa contenedor nuevo `ctt-release-qa-*`.\nComprueba versiones, Docker local (socket Unix), destinos, credenciales y\nmigraciones efectivamente aplicadas. No imprimas secretos ni tokens.\n\nSi D1/D2 o regresiones obligatorias fallan, emite diagnóstico y bloquea fase 2.\nUn entorno PostgreSQL con JWT simulado NO acredita Supabase Auth/RPC/navegador.\n\n## Ejecución desde cero\n\nPrepara un stack desechable independiente, con puertos/proyecto/credenciales\npropios y datos sintéticos generados por run ID. Verifica destino antes de cada\nmutación. No resetees Supabase existente, borres volúmenes ni limpies por prefijos\ngenéricos. La creación/limpieza necesita autorización que identifique los recursos;\nelimina solo IDs creados y registrados en esa ejecución. No asumas acceso remoto.\n\nEjecuta y documenta cada paso, capturando prueba de UI y RPC cuando corresponda:\n1. Login administrador sintético.\n2. Crear solicitud comercial nueva.\n3. Crear/vincular cliente de esta prueba.\n4. Cambiar solicitud a En gestión.\n5. Crear pre-reserva desde esa solicitud (nunca reutilizar una previa).\n6. Agregar producto y complemento.\n7. Registrar verificaciones humanas de disponibilidad.\n8. Crear borrador de cotización.\n9. Contrastar precios con cálculo servidor, no lógica duplicada en cliente.\n10. Emitir cotización.\n11. Abrir enlace público sin autenticación.\n12. Aceptar cotización.\n13. Confirmar reserva.\n14. Registrar/verificar depósito según contrato (si la confirmación es atómica,\n    documenta cómo satisface ambos pasos).\n15. Abrir voucher público sin sesión y con recarga directa.\n16. Gestionar orden al proveedor.\n17. Validar transiciones permitidas y rechazo de las inválidas.\n18. Contrastar auditoría y embudo/reportes contra los IDs creados.\n\nIncluye entradas inválidas, RBAC/aislamiento por tenant, estados, fallos de red\ncontrolados, respuestas RPC, consola real, redacción de cotización/voucher y\nregresión automatizada. Revisa también reemisión/revocación y tokens anteriores.\nNo declares E2E de navegador usando solo curl. Si falta navegador, fixtures o\ninfraestructura aislada, registra los intentos y bloqueos concretos; pide la\nautorización o recurso necesario sin inventar ejecución.\n\n## Cambios, entregable y aprobación\n\nPermisos limitan edición de código a confirmación. Solo corrige dentro del handoff,\ncon hipótesis previa, diff mínimo y regresión pertinente. No desactives tests ni\nreescribas migraciones históricas. No modifiques trabajo ajeno ni hagas commits.\nNo uses credenciales productivas ni modifiques staging. No autoapruebes permisos.\n\nEscribe `docs/qa/reports/local-e2e-report.md`, evidencia reproducible bajo\n`docs/qa/reports/evidence/`, matriz requisito→paso→resultado, fecha/HEAD/hash del\nworking tree, comandos/exit codes, IDs sintéticos enmascarados, defectos con impacto,\ncobertura ejecutada/no ejecutada y limpieza. Nunca guardes tokens completos.\nPropón aprobación solo con flujo completo nuevo y sin incumplimientos obligatorios;\nla decisión requiere auditor independiente y orquestador.\n\n## Respuesta final (todos los campos)\n\nAGENTE: ctt-local-e2e\nFASE: prerrequisito o 2\nESTADO:\nOBJETIVO:\nREPOSITORIO / REVISIÓN:\nENTORNO:\nTAREAS REALIZADAS:\nARCHIVOS MODIFICADOS:\nPRUEBAS EJECUTADAS:\nRESULTADOS:\nEVIDENCIAS:\nDEFECTOS:\nRIESGOS:\nBLOQUEOS:\nRECOMENDACIÓN:",
+  "description": "Valida estabilización D1/D2 y fase 2 E2E del panel desde cero en Docker/Supabase local aislado.",
+  "tools": {
+    "invalid": false,
+    "question": true,
+    "bash": true,
+    "read": true,
+    "glob": true,
+    "grep": true,
+    "edit": true,
+    "write": true,
+    "task": false,
+    "webfetch": false,
+    "todowrite": false,
+    "skill": false
+  }
+}

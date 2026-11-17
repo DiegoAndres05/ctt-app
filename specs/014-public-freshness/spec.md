@@ -4,7 +4,9 @@
 
 **Created**: 2026-10-26
 
-**Status**: Draft
+**Status**: Superseded
+
+> **Nota de alcance (2026-11-13)**: La copia rápida y el tiempo de actualización son responsabilidad de el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). Del lado de este repositorio, `get_public_site` no guarda copia: cada llamada refleja el estado actual, así que FR-001 y FR-002 dependen solo de cuánto guarde el sitio. Las tareas de `tasks.md` (que suponían un `PublicCatalogService` en Angular) no se implementan aquí.
 
 **Input**: Iteración 4 de 5. Lo que el viajero ve en el catálogo y en el contenido editorial se actualiza pronto, las visitas repetidas no se sienten lentas, y una copia guardada nunca decide disponibilidad ni precio final (`.specify/mainspec.md`, capítulo 26).
 

@@ -6,6 +6,8 @@
  * (snake_case). Payload helpers for RPCs use the same keys the SQL reads.
  */
 
+import type { PublicCatalog } from './public-site-projection';
+
 /** Mirrors `public.public_placement`. */
 export type PublicPlacement = 'catalog' | 'lodging' | 'yacht';
 
@@ -18,8 +20,11 @@ export type PublicSource = 'legacy' | 'panel';
 /** Mirrors `public.public_image_role`. */
 export type PublicImageRole = 'cover' | 'gallery';
 
-/** Mirrors `public.lodging_type`. */
-export type LodgingType = 'casa' | 'apartamento' | 'finca' | 'habitacion';
+/**
+ * Lodging type code. Agency-owned since feature 016 (`public_taxonomy_values`, kind
+ * `lodging_type`), so any stable code the agency configured.
+ */
+export type LodgingType = string;
 
 /** Mirrors `public.yacht_icon`. */
 export type YachtIcon =
@@ -37,9 +42,8 @@ export type YachtIcon =
   | 'music'
   | 'map';
 
-/** Mirrors `public.lodging_amenity`. */
-export type LodgingAmenity =
-  'wifi' | 'pool' | 'ac' | 'kitchen' | 'parking' | 'terrace' | 'washer' | 'tv' | 'bbq';
+/** Amenity code. Agency-owned since feature 016 (`public_taxonomy_values`, kind `amenity`). */
+export type LodgingAmenity = string;
 
 /** Bilingual pair stored in JSONB arrays (`includes`, `warnings`). */
 export interface BilingualPair {
@@ -231,25 +235,11 @@ export interface CutoverStatus {
   missing_slugs: string[];
 }
 
-/** Projection returned by `get_public_site` (consumer-facing camelCase). */
-export interface PublicSiteProjection {
-  source: PublicSource;
-  offers: unknown[];
-  lodgings: unknown[];
-  yachts: unknown[];
-}
-
-export const LODGING_AMENITIES: readonly LodgingAmenity[] = [
-  'wifi',
-  'pool',
-  'ac',
-  'kitchen',
-  'parking',
-  'terrace',
-  'washer',
-  'tv',
-  'bbq',
-] as const;
+/**
+ * Projection returned by `get_public_site` (consumer-facing camelCase). Typed and parsed in
+ * `public-site-projection.ts` (feature 009).
+ */
+export type PublicSiteProjection = PublicCatalog;
 
 export const YACHT_ICONS: readonly YachtIcon[] = [
   'people',
@@ -265,11 +255,4 @@ export const YACHT_ICONS: readonly YachtIcon[] = [
   'sun',
   'music',
   'map',
-] as const;
-
-export const LODGING_TYPES: readonly LodgingType[] = [
-  'casa',
-  'apartamento',
-  'finca',
-  'habitacion',
 ] as const;

@@ -1,0 +1,168 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+--- resolve_price: season vs base ---
+ act_as 
+--------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   resolve_price returns the seasonal tariff when the date falls in the season
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   resolve_price returns the base tariff when the date is outside every season
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   resolve_price treats season_start as inclusive
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- anti-overlap ---
+NOTICE:  ok   resolve_price treats season_end as inclusive
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   upsert_pricing_scheme rejects a season that overlaps a current seasonal scheme
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   upsert_pricing_scheme rejects season_start after season_end
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   upsert_pricing_scheme rejects a half-open season range
+NOTICE:  ok   upsert_pricing_scheme requires exactly one of product_id / addon_id
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   EXCLUDE USING gist rejects overlapping current seasons on direct insert
+ act_as 
+--------
+ 
+(1 row)
+
+                                      upsert_pricing_scheme                                      
+-------------------------------------------------------------------------------------------------
+ {"id": "b593e290-dc22-4584-ac0a-ee7ee7e0dcc8", "valid_from": "2026-11-13T16:07:01.97839+00:00"}
+(1 row)
+
+NOTICE:  ok   adjacent (non-overlapping) seasons can coexist with the base tariff
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- pricing RBAC ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot define a pricing scheme
+NOTICE:  ok   an agent cannot apply a price override
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- price_overridden audit ---
+NOTICE:  ok   an operator cannot apply a price override
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   apply_price_override returns the previous base amount and the new amount
+NOTICE:  ok   apply_price_override writes price_overridden with actor, org, previous/new amounts, currency and reason
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   after override, resolve_price returns the new base amount outside the season
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   after override, a date before the override still resolves the previous (closed) base version
+NOTICE:  ok   operator upserts do not emit price_overridden
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- pricing_rules_test: all assertions passed ---

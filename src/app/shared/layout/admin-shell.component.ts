@@ -133,6 +133,7 @@ const NARROW_QUERY = '(max-width: 959px)';
     .main {
       min-width: 0;
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto auto 1fr;
     }
 
@@ -160,6 +161,7 @@ const NARROW_QUERY = '(max-width: 959px)';
       gap: 0.35rem 0.8rem;
       margin: 0;
       flex: 1;
+      min-width: 0;
       font-size: 0.85rem;
       color: #536178;
     }
@@ -177,6 +179,34 @@ const NARROW_QUERY = '(max-width: 959px)';
 
     .denied {
       padding-bottom: 0;
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0.45rem 0.75rem;
+        gap: 0.5rem;
+      }
+
+      .topbar button {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.875rem;
+      }
+
+      /* On a phone only the person's name fits; role and agency stay in the sidebar. */
+      .identity span + span {
+        display: none;
+      }
+
+      .identity span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .denied,
+      .content {
+        padding: 0.75rem 0.75rem 1.25rem;
+      }
     }
   `,
 })

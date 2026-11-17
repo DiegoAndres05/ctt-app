@@ -1,0 +1,127 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+--- resolve_pre_reservation_item: product_id / addon_id ---
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   product without the addon_id key resolves
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   product with "addon_id": null resolves as a product line (D1)
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   add-on without the product_id key resolves
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   add-on with "product_id": null resolves as an add-on line (D1)
+NOTICE:  ok   both identifiers with values are rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   both identifiers absent are rejected
+NOTICE:  ok   both identifiers null are rejected
+NOTICE:  ok   a blank product_id with a null addon_id is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a malformed product_id is a controlled VALIDATION_ERROR
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a malformed addon_id is a controlled VALIDATION_ERROR
+NOTICE:  ok   a non-existent product_id is ITEM_NOT_BOOKABLE
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a non-existent addon_id is ITEM_NOT_BOOKABLE
+NOTICE:  ok   another tenant's product is ITEM_NOT_BOOKABLE
+NOTICE:  ok   resolve_pre_reservation_item is still not executable by anon/authenticated
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- create_pre_reservation / add_pre_reservation_item (panel payload) ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   create_pre_reservation accepts a product line with "addon_id": null (D1)
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   add_pre_reservation_item accepts add-on and product lines with the unused key null (D1)
+NOTICE:  ok   add_pre_reservation_item still rejects a line with both identifiers
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   add_pre_reservation_item still rejects a line without identifiers
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- pre_reservation_item_identifiers_test: all assertions passed ---
+NOTICE:  ok   the pre-reservation holds the 3 lines with the right identifiers

@@ -1,0 +1,255 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT pre_reservations
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT pre_reservation_items
+NOTICE:  ok   anon cannot SELECT availability_verification_events
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT pre_reservation_list
+NOTICE:  ok   anon cannot SELECT availability_verification_queue
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent sees org A pre_reservations
+NOTICE:  ok   agent sees org A pre_reservation_list
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent sees org A availability_verification_queue
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero pre_reservations
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero pre_reservation_list
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   agent B sees zero availability_verification_queue
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot INSERT pre_reservations
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot UPDATE pre_reservations
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot DELETE pre_reservations
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot INSERT pre_reservation_items
+NOTICE:  ok   authenticated cannot UPDATE pre_reservation_items
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot DELETE pre_reservation_items
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot INSERT availability_verification_events
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   UPDATE on availability_verification_events rejected even as superuser
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   DELETE on availability_verification_events rejected even as superuser
+NOTICE:  ok   TRUNCATE on availability_verification_events rejected even as superuser
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE require_availability_verifier
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE resolve_pre_reservation_item
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE insert_pre_reservation_item
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE refresh_pre_reservation_status
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE create_pre_reservation_core
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot EXECUTE require_availability_verifier
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot EXECUTE resolve_pre_reservation_item
+NOTICE:  ok   authenticated cannot EXECUTE insert_pre_reservation_item
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot EXECUTE refresh_pre_reservation_status
+NOTICE:  ok   authenticated cannot EXECUTE create_pre_reservation_core
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon has no EXECUTE privilege on the five internal functions
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated has no EXECUTE privilege on the five internal functions
+NOTICE:  ok   superuser UPDATE changing reference rejected by trigger
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   superuser UPDATE changing start_date rejected by trigger
+ assert_raises 
+---------------
+ 
+(1 row)
+

@@ -1,0 +1,265 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ make_quotable 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   pr1 is priced 2 x 100.00 + 1 x 150.00 = 350.00 before acceptance
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   accepting without confirmation raises CONFIRMATION_REQUIRED
+NOTICE:  ok   a NULL confirmation also raises CONFIRMATION_REQUIRED
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a rejected confirmation leaves the version issued
+NOTICE:  ok   the confirmed public acceptance succeeds
+NOTICE:  ok   the confirmed public acceptance answers status accepted
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the version is accepted with origin customer
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   one customer response row with no agent actor was appended
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_response_recorded audit carries response/origin codes, never names or contact data
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a second acceptance of the same token raises QUOTATION_NOT_OPEN
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot re-accept an accepted version
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   versioning an accepted version raises QUOTATION_TERMINAL
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   changes_requested leaves the version issued
+NOTICE:  ok   changes_requested appended one agent response row
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   the new version opens as draft
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the new version is v2 of the same family
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the new draft is priced with the current tariff: 1 x 250.00, not the frozen 150.00
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the origin version is superseded and keeps its frozen total
+NOTICE:  ok   the family public token hash is preserved across versioning
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_superseded audit carries ids only
+NOTICE:  ok   accepting after a main line changed raises QUOTATION_STALE
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the stale version is left expired
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_expired audit carries reason_code stale
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot void a quotation
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   voiding without a reason raises VOID_REASON_REQUIRED
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an accepted quotation cannot be voided
+NOTICE:  ok   an admin voids an issued quotation with a reason
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   voiding twice raises QUOTATION_TERMINAL
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quotation_voided audit carries no reason text
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   after voiding, the public link answers available false without lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   assert_quotation_confirmable is not executable by anon nor authenticated
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot EXECUTE assert_quotation_confirmable
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the confirmable snapshot carries total, party size, reference and lines
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the confirmable snapshot carries no email
+NOTICE:  ok   a draft version is not confirmable
+ assert_raises 
+---------------
+ 
+(1 row)
+

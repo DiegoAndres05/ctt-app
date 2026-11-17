@@ -4,7 +4,9 @@
 
 **Created**: 2026-10-26
 
-**Status**: Draft
+**Status**: Superseded
+
+> **Nota de alcance (2026-11-13)**: El formulario de solicitud vive en el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). El sitio llama a `submit_public_request` (003), que ya cubre consentimiento, deduplicación, límites y `LISTING_NOT_AVAILABLE`. La solicitud llega a `/sales/requests` con canal `web`. Esta app no construye la pantalla `/solicitar/:slug`. Las tareas de `tasks.md` no se implementan aquí.
 
 **Input**: Iteración 2 de 5. El viajero envía una solicitud de la ficha que está viendo. La agencia la recibe en la misma bandeja que el resto de canales. Una solicitud no es una reserva (`.specify/mainspec.md`, capítulos 9 y 15, principio 1).
 

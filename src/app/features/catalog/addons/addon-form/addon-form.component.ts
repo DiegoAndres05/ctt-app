@@ -44,28 +44,30 @@ import type { UnsavedChangesHost } from '../../../../shared/components/unsaved-c
           <label for="description">Descripción</label>
           <textarea id="description" rows="3" [formField]="addonForm.description"></textarea>
 
-          <label for="unit">Unidad</label>
-          <select id="unit" [formField]="addonForm.unit">
-            <option value="per_person">Por persona</option>
-            <option value="per_unit">Por unidad</option>
-            <option value="per_service">Por servicio</option>
-          </select>
+          <div class="field unit">
+            <label for="unit">Unidad de cobro</label>
+            <select id="unit" [formField]="addonForm.unit">
+              <option value="per_person">Por persona</option>
+              <option value="per_unit">Por unidad</option>
+              <option value="per_service">Por servicio</option>
+            </select>
+          </div>
 
           <label class="check" for="is-active">
             <input id="is-active" type="checkbox" [formField]="addonForm.isActive" />
             Activo
           </label>
 
-          <div class="actions">
+          @if (error(); as failure) {
+            <app-alert kind="error">{{ failure.message }}</app-alert>
+          }
+
+          <div class="form-actions">
             <button class="primary" type="submit" [disabled]="addonForm().submitting()">
               {{ addonForm().submitting() ? 'Guardando…' : 'Guardar' }}
             </button>
             <a class="button-link" routerLink="/cms/settings/addons">Cancelar</a>
           </div>
-
-          @if (error(); as failure) {
-            <app-alert kind="error">{{ failure.message }}</app-alert>
-          }
         </form>
       }
     </main>
@@ -78,31 +80,25 @@ import type { UnsavedChangesHost } from '../../../../shared/components/unsaved-c
       justify-items: start;
     }
 
-    .card {
-      display: grid;
-      gap: 0.5rem;
-      width: min(24rem, 100%);
+    .section {
+      width: min(36rem, 100%);
+      gap: 0.6rem;
     }
 
-    label {
-      font-weight: 600;
+    .section h1 {
+      margin: 0 0 0.25rem;
+      font-size: 1.35rem;
+    }
+
+    .unit {
+      max-width: 18rem;
     }
 
     .check {
       font-weight: 400;
       display: flex;
-      gap: 0.4rem;
+      gap: 0.5rem;
       align-items: center;
-    }
-
-    .field-error {
-      color: var(--color-danger);
-      margin: 0;
-    }
-
-    button {
-      margin-top: 0.75rem;
-      padding: 0.6rem 1rem;
     }
   `,
 })

@@ -1,0 +1,85 @@
+{
+  "run_id": "20261113T160606Z-2aa54024",
+  "mode": "agents",
+  "head": "2844c6fc7a361ee821d9b118abf4d34fdb4f7868",
+  "branch": "main",
+  "status": "?? .opencode/\n?? docs/orchestration/\n?? scripts/orchestration/",
+  "commands": [
+    {
+      "argv": [
+        "opencode",
+        "debug",
+        "agent",
+        "ctt-release-orchestrator"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:06:06.659104+00:00",
+      "exit_code": 0,
+      "output": "000.txt"
+    },
+    {
+      "argv": [
+        "opencode",
+        "debug",
+        "agent",
+        "ctt-local-e2e"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:06:16.381330+00:00",
+      "exit_code": 0,
+      "output": "001.txt"
+    },
+    {
+      "argv": [
+        "opencode",
+        "debug",
+        "agent",
+        "ctt-integration-engineer"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:06:22.961186+00:00",
+      "exit_code": 0,
+      "output": "002.txt"
+    },
+    {
+      "argv": [
+        "opencode",
+        "debug",
+        "agent",
+        "ctt-staging-validator"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:06:28.849878+00:00",
+      "exit_code": 0,
+      "output": "003.txt"
+    },
+    {
+      "argv": [
+        "opencode",
+        "debug",
+        "agent",
+        "ctt-release-engineer"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:06:33.782954+00:00",
+      "exit_code": 0,
+      "output": "004.txt"
+    },
+    {
+      "argv": [
+        "opencode",
+        "debug",
+        "agent",
+        "ctt-quality-gate-auditor"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:06:38.443351+00:00",
+      "exit_code": 0,
+      "output": "005.txt"
+    }
+  ],
+  "exit_code": 0,
+  "discovery": "6/6 loaded; auditor edit/write/bash/task disabled",
+  "changed_inputs_during_run": [],
+  "finished": "2026-11-13T16:06:48.104023+00:00"
+}

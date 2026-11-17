@@ -1,0 +1,115 @@
+NOTICE:  ok   local and 00-prefixed numbers collapse to +573001234567
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   international number keeps its own country code
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   blank phone and email normalize to NULL
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   too-short phone is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   non-numeric phone is rejected
+NOTICE:  ok   email is trimmed and lowercased
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   email without @ is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   first sequence value for org A is 1
+NOTICE:  ok   second sequence value for org A is 2
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   first sequence value for org B is 1
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   match creates a customer when nothing matches
+NOTICE:  ok   second contact with the same email links the existing customer
+NOTICE:  ok   an empty phone is filled and does not flag review
+NOTICE:  ok   a later contact links by phone
+NOTICE:  ok   a different name is not overwritten and is kept for review
+NOTICE:  ok   email wins when email and phone point at different customers
+NOTICE:  ok   an anonymized customer is ignored and a new one is created
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a start date before today in Bogota is rejected
+NOTICE:  ok   an end date before the start date is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   rejected captures insert no request
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   first capture is received with reference SOL-00001
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the same idempotency key returns the existing request
+NOTICE:  ok   the same fingerprint inside two minutes is deduplicated
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a fingerprint older than two minutes creates a new request
+NOTICE:  ok   each new request writes request_received without PII in metadata
+ assert_true 
+-------------
+ 
+(1 row)
+

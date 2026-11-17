@@ -1,0 +1,197 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                                    set_request_status                                                                    
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "in_review", "closed_at": null, "request_id": "a9107ccb-94a2-49c9-a4bc-b2e31b15332e", "first_handled_at": "2026-11-13T16:07:08.453758+00:00"}
+(1 row)
+
+                                                                    set_request_status                                                                    
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "in_review", "closed_at": null, "request_id": "55e6d31d-0cc8-4115-8b22-f9f667224f03", "first_handled_at": "2026-11-13T16:07:08.453758+00:00"}
+(1 row)
+
+                                                                                   set_request_status                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "discarded", "closed_at": "2026-11-13T16:07:08.453758+00:00", "request_id": "55e6d31d-0cc8-4115-8b22-f9f667224f03", "first_handled_at": "2026-11-13T16:07:08.453758+00:00"}
+(1 row)
+
+                                                                                   set_request_status                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "discarded", "closed_at": "2026-11-13T16:07:08.453758+00:00", "request_id": "ab2ee0a7-724b-4abf-94d8-79f7dfe91b49", "first_handled_at": "2026-11-13T16:07:08.453758+00:00"}
+(1 row)
+
+                                                                                   set_request_status                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "discarded", "closed_at": "2026-11-13T16:07:08.453758+00:00", "request_id": "953b6b05-d828-4647-89aa-a651cab0fe5e", "first_handled_at": "2026-11-13T16:07:08.453758+00:00"}
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   discarding without a reason is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   pre_reservation cannot be set manually from an open request
+NOTICE:  ok   pre_reservation cannot be set manually from a discarded request
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   in_review cannot return to received
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a discarded request cannot change status
+                                                                          assign_request                                                                          
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"request_id": "a9107ccb-94a2-49c9-a4bc-b2e31b15332e", "assigned_at": "2026-11-13T16:07:08.453758+00:00", "assigned_to": "03000000-0000-4000-b000-000000000041"}
+(1 row)
+
+                                          assign_request                                          
+--------------------------------------------------------------------------------------------------
+ {"request_id": "a9107ccb-94a2-49c9-a4bc-b2e31b15332e", "assigned_at": null, "assigned_to": null}
+(1 row)
+
+                                                                          assign_request                                                                          
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"request_id": "a9107ccb-94a2-49c9-a4bc-b2e31b15332e", "assigned_at": "2026-11-13T16:07:08.453758+00:00", "assigned_to": "03000000-0000-4000-b000-000000000041"}
+(1 row)
+
+NOTICE:  ok   an inactive collaborator cannot be assigned
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a collaborator from another organization cannot be assigned
+NOTICE:  ok   a closed request cannot be reassigned
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a note needs exactly one target
+NOTICE:  ok   a note cannot target a request and a customer together
+ assert_raises 
+---------------
+ 
+(1 row)
+
+                                                                                                                                                                                                                         update_customer                                                                                                                                                                                                                          
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"id": "246d41e4-21e6-427c-8fda-ad306a245ed9", "email": "laura-wf@example.com", "last_name": null, "created_at": "2026-11-13T16:07:08.453758+00:00", "created_by": null, "first_name": "Laura", "phone_e164": "+573001000001", "updated_at": "2026-11-13T16:07:08.453758+00:00", "country_code": "CO", "anonymized_at": null, "document_type": null, "is_anonymized": false, "document_number": null, "organization_id": "03000000-0000-4000-a000-000000000041"}
+(1 row)
+
+NOTICE:  ok   update_customer rejects an email that belongs to someone else
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   update_customer requires a name
+NOTICE:  ok   in_review keeps first_handled_at and the latest assignment
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   discarding from received sets the reason, first_handled_at, and closed_at
+NOTICE:  ok   the note author is auth.uid()
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   notes cannot be updated, even by the table owner
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   notes cannot be deleted, even by the table owner
+NOTICE:  ok   notes cannot be truncated
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   update_customer normalizes email and country code
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   status audit stores from/to and omits the reason and the customer name
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   assignment audit stores ids and omits the collaborator email
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   customer update audit lists field names and omits the email value

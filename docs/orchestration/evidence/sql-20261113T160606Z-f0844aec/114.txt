@@ -1,0 +1,110 @@
+--- happy path: org + founding admin, slug, no forced password change ---
+NOTICE:  ok   register_agency creates the organization with a URL-friendly slug
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the founding admin is active, role admin, and must_change_password is false
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   creating the agency emits organization_created
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- collisions and tenant-safety ---
+NOTICE:  ok   creating the founding admin emits user_created
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a colliding slug is rejected
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a rejected slug collision leaves no partial profile (atomicity)
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a rejected slug collision does not create a second organization
+NOTICE:  ok   reusing an already-profiled auth user is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a name that slugifies to an existing tenant is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a user_id that is not in auth.users is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   p_email must match the auth.users row (prevents binding a foreign user_id)
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a name that cannot produce a URL-friendly slug is rejected
+NOTICE:  ok   a blank agency name is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- anon and authenticated cannot invoke the RPC ---
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot execute register_agency
+                                                                        set_config                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"sub": "00000000-0000-4000-b000-000000000001", "role": "authenticated", "app_role": "admin", "organization_id": "00000000-0000-4000-a000-000000000001"}
+(1 row)
+
+NOTICE:  ok   authenticated cannot execute register_agency
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- service_role can invoke the RPC ---
+                                                                                                                          register_agency                                                                                                                          
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"name": "Agencia Service Role", "role": "admin", "slug": "agencia-service-role", "email": "otro@agencia-nueva.test", "user_id": "44444444-4444-4000-b000-000000000002", "full_name": "Admin Service", "organization_id": "595d707a-d414-42a2-9766-26bd4c34a004"}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   service_role is the authorized caller of register_agency

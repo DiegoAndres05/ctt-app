@@ -294,48 +294,61 @@ const EMPTY_ADJUSTMENT = {
             <form (submit)="onSaveAdjustment($event)" novalidate>
               <h3>Nuevo ajuste</h3>
 
-              <label class="req" for="adjustment-label">Etiqueta</label>
-              <input id="adjustment-label" type="text" [formField]="adjustmentForm.label" />
-              @if (adjustmentForm.label().touched() && adjustmentForm.label().invalid()) {
-                <p class="field-error">El ajuste necesita una etiqueta.</p>
-              }
-
-              <label for="adjustment-direction">Dirección</label>
-              <select id="adjustment-direction" [formField]="adjustmentForm.direction">
-                <option value="discount">Descuento</option>
-                <option value="surcharge">Suplemento</option>
-              </select>
-
-              <label for="adjustment-kind">Tipo</label>
-              <select id="adjustment-kind" [formField]="adjustmentForm.kind">
-                <option value="percent">Porcentaje</option>
-                <option value="amount">Monto fijo</option>
-              </select>
-
-              <label class="req" for="adjustment-value">Valor</label>
-              <input
-                id="adjustment-value"
-                type="number"
-                step="0.01"
-                [formField]="adjustmentForm.value"
-              />
-              @if (adjustmentForm.value().touched() && adjustmentForm.value().invalid()) {
-                <p class="field-error">El valor debe ser mayor que cero.</p>
-              }
-
-              <label for="adjustment-target">Aplicar a</label>
-              <select id="adjustment-target" [formField]="adjustmentForm.target">
-                <option value="">Toda la cotización</option>
-                @for (line of lines(); track lineId(line)) {
-                  <option [value]="line.pre_reservation_item_id">{{ line.item_label }}</option>
-                }
-              </select>
+              <div class="form-grid">
+                <div class="field req span-all">
+                  <label for="adjustment-label">Etiqueta</label>
+                  <input
+                    id="adjustment-label"
+                    type="text"
+                    placeholder="Ej.: Descuento cliente frecuente"
+                    [formField]="adjustmentForm.label"
+                  />
+                  @if (adjustmentForm.label().touched() && adjustmentForm.label().invalid()) {
+                    <p class="field-error">El ajuste necesita una etiqueta.</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="adjustment-direction">Dirección</label>
+                  <select id="adjustment-direction" [formField]="adjustmentForm.direction">
+                    <option value="discount">Descuento</option>
+                    <option value="surcharge">Suplemento</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="adjustment-kind">Tipo</label>
+                  <select id="adjustment-kind" [formField]="adjustmentForm.kind">
+                    <option value="percent">Porcentaje</option>
+                    <option value="amount">Monto fijo</option>
+                  </select>
+                </div>
+                <div class="field req">
+                  <label for="adjustment-value">Valor</label>
+                  <input
+                    id="adjustment-value"
+                    type="number"
+                    step="0.01"
+                    [formField]="adjustmentForm.value"
+                  />
+                  @if (adjustmentForm.value().touched() && adjustmentForm.value().invalid()) {
+                    <p class="field-error">El valor debe ser mayor que cero.</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="adjustment-target">Aplicar a</label>
+                  <select id="adjustment-target" [formField]="adjustmentForm.target">
+                    <option value="">Toda la cotización</option>
+                    @for (line of lines(); track lineId(line)) {
+                      <option [value]="line.pre_reservation_item_id">{{ line.item_label }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
               <p class="hint">
                 Un agente ajusta hasta un 15 % acumulado; por encima el ajuste lo autoriza un
                 administrador.
               </p>
 
-              <div class="actions">
+              <div class="form-actions">
                 <button class="primary" type="submit" [disabled]="saving()">Agregar ajuste</button>
               </div>
             </form>
@@ -346,17 +359,22 @@ const EMPTY_ADJUSTMENT = {
           <h2>Textos de la propuesta</h2>
           @if (isDraft()) {
             <form (submit)="onSaveTexts($event)" novalidate>
-              <label for="inclusions">Inclusiones</label>
-              <textarea id="inclusions" rows="4" [formField]="textsForm.inclusions"></textarea>
-
-              <label for="exclusions">Exclusiones</label>
-              <textarea id="exclusions" rows="4" [formField]="textsForm.exclusions"></textarea>
+              <div class="form-grid two">
+                <div class="field">
+                  <label for="inclusions">Inclusiones</label>
+                  <textarea id="inclusions" rows="4" [formField]="textsForm.inclusions"></textarea>
+                </div>
+                <div class="field">
+                  <label for="exclusions">Exclusiones</label>
+                  <textarea id="exclusions" rows="4" [formField]="textsForm.exclusions"></textarea>
+                </div>
+              </div>
 
               <label for="notes">Notas internas</label>
               <textarea id="notes" rows="3" [formField]="textsForm.notes"></textarea>
               <p class="hint">Las notas internas nunca aparecen en la propuesta pública.</p>
 
-              <div class="actions">
+              <div class="form-actions">
                 <button class="primary" type="submit" [disabled]="saving()">Guardar textos</button>
               </div>
             </form>
@@ -389,7 +407,7 @@ const EMPTY_ADJUSTMENT = {
                 la pre-reserva ni de 30 días.
               </p>
 
-              <div class="actions">
+              <div class="form-actions">
                 <button class="primary" type="submit" [disabled]="saving()">
                   {{ saving() ? 'Emitiendo…' : 'Emitir cotización' }}
                 </button>
@@ -509,7 +527,7 @@ const EMPTY_ADJUSTMENT = {
                 <p class="field-error">Faltan las condiciones de la propuesta.</p>
               }
 
-              <div class="actions">
+              <div class="form-actions">
                 <button type="submit" [disabled]="saving()">Guardar plantilla</button>
               </div>
             </form>
@@ -625,7 +643,12 @@ const EMPTY_ADJUSTMENT = {
 
     form {
       display: grid;
-      gap: 0.5rem;
+      gap: 0.75rem;
+    }
+
+    .form-grid.two {
+      grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+      max-width: none;
     }
 
     h3 {

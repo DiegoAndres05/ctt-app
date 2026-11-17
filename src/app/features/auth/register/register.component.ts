@@ -102,22 +102,13 @@ const MAX_TEXT_LENGTH = 255;
       width: min(24rem, 100%);
     }
 
-    label {
-      font-weight: 600;
-    }
-
-    .field-error {
-      color: var(--color-danger);
-      margin: 0;
-    }
-
     .notice {
       margin: 0;
     }
 
-    button {
+    button[type='submit'] {
       margin-top: 0.75rem;
-      padding: 0.6rem 1rem;
+      padding: 0.65rem 1rem;
     }
   `,
 })

@@ -1,0 +1,28 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   one handled request
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   response hours recorded
+NOTICE:  ok   stale queue has the old request
+ assert_true 
+-------------
+ 
+(1 row)
+

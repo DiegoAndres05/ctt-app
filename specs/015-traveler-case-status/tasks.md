@@ -1,8 +1,10 @@
 # Tasks: Etapa del caso para el viajero
 
+> **Nota de alcance (2026-11-13)**: La pantalla «Consultar mi solicitud» vive en el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). En este repositorio solo corresponde el RPC `get_traveler_case_status`, sus pruebas SQL y su documentación (tareas T001–T007 y T017–T018, sin la carpeta Angular). Las tareas de pantalla (T008–T016) las implementa el sitio.
+
 **Input**: `specs/015-traveler-case-status/spec.md`. Expedientes de 003–006. Enlaces secretos actuales: `/q/:token` y `/r/:token`, que esta pantalla no revela.
 
-**Prerequisites**: spec.md. La última migración del repo es `055_analytics_rpcs.sql`. Esta feature empieza en `056`.
+**Prerequisites**: spec.md. 016 ocupó `058`–`063`; esta feature usa `064_traveler_case_status_enums.sql` (tipo de evento de auditoría, migración aparte porque un valor de enum no se usa en la transacción que lo crea) y `065_traveler_case_status.sql`.
 
 **Tests**: SQL del RPC y Vitest del formulario. La consulta no escribe expediente.
 
@@ -15,8 +17,8 @@
 
 ## Design baseline
 
-- RPC `get_traveler_case_status(p_organization_id uuid, p_reference text, p_contact text)` `SECURITY DEFINER`, `search_path = ''`, ejecutable por `anon` y `authenticated`.
-- `p_organization_id` solo se acepta si el llamador es anónimo. Si hay JWT, se usa la organización del JWT y se ignora el argumento, igual que `get_public_site`.
+- RPC `get_traveler_case_status(p_organization_id uuid, p_reference text, p_contact text)` y, por 016, `get_traveler_case_status_by_key(p_key text, p_reference text, p_contact text)`; ambos delegan en `traveler_case_status_for_org` (interno). `SECURITY DEFINER`, `search_path = ''`, ejecutable por `anon` y `authenticated`.
+- `p_organization_id` solo se acepta si el llamador es anónimo y la agencia está en la transición de identificador de 016 (`require_organization_identifier_access`). Si hay JWT, se usa la organización del JWT y se ignora el argumento, igual que `get_public_site`.
 - Normalizar correo y teléfono con las funciones ya existentes de 003 (`normalize_email`, `normalize_phone_e164`). Un contacto que no normaliza devuelve el mismo JSON de «no encontrado», no un error distinto.
 - Buscar la solicitud por referencia de la organización (`SOL-#####` y el formato que ya emite 003). El contacto debe coincidir con el correo o el teléfono del cliente vinculado, y el cliente no puede estar anonimizado.
 - Etapa más avanzada, en este orden: reserva (`completed`, `in_progress`, `confirmed`, `cancelled`) por encima de cotización emitida o aceptada, por encima de pre-reserva no cancelada, por encima de la solicitud (`received`, `in_review`, `discarded`). `superseded` de reserva no se muestra: se sigue a la reserva vigente si existe.
@@ -31,8 +33,8 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Crear `supabase/tests/traveler_case_status_test.sql` y `src/app/features/public-case/`
-- [ ] T002 Reservar la migración `supabase/migrations/056_traveler_case_status.sql` sin editar `049`–`055`
+- [x] T001 Crear `supabase/tests/traveler_case_status_test.sql`
+- [x] T002 Reservar las migraciones `supabase/migrations/064_traveler_case_status_enums.sql` y `065_traveler_case_status.sql` sin editar `049`–`063`
 
 ---
 
@@ -40,11 +42,11 @@
 
 **Purpose**: El RPC es la única puerta. Bloquea las tres historias.
 
-- [ ] T003 En `056_traveler_case_status.sql`, crear `get_traveler_case_status` con la firma, `search_path`, grants y la respuesta `found: false` por defecto
-- [ ] T004 Resolver la solicitud de la organización por referencia y exigir contacto normalizado igual al del cliente no anonimizado
-- [ ] T005 Calcular `stage` con el orden de la línea base y devolver solo los campos permitidos
-- [ ] T006 Contar intentos y lanzar `RATE_LIMITED` al superar 8 por contacto u hora, o 30 por organización u hora
-- [ ] T007 [P] Escribir `supabase/tests/traveler_case_status_test.sql`: contacto correcto en solicitud recibida; correo ajeno y referencia inventada devuelven el mismo JSON; anonimizado devuelve `found: false`; descarte no incluye el motivo; cotización no incluye precio ni token; reserva confirmada no incluye documento; el RPC no cambia estados
+- [x] T003 En `065_traveler_case_status.sql`, crear `get_traveler_case_status` con la firma, `search_path`, grants y la respuesta `found: false` por defecto
+- [x] T004 Resolver la solicitud de la organización por referencia y exigir contacto normalizado igual al del cliente no anonimizado
+- [x] T005 Calcular `stage` con el orden de la línea base y devolver solo los campos permitidos
+- [x] T006 Contar intentos y lanzar `RATE_LIMITED` al superar 8 por contacto u hora, o 30 por organización u hora
+- [x] T007 [P] Escribir `supabase/tests/traveler_case_status_test.sql`: contacto correcto en solicitud recibida; correo ajeno y referencia inventada devuelven el mismo JSON; anonimizado devuelve `found: false`; descarte no incluye el motivo; cotización no incluye precio ni token; reserva confirmada no incluye documento; el RPC no cambia estados
 
 **Checkpoint**: La suite SQL cubre FR-005, FR-007 y FR-008 antes de haber pantalla.
 
@@ -94,8 +96,8 @@
 
 ## Phase 6: Polish
 
-- [ ] T017 Documentar el RPC, los nueve `stage` y lo que no devuelve en `docs/modules/customer-requests.md`
-- [ ] T018 Revisión: `rg -n "service_role|SERVICE_ROLE" src/app/features/public-case src/app/core/requests/traveler-case.service.ts` vacío; la migración tiene `search_path = ''` y no mete correo ni teléfono en `audit.log_event`
+- [x] T017 Documentar el RPC, los nueve `stage` y lo que no devuelve en `docs/modules/customer-requests.md`
+- [x] T018 Revisión: `rg -n "service_role|SERVICE_ROLE" src/app/features/public-case src/app/core/requests/traveler-case.service.ts` vacío; la migración tiene `search_path = ''` y no mete correo ni teléfono en `audit.log_event`
 
 ---
 

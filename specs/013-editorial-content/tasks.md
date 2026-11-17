@@ -1,5 +1,7 @@
 # Tasks: Contenido editorial del sitio público
 
+> **Nota de alcance (2026-11-13)**: El contenido editorial (WordPress) lo muestra el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). Esta app no lee WordPress ni tiene shell público. Las tareas de `tasks.md` no se implementan aquí.
+
 **Input**: `specs/013-editorial-content/spec.md`
 
 **Prerequisites**: spec.md. El shell público de 011. WordPress es solo lectura.

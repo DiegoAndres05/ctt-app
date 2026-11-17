@@ -1,0 +1,45 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select reservation_families
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select reservation_list
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot execute assert_quotation_confirmable
+NOTICE:  ok   authenticated cannot execute internal payment helper
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   other org sees empty reservation_list
+ assert_equals 
+---------------
+ 
+(1 row)
+

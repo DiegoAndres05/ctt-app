@@ -1,0 +1,11 @@
+NOTICE:  trigger "organizations_seed_public_catalog" for relation "public.organizations" does not exist, skipping
+ seed_public_cutover_manifest 
+------------------------------
+ 
+(1 row)
+
+ seed_public_catalog_demo_listings 
+-----------------------------------
+ 
+(1 row)
+

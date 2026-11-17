@@ -1,0 +1,388 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE assign_pre_reservation_operator
+NOTICE:  ok   anon cannot EXECUTE start_item_verification
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE record_item_verification
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon has no EXECUTE privilege on the three US2 RPCs
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   assign returns the new assigned_operator_id
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot be assigned as verifier
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an inactive operator cannot be assigned as verifier
+                                                assign_pre_reservation_operator                                                 
+--------------------------------------------------------------------------------------------------------------------------------
+ {"pre_reservation_id": "457038af-0322-4c3d-a55a-c27e615edb55", "assigned_operator_id": "05000000-0000-4000-b000-000000000003"}
+(1 row)
+
+                               assign_pre_reservation_operator                                
+----------------------------------------------------------------------------------------------
+ {"pre_reservation_id": "457038af-0322-4c3d-a55a-c27e615edb55", "assigned_operator_id": null}
+(1 row)
+
+                                                          cancel_pre_reservation                                                           
+-------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "cancelled", "cancelled_at": "2026-11-13T16:06:43.490009+00:00", "pre_reservation_id": "457038af-0322-4c3d-a55a-c27e615edb55"}
+(1 row)
+
+NOTICE:  ok   assign on a cancelled pre-reservation is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   start on a line of a cancelled pre-reservation is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   record on a line of a cancelled pre-reservation is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   each assignment writes one pre_reservation_assigned audit
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the first assignment records {from: null, to: operator}
+NOTICE:  ok   clearing the assignment records {to: null}
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   assignment audit carries ids only, never free text
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   first start auto-assigns the caller when nobody was assigned
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   start returns verification_started_at
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   start returns the auto-assigned operator
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a second start keeps the original verification_started_at
+NOTICE:  ok   a second start adds no verification_started event
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot start a verification
+NOTICE:  ok   an agent cannot record a verification result
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                           withdraw_pre_reservation_item                                            
+--------------------------------------------------------------------------------------------------------------------
+ {"withdrawn_item_ids": ["6256f079-a5c0-4c8f-a4f3-c17c2e115341"], "pre_reservation_status": "pending_verification"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   start on a withdrawn line is rejected
+NOTICE:  ok   record on a withdrawn line is rejected
+NOTICE:  ok   pending outcome is rejected
+NOTICE:  ok   outcome without contact_person is rejected
+NOTICE:  ok   outcome without contact_method is rejected
+NOTICE:  ok   outcome with an unknown contact_method is rejected
+NOTICE:  ok   hold_expires_at in the past is rejected
+NOTICE:  ok   hold_expires_at with unavailable is rejected
+NOTICE:  ok   alternative_suggested without a suggestion is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   contact_person longer than 120 is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a rejected outcome leaves the line untouched
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a rejected outcome writes no history event
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   first result records the available state
+NOTICE:  ok   one available line of two makes the pre-reservation partially_verified
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the first outcome auto-assigns the caller
+NOTICE:  ok   every main line available makes the pre-reservation verified
+ assert_equals 
+---------------
+ 
+(1 row)
+
+                                                                         record_item_verification                                                                         
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"item_id": "b1d1b7dc-cda3-428a-bc1c-3a60384e5a58", "expires_at": null, "verification_status": "alternative_suggested", "pre_reservation_status": "requires_adjustment"}
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an unavailable main line moves the pre-reservation to requires_adjustment
+NOTICE:  ok   re-verification appends a second outcome_recorded event
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the first outcome event carries pending -> available with contact data
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   availability_recorded audit stores {item_id, from, to, has_hold} without notes
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   every recorded outcome writes one availability_recorded audit
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   re-verification without a hold clears the previous retention
+NOTICE:  ok   verified_at follows the status while first_verified_at is kept
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   the expiry scenario starts out verified
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the sweep returns how many pre-reservations became expired
+NOTICE:  ok   the lapsed hold marks the pre-reservation expired
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the sweep is idempotent

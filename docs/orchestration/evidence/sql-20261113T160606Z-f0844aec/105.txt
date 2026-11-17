@@ -1,0 +1,73 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                             set_quotation_terms                                                              
+----------------------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Condiciones de prueba.", "version_id": "77d8d6a4-b4ef-40d6-a479-9d8abfa38ecc", "valid_until": "2026-11-15T16:07:09.712042+00:00"}
+(1 row)
+
+NOTICE:  ok   unknown version
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   issued cannot confirm
+ assert_raises 
+---------------
+ 
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "77d8d6a4-b4ef-40d6-a479-9d8abfa38ecc"}
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   too few passengers
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   zero deposit
+NOTICE:  ok   first locator
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   second confirm
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   token not in audit metadata
+NOTICE:  ok   anon cannot confirm
+ assert_true 
+-------------
+ 
+(1 row)
+

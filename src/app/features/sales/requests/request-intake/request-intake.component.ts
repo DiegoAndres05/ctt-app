@@ -38,144 +38,194 @@ interface ProductOption {
   imports: [FormField, RouterLink, AlertComponent],
   template: `
     <div class="stack">
-      <h1>Nueva solicitud</h1>
+      <header class="page-head">
+        <h1>Nueva solicitud</h1>
+        <p class="hint">Los campos con <span class="req-star">*</span> son obligatorios.</p>
+      </header>
 
       <form (submit)="onSubmit($event)" novalidate>
         <section class="section" [class.incomplete]="sectionIncomplete('channel')">
           <h2>Canal</h2>
-          <label for="channel">Canal</label>
-          <select id="channel" [formField]="intakeForm.channel">
-            @for (channel of channels; track channel) {
-              <option [value]="channel">{{ channelLabel(channel) }}</option>
-            }
-          </select>
+          <div class="form-grid">
+            <div class="field">
+              <label for="channel">¿Por dónde llegó?</label>
+              <select id="channel" [formField]="intakeForm.channel">
+                @for (channel of channels; track channel) {
+                  <option [value]="channel">{{ channelLabel(channel) }}</option>
+                }
+              </select>
+            </div>
+          </div>
         </section>
 
         <section class="section" [class.incomplete]="sectionIncomplete('customer')">
           <h2>Cliente</h2>
           @if (draft().customerId) {
-            <p>Cliente seleccionado: {{ selectedName() }}</p>
-            <button type="button" (click)="useNewCustomer()">Cliente nuevo</button>
+            <div class="selected">
+              <p>
+                <span class="hint">Cliente seleccionado</span>
+                <strong>{{ selectedName() }}</strong>
+              </p>
+              <button type="button" (click)="useNewCustomer()">Cambiar</button>
+            </div>
           } @else {
-            <label for="customer-q">Buscar cliente</label>
-            <input
-              id="customer-q"
-              type="search"
-              [value]="searchDraft()"
-              (input)="onSearch($event)"
-              placeholder="Nombre, correo o teléfono"
-            />
-            @if (matches().length > 0) {
-              <ul>
-                @for (match of matches(); track match.id) {
-                  <li>
-                    <button type="button" (click)="selectCustomer(match)">
-                      {{ display(match) }}
-                    </button>
-                  </li>
+            <div class="field search">
+              <label for="customer-q">Buscar cliente existente</label>
+              <input
+                id="customer-q"
+                type="search"
+                [value]="searchDraft()"
+                (input)="onSearch($event)"
+                placeholder="Nombre, correo o teléfono"
+              />
+              @if (matches().length > 0) {
+                <ul class="matches">
+                  @for (match of matches(); track match.id) {
+                    <li>
+                      <button type="button" (click)="selectCustomer(match)">
+                        {{ display(match) }}
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+
+            <p class="divider"><span>o registra un cliente nuevo</span></p>
+
+            <div class="form-grid">
+              <div class="field req">
+                <label for="first-name">Nombre</label>
+                <input id="first-name" type="text" [formField]="intakeForm.firstName" />
+                @if (issue('firstName'); as message) {
+                  <p class="field-error">{{ message }}</p>
                 }
-              </ul>
-            }
-            <p>O registra un cliente nuevo.</p>
-            <label class="req" for="first-name">Nombre</label>
-            <input id="first-name" type="text" [formField]="intakeForm.firstName" />
-            @if (issue('firstName'); as message) {
-              <p class="field-error">{{ message }}</p>
-            }
-            <label for="last-name">Apellido</label>
-            <input id="last-name" type="text" [formField]="intakeForm.lastName" />
-            <label for="email">Correo</label>
-            <input id="email" type="email" [formField]="intakeForm.email" />
-            @if (issue('email'); as message) {
-              <p class="field-error">{{ message }}</p>
-            }
-            <p>Ingresa correo o teléfono.</p>
-            <label for="phone">Teléfono</label>
-            <input id="phone" type="tel" [formField]="intakeForm.phone" />
-            <label for="country">País</label>
-            <input id="country" type="text" [formField]="intakeForm.countryCode" />
+              </div>
+              <div class="field">
+                <label for="last-name">Apellido</label>
+                <input id="last-name" type="text" [formField]="intakeForm.lastName" />
+              </div>
+              <div class="field">
+                <label for="email">Correo</label>
+                <input id="email" type="email" [formField]="intakeForm.email" />
+                @if (issue('email'); as message) {
+                  <p class="field-error">{{ message }}</p>
+                }
+              </div>
+              <div class="field">
+                <label for="phone">Teléfono</label>
+                <input id="phone" type="tel" [formField]="intakeForm.phone" />
+              </div>
+              <div class="field">
+                <label for="country">País</label>
+                <input id="country" type="text" [formField]="intakeForm.countryCode" />
+              </div>
+            </div>
+            <p class="hint">Necesitamos al menos un correo o un teléfono para contactarlo.</p>
           }
         </section>
 
         <section class="section" [class.incomplete]="sectionIncomplete('travel')">
           <h2>Viaje</h2>
-          <label for="start">Inicio</label>
-          <input id="start" type="date" [min]="today" [formField]="intakeForm.travelStart" />
-          @if (issue('travelStart'); as message) {
-            <p class="field-error">{{ message }}</p>
-          }
-          <label for="end">Fin</label>
-          <input
-            id="end"
-            type="date"
-            [min]="draft().travelStart || today"
-            [formField]="intakeForm.travelEnd"
-          />
-          @if (issue('travelEnd'); as message) {
-            <p class="field-error">{{ message }}</p>
-          }
-          <label class="req" for="adults">Adultos</label>
-          <input id="adults" type="number" [formField]="intakeForm.adults" />
-          @if (issue('adults'); as message) {
-            <p class="field-error">{{ message }}</p>
-          }
-          <label for="children">Niños</label>
-          <input id="children" type="number" [formField]="intakeForm.children" />
+          <div class="form-grid">
+            <div class="field">
+              <label for="start">Fecha de inicio</label>
+              <input id="start" type="date" [min]="today" [formField]="intakeForm.travelStart" />
+              @if (issue('travelStart'); as message) {
+                <p class="field-error">{{ message }}</p>
+              }
+            </div>
+            <div class="field">
+              <label for="end">Fecha de fin</label>
+              <input
+                id="end"
+                type="date"
+                [min]="draft().travelStart || today"
+                [formField]="intakeForm.travelEnd"
+              />
+              @if (issue('travelEnd'); as message) {
+                <p class="field-error">{{ message }}</p>
+              }
+            </div>
+            <div class="field req">
+              <label for="adults">Adultos</label>
+              <input id="adults" type="number" [formField]="intakeForm.adults" />
+              @if (issue('adults'); as message) {
+                <p class="field-error">{{ message }}</p>
+              }
+            </div>
+            <div class="field">
+              <label for="children">Niños</label>
+              <input id="children" type="number" [formField]="intakeForm.children" />
+            </div>
+          </div>
         </section>
 
         <section class="section" [class.incomplete]="sectionIncomplete('items')">
           <h2>Intereses</h2>
+          <p class="hint">Elige un producto del catálogo o describe lo que busca el cliente.</p>
           @for (item of draft().items; track $index) {
             <div class="item-row">
-              <label [attr.for]="'product-' + $index">Producto</label>
-              <select
-                [id]="'product-' + $index"
-                [value]="item.productId ?? ''"
-                (change)="onProduct($index, $event)"
-              >
-                <option value="">Texto libre</option>
-                @for (product of products(); track product.id) {
-                  <option [value]="product.id">{{ product.name }}</option>
-                }
-              </select>
-              <label [attr.for]="'free-' + $index">Texto libre</label>
-              <input
-                [id]="'free-' + $index"
-                type="text"
-                [value]="item.freeText"
-                (input)="onFreeText($index, $event)"
-              />
-              <label [attr.for]="'qty-' + $index">Cantidad</label>
-              <input
-                [id]="'qty-' + $index"
-                type="number"
-                min="1"
-                max="99"
-                [value]="item.quantity"
-                (input)="onQuantity($index, $event)"
-              />
-              @if (issue('item-' + $index); as message) {
-                <p class="field-error">{{ message }}</p>
-              }
+              <div class="field product">
+                <label [attr.for]="'product-' + $index">Producto</label>
+                <select
+                  [id]="'product-' + $index"
+                  [value]="item.productId ?? ''"
+                  (change)="onProduct($index, $event)"
+                >
+                  <option value="">Texto libre</option>
+                  @for (product of products(); track product.id) {
+                    <option [value]="product.id">{{ product.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="field">
+                <label [attr.for]="'free-' + $index">Descripción</label>
+                <input
+                  [id]="'free-' + $index"
+                  type="text"
+                  [value]="item.freeText"
+                  (input)="onFreeText($index, $event)"
+                />
+              </div>
+              <div class="field qty">
+                <label [attr.for]="'qty-' + $index">Cantidad</label>
+                <input
+                  [id]="'qty-' + $index"
+                  type="number"
+                  min="1"
+                  max="99"
+                  [value]="item.quantity"
+                  (input)="onQuantity($index, $event)"
+                />
+              </div>
               @if (draft().items.length > 1) {
-                <button type="button" (click)="removeItem($index)">Quitar</button>
+                <button type="button" class="remove danger" (click)="removeItem($index)">
+                  Quitar
+                </button>
+              }
+              @if (issue('item-' + $index); as message) {
+                <p class="field-error span-all">{{ message }}</p>
               }
             </div>
           }
           @if (issue('items'); as message) {
             <p class="field-error">{{ message }}</p>
           }
-          <button type="button" (click)="addItem()">Agregar interés</button>
+          <button type="button" (click)="addItem()">+ Agregar interés</button>
         </section>
 
         <section class="section">
           <h2>Notas del cliente</h2>
-          <label for="requirements">Requerimientos</label>
-          <textarea
-            id="requirements"
-            rows="3"
-            [formField]="intakeForm.specialRequirements"
-          ></textarea>
+          <div class="field">
+            <label for="requirements">Requerimientos especiales</label>
+            <textarea
+              id="requirements"
+              rows="3"
+              placeholder="Alergias, movilidad, celebraciones…"
+              [formField]="intakeForm.specialRequirements"
+            ></textarea>
+          </div>
         </section>
 
         <section class="section" [class.incomplete]="sectionIncomplete('privacy')">
@@ -189,30 +239,107 @@ interface ProductOption {
           }
         </section>
 
-        <div class="actions">
+        @if (error(); as failure) {
+          <app-alert kind="error">{{ failure.message }}</app-alert>
+        }
+
+        <div class="form-actions">
           <button class="primary" type="submit" [disabled]="saving()">
             {{ saving() ? 'Guardando…' : 'Guardar solicitud' }}
           </button>
           <a class="button-link" routerLink="/sales/requests">Cancelar</a>
         </div>
-
-        @if (error(); as failure) {
-          <app-alert kind="error">{{ failure.message }}</app-alert>
-        }
       </form>
     </div>
   `,
   styles: `
     .stack,
-    form,
+    form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .section {
+      gap: 0.85rem;
+    }
+
+    .selected {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--color-primary-border);
+      border-radius: var(--radius-md);
+      background: var(--color-primary-tint);
+    }
+
+    .selected p {
+      display: grid;
+      margin: 0;
+    }
+
+    .search {
+      max-width: 36rem;
+    }
+
+    .matches {
+      display: grid;
+      margin: 0;
+      padding: 0.25rem;
+      list-style: none;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      box-shadow: 0 8px 24px rgb(15 23 42 / 8%);
+    }
+
+    .matches button {
+      width: 100%;
+      justify-content: flex-start;
+      border: 0;
+      font-weight: 500;
+    }
+
+    .matches button:hover {
+      background: var(--color-primary-tint);
+    }
+
     .item-row {
       display: grid;
+      grid-template-columns: minmax(12rem, 1.2fr) minmax(12rem, 1.5fr) 6rem auto;
       gap: 0.75rem;
+      align-items: end;
+      max-width: 60rem;
+      padding: 0.85rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-muted);
+    }
+
+    .item-row .span-all {
+      grid-column: 1 / -1;
+    }
+
+    .remove {
+      min-height: 2.5rem;
+    }
+
+    @media (max-width: 760px) {
+      .item-row {
+        grid-template-columns: 1fr 6rem;
+      }
+
+      .item-row .product,
+      .item-row .field:not(.product, .qty) {
+        grid-column: 1 / -1;
+      }
     }
 
     .check {
       display: flex;
-      gap: 0.4rem;
+      gap: 0.5rem;
       align-items: center;
       font-weight: 400;
     }

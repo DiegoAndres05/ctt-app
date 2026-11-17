@@ -26,54 +26,79 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   imports: [DatePipe, FormField, RouterLink, AlertComponent, SpinnerComponent],
   template: `
     <main class="page">
-      <a routerLink="/settings/users">Volver a usuarios</a>
+      <a routerLink="/settings/users">← Usuarios</a>
 
       @if (loading()) {
         <app-spinner />
       } @else if (error(); as failure) {
         <app-alert kind="error">{{ failure.message }}</app-alert>
       } @else if (profile(); as user) {
-        <h1>{{ user.full_name }}</h1>
-        <dl>
-          <dt>Correo</dt>
-          <dd>{{ user.email }}</dd>
-          <dt>Alta</dt>
-          <dd>{{ user.created_at | date: 'short' }}</dd>
-          <dt>Última actividad</dt>
-          <dd>{{ user.last_activity_at ? (user.last_activity_at | date: 'short') : '—' }}</dd>
-          <dt>Cambio de contraseña pendiente</dt>
-          <dd>{{ user.must_change_password ? 'Sí' : 'No' }}</dd>
-        </dl>
+        <header class="page-head">
+          <h1>{{ user.full_name }}</h1>
+          <p class="hint">{{ user.email }}</p>
+        </header>
+
+        <section class="card">
+          <h2>Datos de la cuenta</h2>
+          <dl class="facts">
+            <div>
+              <dt>Correo</dt>
+              <dd>{{ user.email }}</dd>
+            </div>
+            <div>
+              <dt>Alta</dt>
+              <dd>{{ user.created_at | date: 'short' }}</dd>
+            </div>
+            <div>
+              <dt>Última actividad</dt>
+              <dd>{{ user.last_activity_at ? (user.last_activity_at | date: 'short') : '—' }}</dd>
+            </div>
+            <div>
+              <dt>Cambio de contraseña pendiente</dt>
+              <dd>{{ user.must_change_password ? 'Sí' : 'No' }}</dd>
+            </div>
+          </dl>
+        </section>
 
         @if (isSelf()) {
           <app-alert kind="info">
             No puedes cambiar tu propio rol ni desactivar tu cuenta.
           </app-alert>
         } @else {
-          <form class="card" (submit)="onSaveRole($event)" novalidate>
-            <h2>Rol</h2>
-            <label for="role">Rol asignado</label>
-            <select id="role" [formField]="roleForm.role">
-              <option value="admin">Administrador</option>
-              <option value="operator">Operador</option>
-              <option value="agent">Agente</option>
-            </select>
-            <button type="submit" [disabled]="roleForm().submitting()">
-              {{ roleForm().submitting() ? 'Guardando…' : 'Cambiar rol' }}
-            </button>
-          </form>
+          <div class="forms">
+            <form class="card" (submit)="onSaveRole($event)" novalidate>
+              <h2>Rol</h2>
+              <div class="field">
+                <label for="role">Rol asignado</label>
+                <select id="role" [formField]="roleForm.role">
+                  <option value="admin">Administrador</option>
+                  <option value="operator">Operador</option>
+                  <option value="agent">Agente</option>
+                </select>
+              </div>
+              <div class="form-actions">
+                <button class="primary" type="submit" [disabled]="roleForm().submitting()">
+                  {{ roleForm().submitting() ? 'Guardando…' : 'Cambiar rol' }}
+                </button>
+              </div>
+            </form>
 
-          <form class="card" (submit)="onSaveStatus($event)" novalidate>
-            <h2>Estado</h2>
-            <label for="status">Estado de la cuenta</label>
-            <select id="status" [formField]="statusForm.status">
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-            </select>
-            <button type="submit" [disabled]="statusForm().submitting()">
-              {{ statusForm().submitting() ? 'Guardando…' : 'Actualizar estado' }}
-            </button>
-          </form>
+            <form class="card" (submit)="onSaveStatus($event)" novalidate>
+              <h2>Estado</h2>
+              <div class="field">
+                <label for="status">Estado de la cuenta</label>
+                <select id="status" [formField]="statusForm.status">
+                  <option value="active">Activo</option>
+                  <option value="inactive">Inactivo</option>
+                </select>
+              </div>
+              <div class="form-actions">
+                <button class="primary" type="submit" [disabled]="statusForm().submitting()">
+                  {{ statusForm().submitting() ? 'Guardando…' : 'Actualizar estado' }}
+                </button>
+              </div>
+            </form>
+          </div>
         }
 
         @if (actionError(); as failure) {
@@ -90,44 +115,25 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   `,
   styles: `
     .page {
-      padding: 1.5rem;
       display: grid;
       gap: 1rem;
-      justify-items: start;
+      max-width: 52rem;
     }
 
-    h1,
     h2 {
-      margin: 0;
-    }
-
-    dl {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.25rem 1rem;
-    }
-
-    dt {
-      font-weight: 600;
-    }
-
-    dd {
       margin: 0;
     }
 
     .card {
       display: grid;
-      gap: 0.5rem;
-      width: min(24rem, 100%);
+      gap: 0.85rem;
+      align-content: start;
     }
 
-    label {
-      font-weight: 600;
-    }
-
-    button {
-      margin-top: 0.25rem;
-      padding: 0.6rem 1rem;
+    .forms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+      gap: 1rem;
     }
   `,
 })

@@ -1,0 +1,68 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                      set_quotation_terms                                                       
+--------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Términos.", "version_id": "a7c2e2a7-ec6d-48bd-8caf-86d25c12b2cd", "valid_until": "2026-11-15T16:07:12.97578+00:00"}
+(1 row)
+
+                                                                                                                                issue_quotation                                                                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"total": 110.00, "status": "issued", "currency": "COP", "reference": "COT-00001", "version_id": "a7c2e2a7-ec6d-48bd-8caf-86d25c12b2cd", "valid_until": "2026-11-15T16:07:12.97578+00:00", "public_token": "mSmmsjRK5ibg9mCQF9AElQlFrbLi8VvcVBGq1Yp1RVw", "version_number": 1}
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "a7c2e2a7-ec6d-48bd-8caf-86d25c12b2cd"}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   order text hides sale price and other provider
+ assert_true 
+-------------
+ 
+(1 row)
+
+              mark_provider_order_sent               
+-----------------------------------------------------
+ {"item_id": "eacc2991-1cfd-4598-8744-96f93f045bb1"}
+(1 row)
+
+NOTICE:  ok   marked sent
+ assert_equals 
+---------------
+ 
+(1 row)
+
+         reassign_reservation_item_provider          
+-----------------------------------------------------
+ {"item_id": "eacc2991-1cfd-4598-8744-96f93f045bb1"}
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   reassigned pending

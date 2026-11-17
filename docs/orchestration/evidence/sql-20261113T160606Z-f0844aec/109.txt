@@ -1,0 +1,159 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                        set_quotation_terms                                                         
+------------------------------------------------------------------------------------------------------------------------------------
+ {"terms": "Términos VT.", "version_id": "2eda09bc-61d6-4296-a0f0-89fbadd232ca", "valid_until": "2026-11-15T16:07:11.909564+00:00"}
+(1 row)
+
+                                      record_quotation_response                                       
+------------------------------------------------------------------------------------------------------
+ {"status": "accepted", "response": "accepted", "version_id": "2eda09bc-61d6-4296-a0f0-89fbadd232ca"}
+(1 row)
+
+--- voucher token format ---
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   confirm_reservation returns a 43-char base64url token (no + / =)
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   new_voucher_token yields 500 distinct base64url tokens of 43 chars
+NOTICE:  ok   only the SHA-256 hex of the token is stored
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the clear token is not persisted on the reservation family
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   new_voucher_token is internal (no EXECUTE for anon/authenticated)
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- anon public voucher ---
+NOTICE:  ok   quotation public token is still base64url (046 untouched)
+NOTICE:  ok   anon resolves the new token
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   public voucher exposes only the documented keys
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   public voucher carries no provider data, internal notes, documents or amounts
+NOTICE:  ok   null token
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   blank token
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   malformed token
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+--- re-issue ---
+NOTICE:  ok   well-formed but unknown token
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   rotating an unknown family is a VALIDATION_ERROR
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot re-issue the voucher
+NOTICE:  ok   re-issued token is a different 43-char base64url token
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   re-issued token resolves
+NOTICE:  ok   previous token is revoked by re-issue
+ assert_equals 
+---------------
+ 
+(1 row)
+
+--- legacy token compatibility ---
+NOTICE:  ok   a pre-057 standard-base64 token still resolves (hash lookup is format-agnostic)
+ assert_equals 
+---------------
+ 
+(1 row)
+
+--- reservation_voucher_token_test: all assertions passed ---

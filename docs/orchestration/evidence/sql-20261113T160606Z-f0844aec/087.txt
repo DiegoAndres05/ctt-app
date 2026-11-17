@@ -1,0 +1,415 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                                          cancel_pre_reservation                                                          
+------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "cancelled", "cancelled_at": "2026-11-13T16:06:58.12502+00:00", "pre_reservation_id": "4c63df12-eea9-464f-bf6e-b9cc8950a257"}
+(1 row)
+
+ mark_available 
+----------------
+ 
+(1 row)
+
+ mark_available 
+----------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ verified
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ expired
+(1 row)
+
+NOTICE:  ok   anon cannot EXECUTE assert_pre_reservation_quotable
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon has no EXECUTE privilege on assert_pre_reservation_quotable
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot EXECUTE assert_pre_reservation_quotable
+NOTICE:  ok   authenticated has no EXECUTE privilege on assert_pre_reservation_quotable
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a pending pre-reservation is not quotable
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an expired pre-reservation without an override is not quotable
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a cancelled pre-reservation is never quotable
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quote_eligible is false while pending
+NOTICE:  ok   quote_eligible is false once expired
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quote_eligible is false once cancelled
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   adding a main line returns the recomputed status
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the new main line was appended
+NOTICE:  ok   adding a main line clears the quote override
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   add on a cancelled pre-reservation is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   adding an alternative keeps the quote override
+NOTICE:  ok   every added line writes one pre_reservation_items_changed audit
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   adding a main line audits override_cleared = true with the new item id
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   adding an alternative audits override_cleared = false
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   withdraw without a reason is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   withdraw with a blank reason is rejected
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   withdrawing a main line takes its alternative with it
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an already withdrawn line cannot be withdrawn again
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the withdrawn alternative cannot be withdrawn again
+NOTICE:  ok   withdrawing the last main line is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   withdraw on a cancelled pre-reservation is rejected
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the main line and its alternative are both withdrawn with the reason
+NOTICE:  ok   the other main line stays active
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   one item_withdrawn event is written per withdrawn line
+NOTICE:  ok   the withdrawal audits action, item_ids and override_cleared
+ assert_true 
+-------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   promoting a main line is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   promotion reports the replaced main line
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   promoting a withdrawn alternative is rejected
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the original main line is withdrawn with the automatic reason
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the promoted alternative becomes a main line
+NOTICE:  ok   the sibling alternative is reparented to the promoted line
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   promoting a line clears the quote override
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   promotion writes alternative_promoted with metadata.replaced_item_id
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the promotion audit records action, ids and override_cleared
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an operator cannot authorize a quotation override
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   override without a reason is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   override with a blank reason is rejected
+NOTICE:  ok   override reason longer than 500 is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a verified pre-reservation does not need an override
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   override on a cancelled pre-reservation is rejected
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the override stores timestamp, admin and reason
+NOTICE:  ok   the override audit stores {status} without the reason
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the override event keeps the reason in notes
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a verified pre-reservation is quotable on the verified basis
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quote_eligible is true while verified
+ mark_available 
+----------------
+ 
+(1 row)
+
+ refresh_pre_reservation_status 
+--------------------------------
+ expired
+(1 row)
+
+NOTICE:  ok   the add scenario is expired after its hold lapsed
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a live exception covers an expired pre-reservation (basis override)
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quote_eligible is true while an override is live
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a live exception covers a pending pre-reservation (basis override)
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quote_eligible is true for the pending pre-reservation with an override
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   quote_eligible matches the rule for every row in the list view

@@ -38,6 +38,22 @@ enforces hierarchical RBAC, and records an immutable security audit trail.
 - The service role key is never referenced from `src/`. Environment files hold the public
   anon key only.
 
+## Public access keys (016)
+
+A public access key is a **limited credential**, not a login: it only lets a showcase read one
+agency's published profile and catalog and submit traveler requests for that agency
+(`get_public_site_by_key`, `submit_public_request_by_key`). It never reaches the panel, RLS-protected
+tables or internal data.
+
+- Administrator-only: generate, regenerate, revoke and list (`require_tenant_admin`); operators and
+  agents get `FORBIDDEN`, and RLS hides `public_access_keys` from them.
+- Stored as a SHA-256 fingerprint; the clear key is returned once. Rotation keeps the previous key
+  for 7 days; revocation is immediate. `public_key_generated` / `public_key_revoked` audit events
+  carry the actor and key id only.
+- Every denial is the identical `PUBLIC_ACCESS_UNAVAILABLE`, including for inactive agencies.
+- The legacy organization-identifier access exists only for an agency migrating an existing site
+  (CTT) and closes at `organization_identifier_until` or when an admin ends it.
+
 ## Local commands
 
 ```bash

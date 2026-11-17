@@ -1,5 +1,7 @@
 # Tasks: Frescura de lo que ve el viajero
 
+> **Nota de alcance (2026-11-13)**: La copia rápida y el tiempo de actualización son responsabilidad de el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). Del lado de este repositorio, `get_public_site` no guarda copia: cada llamada refleja el estado actual, así que FR-001 y FR-002 dependen solo de cuánto guarde el sitio. Las tareas de `tasks.md` (que suponían un `PublicCatalogService` en Angular) no se implementan aquí.
+
 **Input**: `specs/014-public-freshness/spec.md`
 
 **Prerequisites**: spec.md, catálogo 011, solicitud 012 y editorial 013.

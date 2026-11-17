@@ -173,8 +173,10 @@ input,
 select,
 textarea {
   font: inherit;
+  font-size: 0.95rem;
   color: var(--color-text);
-  padding: 0.5rem 0.65rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.7rem;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   width: 100%;
@@ -185,10 +187,40 @@ textarea {
     box-shadow 0.15s ease;
 }
 
+textarea {
+  min-height: 5.5rem;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+select:not([multiple]) {
+  appearance: none;
+  padding-right: 2.2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%2364748b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+
 input[type='checkbox'],
 input[type='radio'] {
-  width: auto;
+  width: 1rem;
+  height: 1rem;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  flex: none;
   accent-color: var(--color-primary);
+}
+
+input[type='file'] {
+  min-height: 0;
+  padding: 0.4rem;
+}
+
+input:hover:not(:disabled, :focus),
+select:hover:not(:disabled, :focus),
+textarea:hover:not(:disabled, :focus) {
+  border-color: var(--color-text-subtle);
 }
 
 input:focus,
@@ -206,25 +238,352 @@ textarea::placeholder {
 
 input:disabled,
 select:disabled,
-textarea:disabled {
+textarea:disabled,
+input[readonly] {
   background: var(--color-surface-sunken);
   color: var(--color-text-muted);
+  cursor: not-allowed;
 }
 
 label,
 legend {
   font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text);
 }
 
-label.req::after {
+label.req::after,
+.req > label::after {
   content: ' *';
   color: var(--color-danger);
 }
 
+/*
+ * Flat forms (label, control, error, label…) get a breathing space before every new label,
+ * so each label reads as the title of the control below it, not of the one above.
+ */
+:is(input, select, textarea, .field-error, .hint, .notice, .check, .field, .form-grid) + label,
+:is(input, select, textarea, .field-error, .hint, .notice, .check) + .field,
+:is(input, select, textarea, .field-error, .hint) + .form-grid,
+:is(input, select, textarea, .field-error, .hint, .form-grid, .field) + .check {
+  margin-top: 0.6rem;
+}
+
+/* Invalid controls: the error message that follows marks the control red. */
+:is(input, select, textarea):has(+ .field-error),
+:is(input, select, textarea)[aria-invalid='true'],
+.field.has-error :is(input, select, textarea) {
+  border-color: var(--color-danger);
+}
+
+:is(input, select, textarea):has(+ .field-error):focus,
+:is(input, select, textarea)[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgb(180 35 24 / 14%);
+}
+
 .field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
   color: var(--color-danger);
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.825rem;
+  font-weight: 500;
+}
+
+.field-error::before {
+  content: '!';
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  border-radius: 999px;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/*
+ * Form containers may shrink below their content's natural width. Without this, grid parents
+ * size their column to the widest form row and the page scrolls sideways on a phone
+ * (fieldsets default to min-content width).
+ */
+form,
+fieldset,
+.section,
+.card,
+.form-grid,
+.field,
+.stack > * {
+  min-width: 0;
+}
+
+/* Page wrappers are single-column grids; their column must not grow past the screen. */
+.page,
+.stack {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.page > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Field wrapper and responsive grid for new or restructured forms. */
+.field {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.field > :is(input, select, textarea) {
+  max-width: none;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
+  gap: 0.9rem 1rem;
+  max-width: 48rem;
+}
+
+.form-grid > .span-all {
+  grid-column: 1 / -1;
+}
+
+/* Short numeric fields (dates, counts, prices) sit closer together. */
+.form-grid.compact {
+  grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
+}
+
+/* Toggle chips for multi-select checkboxes (categories, amenities). */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chip:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+  color: var(--color-primary-hover);
+}
+
+.chip:has(input:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+fieldset:disabled .chip {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Side-by-side Spanish / English columns. */
+.bilingual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 1rem;
+}
+
+.lang-col {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.lang-tag {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Nested mini-form inside a section (e.g. «Vincular complemento»). */
+.subform,
+fieldset.plain.subform {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.subform h3 {
+  margin: 0;
+}
+
+.section > h3 {
+  margin: 0.5rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9rem;
+}
+
+/* Single row form: a control and its button side by side. */
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: flex-end;
+}
+
+.inline-form .field {
+  flex: 1 1 14rem;
+  max-width: 22rem;
+}
+
+.inline-form > .span-all {
+  flex-basis: 100%;
+}
+
+/* Checklist of publish requirements. */
+ul.gates {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.gates li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  color: var(--color-text-muted);
+}
+
+ul.gates .gate-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: var(--color-surface-sunken);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+ul.gates li.ok {
+  color: var(--color-text);
+}
+
+ul.gates li.ok .gate-mark {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Value that can no longer be edited, shown where its control would be. */
+.locked {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin: 0;
+  min-height: 2.5rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+  font-weight: 600;
+}
+
+form.card,
+section.card:not(.section) {
+  padding: 1.25rem 1.35rem;
+}
+
+/* Page header used by forms: title plus a short hint. */
+.page-head {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.page-head :is(h1, p) {
+  margin: 0;
+}
+
+.req-star {
+  color: var(--color-danger);
+}
+
+/* Read-only label/value pairs (locked forms, record summaries). */
+dl.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0;
+}
+
+dl.facts dt {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+dl.facts dd {
+  margin: 0.1rem 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* «o …» separator between two ways of filling a form. */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 48rem;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--color-border);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border);
 }
 
 /* Cards / sections */
@@ -336,6 +695,9 @@ label.req::after {
 
 /* Tables */
 .table-wrap {
+  /* Containing block for visually-hidden headers, so they scroll with the table instead of
+     widening the page. */
+  position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -465,4 +827,61 @@ fieldset.plain {
   .preview-column {
     position: static;
   }
+}
+
+/* Forms on small screens */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    max-width: none;
+    font-size: 1rem; /* avoids the iOS zoom on focus */
+  }
+
+  .form-actions,
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions > :is(button, a),
+  .actions > :is(button, .btn, a.primary) {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-bar label,
+  .filters-bar input,
+  .filters-bar select {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* Text-style button for row actions (feature 016). */
+button.link {
+  min-height: 0;
+  padding: 0.15rem 0.1rem;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+button.link:hover:not(:disabled) {
+  background: none;
+  color: var(--color-primary-hover);
+}
+
+button.link.danger {
+  color: var(--color-danger);
 }

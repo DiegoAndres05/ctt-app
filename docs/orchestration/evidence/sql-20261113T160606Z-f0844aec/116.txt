@@ -1,0 +1,133 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+                                                                                                    capture_request_core                                                                                                    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"reference": "SOL-00001", "request_id": "87e64cbb-bdb3-421c-b1fb-dd3defdebb5d", "customer_id": "f77c4b16-c43b-4271-b8e5-5ce11f0b678c", "deduplicated": false, "customer_created": true, "contact_review_required": false}
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   assisted intake requires privacy_notice_given
+NOTICE:  ok   assisted intake rejects the web channel
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   assisted intake rejects a customer from another organization
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   assisted intake rejects an inactive product
+NOTICE:  ok   assisted intake rejects a product from another organization
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a local phone links the existing customer and assigns the request to the agent
+NOTICE:  ok   anon cannot execute create_assisted_request
+ assert_true 
+-------------
+ 
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon is rejected when calling create_assisted_request
+ act_as 
+--------
+ 
+(1 row)
+
+                                                                                   set_request_status                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"status": "discarded", "closed_at": "2026-11-13T16:07:15.257733+00:00", "request_id": "d0f971e7-0867-4569-8e35-553b8d5b0c15", "first_handled_at": "2026-11-13T16:07:15.257733+00:00"}
+(1 row)
+
+NOTICE:  ok   ingest creates, deduplicates by wamid, attaches, and opens a new request after discard
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the text fixture creates the customer from the profile name and stores the message
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an image message is stored with the unsupported-message marker
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an unknown phone_number_id is ignored and status callbacks create nothing
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   replaying the same wamid does not insert another message

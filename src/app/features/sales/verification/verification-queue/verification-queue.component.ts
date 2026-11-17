@@ -124,108 +124,110 @@ type QueueEntry =
         <app-alert kind="error">{{ failure }}</app-alert>
       }
 
-      <table class="data">
-        <thead>
-          <tr>
-            <th>Fecha servicio</th>
-            <th>Servicio</th>
-            <th>Pasajeros</th>
-            <th>Proveedor</th>
-            <th>Pre-reserva</th>
-            <th>Cliente</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (entry of entries(); track entryKey(entry)) {
-            @if (entry.kind === 'group') {
-              <tr class="group-row">
-                <td colspan="8">{{ entry.label }}</td>
-              </tr>
-            } @else {
-              <tr>
-                <td>{{ formatDay(entry.row.start_date) }}</td>
-                <td>
-                  @if (entry.row.is_alternative) {
-                    <span class="tag">Alternativa</span>
-                  }
-                  {{ entry.row.item_label }}
-                </td>
-                <td>{{ pax(entry.row) }}</td>
-                <td>
-                  @if (entry.row.provider_name; as providerName) {
-                    {{ providerName }}
-                    @if (contactLinks(entry.row); as links) {
-                      @if (links.tel) {
-                        <a [href]="links.tel">Llamar</a>
-                      }
-                      @if (links.whatsapp) {
-                        <a [href]="links.whatsapp" target="_blank" rel="noopener noreferrer">
-                          WhatsApp
-                        </a>
-                      }
-                      @if (links.mailto) {
-                        <a [href]="links.mailto">Correo</a>
-                      }
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Fecha servicio</th>
+              <th>Servicio</th>
+              <th>Pasajeros</th>
+              <th>Proveedor</th>
+              <th>Pre-reserva</th>
+              <th>Cliente</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of entries(); track entryKey(entry)) {
+              @if (entry.kind === 'group') {
+                <tr class="group-row">
+                  <td colspan="8">{{ entry.label }}</td>
+                </tr>
+              } @else {
+                <tr>
+                  <td>{{ formatDay(entry.row.start_date) }}</td>
+                  <td>
+                    @if (entry.row.is_alternative) {
+                      <span class="tag">Alternativa</span>
                     }
-                  } @else {
-                    Sin proveedor
-                  }
-                </td>
-                <td>
-                  <a [routerLink]="['/sales/pre-reservations', entry.row.pre_reservation_id]">
-                    {{ entry.row.reference }}
-                  </a>
-                </td>
-                <td>{{ customerName(entry.row) }}</td>
-                <td>
-                  {{ statusLabel(entry.row.verification_status) }}
-                  @if (entry.row.hold_expired) {
-                    <span> · Retención vencida</span>
-                  } @else if (entry.row.verification_started_at) {
-                    <span>
-                      · En gestión por {{ entry.row.assigned_operator_name || 'operador' }}</span
+                    {{ entry.row.item_label }}
+                  </td>
+                  <td>{{ pax(entry.row) }}</td>
+                  <td>
+                    @if (entry.row.provider_name; as providerName) {
+                      {{ providerName }}
+                      @if (contactLinks(entry.row); as links) {
+                        @if (links.tel) {
+                          <a [href]="links.tel">Llamar</a>
+                        }
+                        @if (links.whatsapp) {
+                          <a [href]="links.whatsapp" target="_blank" rel="noopener noreferrer">
+                            WhatsApp
+                          </a>
+                        }
+                        @if (links.mailto) {
+                          <a [href]="links.mailto">Correo</a>
+                        }
+                      }
+                    } @else {
+                      Sin proveedor
+                    }
+                  </td>
+                  <td>
+                    <a [routerLink]="['/sales/pre-reservations', entry.row.pre_reservation_id]">
+                      {{ entry.row.reference }}
+                    </a>
+                  </td>
+                  <td>{{ customerName(entry.row) }}</td>
+                  <td>
+                    {{ statusLabel(entry.row.verification_status) }}
+                    @if (entry.row.hold_expired) {
+                      <span> · Retención vencida</span>
+                    } @else if (entry.row.verification_started_at) {
+                      <span>
+                        · En gestión por {{ entry.row.assigned_operator_name || 'operador' }}</span
+                      >
+                    }
+                  </td>
+                  <td class="row-actions">
+                    <button
+                      type="button"
+                      (click)="start(entry.row)"
+                      [disabled]="
+                        entry.row.verification_started_at !== null ||
+                        busyItemId() === entry.row.item_id
+                      "
                     >
+                      Iniciar gestión
+                    </button>
+                    <button
+                      type="button"
+                      (click)="toggleOutcome(entry.row)"
+                      [disabled]="busyItemId() === entry.row.item_id"
+                    >
+                      Registrar resultado
+                    </button>
+                  </td>
+                </tr>
+                @if (outcomeItem(); as openRow) {
+                  @if (openRow.item_id === entry.row.item_id) {
+                    <tr class="outcome-row">
+                      <td colspan="8">
+                        <app-verification-outcome-form
+                          [item]="openRow"
+                          (saved)="onOutcomeSaved()"
+                          (cancelled)="closeOutcome()"
+                        />
+                      </td>
+                    </tr>
                   }
-                </td>
-                <td class="row-actions">
-                  <button
-                    type="button"
-                    (click)="start(entry.row)"
-                    [disabled]="
-                      entry.row.verification_started_at !== null ||
-                      busyItemId() === entry.row.item_id
-                    "
-                  >
-                    Iniciar gestión
-                  </button>
-                  <button
-                    type="button"
-                    (click)="toggleOutcome(entry.row)"
-                    [disabled]="busyItemId() === entry.row.item_id"
-                  >
-                    Registrar resultado
-                  </button>
-                </td>
-              </tr>
-              @if (outcomeItem(); as openRow) {
-                @if (openRow.item_id === entry.row.item_id) {
-                  <tr class="outcome-row">
-                    <td colspan="8">
-                      <app-verification-outcome-form
-                        [item]="openRow"
-                        (saved)="onOutcomeSaved()"
-                        (cancelled)="closeOutcome()"
-                      />
-                    </td>
-                  </tr>
                 }
               }
             }
-          }
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </app-data-table>
   `,
   styles: `

@@ -1,0 +1,101 @@
+--- non-admins cannot manage users ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot create a collaborator
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an operator cannot change another collaborator's role
+NOTICE:  ok   an operator cannot deactivate a collaborator
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- an administrator can provision, retask and deactivate ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   create_internal_user rejects the admin role
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the new collaborator is an active operator who must change their password
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   creating a collaborator emits user_created attributed to the administrator
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a duplicate email is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   update_user_role takes effect immediately
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   changing a role emits role_changed
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   toggle_user_status deactivates the collaborator
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   deactivation emits user_deactivated
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an administrator cannot deactivate themselves
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an administrator cannot change their own role
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an administrator cannot change a collaborator of another tenant

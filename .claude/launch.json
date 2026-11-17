@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["start"],
       "port": 4200
+    },
+    {
+      "name": "ctt-app-dev-4300",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start", "--", "--port", "4300"],
+      "port": 4300
     }
   ]
 }

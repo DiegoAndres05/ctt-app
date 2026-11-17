@@ -1,0 +1,194 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+NOTICE:  ok   anon and authenticated cannot execute internal intake functions
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   channel cannot be changed, even by the table owner
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select customers
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select customer_requests
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select customer_request_items
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select customer_request_list
+NOTICE:  ok   anon cannot select customer_list
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select inbound_messages
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select channel_connections
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot select request_notes
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated sees only customers of their organization
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated sees only requests of their organization
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated sees only request items of their organization
+NOTICE:  ok   request list view is limited to the caller tenant
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   customer list view is limited to the caller tenant
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a request from another organization is invisible
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot insert customers
+NOTICE:  ok   authenticated cannot update customers
+NOTICE:  ok   authenticated cannot delete customers
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot insert customer_requests
+NOTICE:  ok   authenticated cannot update customer_requests
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot delete customer_requests
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated sees only inbound messages of their organization
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated sees only channel connections of their organization
+ assert_equals 
+---------------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated sees only notes of their organization
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot insert request_notes
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   authenticated cannot update inbound_messages
+NOTICE:  ok   authenticated cannot delete channel_connections
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   execute grants match the public, collaborator, and service_role boundaries

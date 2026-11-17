@@ -4,7 +4,9 @@
 
 **Created**: 2026-10-26
 
-**Status**: Draft
+**Status**: Superseded
+
+> **Nota de alcance (2026-11-13)**: El contenido editorial (WordPress) lo muestra el sitio de Cartagena Tailored Travel (https://www.cartagenatailoredtravel.com/). Esta app no lee WordPress ni tiene shell público. Las tareas de `tasks.md` no se implementan aquí.
 
 **Input**: Iteración 3 de 5. Marketing publica blog, guías, páginas de destino y políticas en el gestor editorial, y el sitio público las muestra. Los datos comerciales siguen fuera de ese gestor (`.specify/mainspec.md`, capítulo 22).
 

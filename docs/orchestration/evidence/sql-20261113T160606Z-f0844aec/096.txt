@@ -1,0 +1,250 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                          attach_public_image                                           
+--------------------------------------------------------------------------------------------------------
+ {"id": "98ac393e-c3fe-462c-a0fd-6e6b778e186d", "ref": "/images/web-intake-offer.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:03.774645+00:00"}
+(1 row)
+
+                                          attach_public_image                                          
+-------------------------------------------------------------------------------------------------------
+ {"id": "9ca5fb47-8d4a-42ff-ad2f-99df9426e37a", "ref": "/images/web-intake-sold.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:03.774645+00:00"}
+(1 row)
+
+ set_public_listing_sold_out 
+-----------------------------
+ {"sold_out": true}
+(1 row)
+
+                                            attach_public_image                                            
+-----------------------------------------------------------------------------------------------------------
+ {"id": "dd3efb11-192a-47c9-9708-2341634f2bf9", "ref": "/images/web-intake-inactive.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:03.774645+00:00"}
+(1 row)
+
+                          set_product_status                          
+----------------------------------------------------------------------
+ {"id": "8866d82a-6295-449b-8238-2711d0dcf175", "status": "inactive"}
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   web intake requires privacy_consent
+NOTICE:  ok   web intake requires a contact object
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   web intake rejects a malformed email
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   web intake rejects a too-short phone
+NOTICE:  ok   web intake rejects a travel date in the past
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   web intake rejects an end date before the start date
+NOTICE:  ok   a filled honeypot is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   more than 10 items is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a request with no interest and no requirements is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an unknown organization is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an inactive organization is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an unknown public slug is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a draft listing is rejected
+NOTICE:  ok   a sold-out listing is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a listing whose product is inactive is rejected
+NOTICE:  ok   rejected web calls create no requests
+ assert_equals 
+---------------
+ 
+(1 row)
+
+               submit_public_request               
+---------------------------------------------------
+ {"reference": "SOL-00003", "deduplicated": false}
+(1 row)
+
+               submit_public_request               
+---------------------------------------------------
+ {"reference": "SOL-00004", "deduplicated": false}
+(1 row)
+
+               submit_public_request               
+---------------------------------------------------
+ {"reference": "SOL-00005", "deduplicated": false}
+(1 row)
+
+               submit_public_request               
+---------------------------------------------------
+ {"reference": "SOL-00006", "deduplicated": false}
+(1 row)
+
+NOTICE:  ok   the sixth web request in an hour for the same email is rate limited
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a repeated idempotency key returns the same reference and deduplicated=true
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an identical request inside two minutes is deduplicated by fingerprint
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the stored request is received on the web channel with a normalized customer and listing item
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   idempotent replay still returns an object
+NOTICE:  ok   submit_public_request returns only reference and deduplicated
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a different name links to the existing email and flags the submitted contact for review
+NOTICE:  ok   when email and phone point at different customers, email wins and neither profile is overwritten
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   rate limiting stops the sixth request before it is stored
+ assert_equals 
+---------------
+ 
+(1 row)
+

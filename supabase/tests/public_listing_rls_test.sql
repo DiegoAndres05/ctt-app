@@ -104,6 +104,9 @@ VALUES
   (:'beta_org_id'::uuid, 'Public Beta', 'public-beta', 'active',
    jsonb_build_object('default_currency', 'COP'));
 
+-- Feature 016: these agencies model CTT, so the organization-identifier transition is open.
+SELECT public.mark_public_site_as_migrated(o) FROM unnest(ARRAY[:'alpha_org_id'::uuid, :'beta_org_id'::uuid]) AS o;
+
 SELECT pg_temp.add_collaborator(
   :'alpha_operator_id'::uuid, :'alpha_org_id'::uuid,
   'operador-public-alpha@test.invalid', 'Operador Alpha', 'operator'

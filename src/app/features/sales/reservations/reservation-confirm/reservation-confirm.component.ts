@@ -65,81 +65,101 @@ interface PassengerDraft {
           <p>El depósito no se cobra en línea. Registre el abono ya recibido.</p>
 
           <form (submit)="onSubmit($event)" class="stack">
-            <label>
-              Monto del depósito
-              <input
-                type="number"
-                min="0.01"
-                step="0.01"
-                [value]="amount()"
-                (input)="amount.set($any($event.target).value)"
-              />
-            </label>
-            <label>
-              Fecha de pago
-              <input
-                type="date"
-                [value]="paidOn()"
-                (input)="paidOn.set($any($event.target).value)"
-              />
-            </label>
-            <label>
-              Método
-              <select [value]="method()" (change)="method.set($any($event.target).value)">
-                @for (option of methods; track option) {
-                  <option [value]="option">{{ methodLabel(option) }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              Referencia de transferencia
-              <input [value]="transferRef()" (input)="transferRef.set($any($event.target).value)" />
-            </label>
-            <label>
-              Teléfonos de asistencia
-              <input [value]="phones()" (input)="phones.set($any($event.target).value)" />
-            </label>
-
-            <h2>Pasajeros</h2>
-            @for (pax of passengers(); track $index; let i = $index) {
-              <fieldset>
-                <legend>Pasajero {{ i + 1 }}</legend>
-                <label>
-                  Nombre
+            <section class="section">
+              <h2>Depósito recibido</h2>
+              <div class="form-grid">
+                <label class="field req">
+                  <span>Monto del depósito</span>
                   <input
-                    [value]="pax.first_name"
-                    (input)="patchPax(i, 'first_name', $any($event.target).value)"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    [value]="amount()"
+                    (input)="amount.set($any($event.target).value)"
                   />
                 </label>
-                <label>
-                  Apellido
+                <label class="field req">
+                  <span>Fecha de pago</span>
                   <input
-                    [value]="pax.last_name"
-                    (input)="patchPax(i, 'last_name', $any($event.target).value)"
+                    type="date"
+                    [value]="paidOn()"
+                    (input)="paidOn.set($any($event.target).value)"
                   />
                 </label>
-                <label>
-                  Documento
-                  <select
-                    [value]="pax.document_type"
-                    (change)="patchPax(i, 'document_type', $any($event.target).value)"
-                  >
-                    @for (doc of documents; track doc) {
-                      <option [value]="doc">{{ documentLabel(doc) }}</option>
+                <label class="field">
+                  <span>Método</span>
+                  <select [value]="method()" (change)="method.set($any($event.target).value)">
+                    @for (option of methods; track option) {
+                      <option [value]="option">{{ methodLabel(option) }}</option>
                     }
                   </select>
                 </label>
-                <label>
-                  Número
+                <label class="field">
+                  <span>Referencia de transferencia</span>
                   <input
-                    [value]="pax.document_number"
-                    (input)="patchPax(i, 'document_number', $any($event.target).value)"
+                    [value]="transferRef()"
+                    (input)="transferRef.set($any($event.target).value)"
                   />
                 </label>
-              </fieldset>
-            }
+                <label class="field span-all">
+                  <span>Teléfonos de asistencia</span>
+                  <input
+                    placeholder="Ej.: +57 300 000 0000, +57 310 000 0000"
+                    [value]="phones()"
+                    (input)="phones.set($any($event.target).value)"
+                  />
+                </label>
+              </div>
+            </section>
 
-            <button class="primary" type="submit" [disabled]="saving()">Confirmar reserva</button>
+            <section class="section">
+              <h2>Pasajeros</h2>
+              @for (pax of passengers(); track $index; let i = $index) {
+                <fieldset class="plain pax">
+                  <legend>Pasajero {{ i + 1 }}</legend>
+                  <div class="form-grid">
+                    <label class="field">
+                      <span>Nombre</span>
+                      <input
+                        [value]="pax.first_name"
+                        (input)="patchPax(i, 'first_name', $any($event.target).value)"
+                      />
+                    </label>
+                    <label class="field">
+                      <span>Apellido</span>
+                      <input
+                        [value]="pax.last_name"
+                        (input)="patchPax(i, 'last_name', $any($event.target).value)"
+                      />
+                    </label>
+                    <label class="field">
+                      <span>Documento</span>
+                      <select
+                        [value]="pax.document_type"
+                        (change)="patchPax(i, 'document_type', $any($event.target).value)"
+                      >
+                        @for (doc of documents; track doc) {
+                          <option [value]="doc">{{ documentLabel(doc) }}</option>
+                        }
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>Número</span>
+                      <input
+                        [value]="pax.document_number"
+                        (input)="patchPax(i, 'document_number', $any($event.target).value)"
+                      />
+                    </label>
+                  </div>
+                </fieldset>
+              }
+            </section>
+
+            <div class="form-actions">
+              <button class="primary" type="submit" [disabled]="saving()">
+                {{ saving() ? 'Confirmando…' : 'Confirmar reserva' }}
+              </button>
+            </div>
           </form>
         }
       }
@@ -148,12 +168,36 @@ interface PassengerDraft {
   styles: `
     .stack {
       display: grid;
-      gap: 0.75rem;
-      max-width: 40rem;
+      gap: 1rem;
+      max-width: 56rem;
     }
-    fieldset {
-      display: grid;
-      gap: 0.4rem;
+
+    .section {
+      gap: 0.85rem;
+    }
+
+    label.field > span {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    label.field.req > span::after {
+      content: ' *';
+      color: var(--color-danger);
+    }
+
+    .pax {
+      gap: 0.6rem;
+      padding: 0.85rem 1rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-muted);
+    }
+
+    .pax legend {
+      float: left;
+      padding: 0;
+      margin-bottom: 0.25rem;
     }
   `,
 })

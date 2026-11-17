@@ -1,0 +1,241 @@
+--- must_change_password self-update scope ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   fixture: the agent starts with must_change_password = true
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a collaborator cannot clear must_change_password on their own profile
+NOTICE:  ok   a collaborator cannot promote themselves to admin
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a collaborator cannot reset their own lockout counters
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   a collaborator can still record their own last_activity_at
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- change_password ---
+NOTICE:  ok   must_change_password survived every rejected attempt
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   change_password rejects a wrong current password
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   change_password rejects a new password under 8 characters
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   change_password rejects a new password longer than bcrypt can hash
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   change_password refuses to re-use the temporary password
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   no rejected rotation cleared the mandatory-change flag
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   change_password succeeds with the correct current password
+NOTICE:  ok   the mandatory-change flag is cleared server-side by change_password
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   auth.users now stores a bcrypt hash of the new password
+NOTICE:  ok   the temporary password no longer authenticates
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the rotation kept the calling session and dropped the other one
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   exactly one password_changed event was recorded
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- failed-login lockout ---
+ set_config 
+------------
+ 
+(1 row)
+
+NOTICE:  ok   an authenticated session cannot invoke the password verification hook
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ password_verification_hook 
+----------------------------
+ {"decision": "continue"}
+ {"decision": "continue"}
+ {"decision": "continue"}
+ {"decision": "continue"}
+(4 rows)
+
+NOTICE:  ok   four failed verifications are counted without locking the account
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the fifth failed verification is rejected
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the account is locked for 15 minutes after the fifth attempt
+NOTICE:  ok   every failed verification produced a login_failure event
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the lock produced exactly one account_locked event, recorded as a system event
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a correct password is rejected while the lock is live
+NOTICE:  ok   no login_success was recorded while the account was locked
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   once the lock expires the correct password is accepted again
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a successful verification resets the counters and stamps activity
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   clearing the expired lock produced an account_unlocked event
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the accepted verification produced a login_success event
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a deactivated collaborator is rejected after proving their password
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   a wrong password against a deactivated account reveals nothing about its status
+--- record_session_end ---
+ act_as 
+--------
+ 
+(1 row)
+
+ record_session_end 
+--------------------
+ 
+(1 row)
+
+ record_session_end 
+--------------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   record_session_end only accepts the two session-termination reasons
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   logout and session_expired are recorded for the calling session
+--- us1_auth_functions_test: all assertions passed ---

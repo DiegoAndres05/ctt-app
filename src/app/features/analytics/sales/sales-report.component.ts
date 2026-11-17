@@ -13,11 +13,19 @@ import { monthStart, today } from '../funnel/funnel-report.component';
   template: `
     <div class="stack">
       <h1>Productos e ingresos</h1>
-      <form class="filters" (submit)="onLoad($event)">
-        <label>Desde <input type="date" [value]="from()" (input)="from.set($any($event.target).value)" /></label>
-        <label>Hasta <input type="date" [value]="to()" (input)="to.set($any($event.target).value)" /></label>
+      <form class="filters-bar" (submit)="onLoad($event)">
+        <label>
+          Desde
+          <input type="date" [value]="from()" (input)="from.set($any($event.target).value)"
+        /></label>
+        <label>
+          Hasta
+          <input type="date" [value]="to()" (input)="to.set($any($event.target).value)"
+        /></label>
         <button class="primary" type="submit" [disabled]="loading()">Consultar</button>
-        <button type="button" (click)="onCsv()" [disabled]="rows().length === 0">Descargar CSV</button>
+        <button type="button" (click)="onCsv()" [disabled]="rows().length === 0">
+          Descargar CSV
+        </button>
       </form>
       @if (loading()) {
         <app-spinner label="Cargando ranking…" />
@@ -29,37 +37,43 @@ import { monthStart, today } from '../funnel/funnel-report.component';
         }
         @for (s of summaries(); track s.currency) {
           <p>
-            {{ s.currency }} · Brutos {{ s.gross }} · Cancelados {{ s.cancelled }} · Netos {{ s.net }}
-            · Recaudado {{ s.paid_total }} · Saldo {{ s.balance }}
+            {{ s.currency }} · Brutos {{ s.gross }} · Cancelados {{ s.cancelled }} · Netos
+            {{ s.net }} · Recaudado {{ s.paid_total }} · Saldo {{ s.balance }}
           </p>
         }
         @if (rows().length > 0) {
-          <table class="data">
-            <thead>
-              <tr>
-                <th>Servicio</th>
-                <th>Reservas</th>
-                <th>Viajeros</th>
-                <th>Ingresos</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of rows(); track $index) {
+          <div class="table-wrap">
+            <table class="data">
+              <thead>
                 <tr>
-                  <td>{{ row.item_label }}</td>
-                  <td>{{ row.reservation_count }}</td>
-                  <td>{{ row.traveler_count }}</td>
-                  <td>{{ row.revenue }} {{ row.currency }}</td>
+                  <th>Servicio</th>
+                  <th>Reservas</th>
+                  <th>Viajeros</th>
+                  <th>Ingresos</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (row of rows(); track $index) {
+                  <tr>
+                    <td>{{ row.item_label }}</td>
+                    <td>{{ row.reservation_count }}</td>
+                    <td>{{ row.traveler_count }}</td>
+                    <td>{{ row.revenue }} {{ row.currency }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         }
       }
     </div>
   `,
   styles: `
-    .stack { display: grid; gap: 1rem; max-width: 48rem; }
+    .stack {
+      display: grid;
+      gap: 1rem;
+      max-width: 48rem;
+    }
   `,
 })
 export class SalesReportComponent {

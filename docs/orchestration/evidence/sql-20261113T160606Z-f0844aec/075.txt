@@ -1,0 +1,38 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   empty currencies
+ assert_equals 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   empty ranking
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   agent blocked
+ assert_raises 
+---------------
+ 
+(1 row)
+

@@ -1,0 +1,58 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   upsert_pricing_scheme inserts a new version instead of reusing the historical row
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the historical row keeps its original amount and valid_from; only valid_to is closed
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   the new version carries the new amount and is the current row
+NOTICE:  ok   resolve_price on a date covered by the closed version still returns the frozen amount
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   resolve_price on a date after the new version took effect returns the new amount
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an in-place UPDATE of a historical amount is rejected
+NOTICE:  ok   an in-place UPDATE of the current amount is rejected; versioning must insert a new row
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- price_freeze_test: all assertions passed ---

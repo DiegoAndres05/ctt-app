@@ -1,0 +1,108 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+--- placement vs product type ---
+NOTICE:  ok   experience cannot use lodging placement
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   accommodation cannot use catalog placement
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- bilingual pairs and original price ---
+NOTICE:  ok   incomplete includes pair is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   original_price must exceed display_price
+                                        attach_public_image                                        
+---------------------------------------------------------------------------------------------------
+ {"id": "cb7fb1ed-4b1f-4c14-8152-aa4369b68a25", "ref": "/images/capri-rules.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:03.360773+00:00"}
+(1 row)
+
+--- slug immutable ---
+NOTICE:  ok   slug cannot change after first_published_at
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- display price vs tariff ---
+                          save_public_listing                          
+-----------------------------------------------------------------------
+ {"id": "2b964ba0-13ca-4c2d-abfd-3ebf0b4a8e8e", "status": "published"}
+(1 row)
+
+NOTICE:  ok   editing display_price does not insert a new pricing_schemes row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   display_price on the listing is updated
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   current tariff amount is unchanged after display_price edit
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   publish rejects incomplete catalog listing
+ assert_raises 
+---------------
+ 
+(1 row)
+

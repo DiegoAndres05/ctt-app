@@ -136,6 +136,63 @@ Lists show 20 rows and keep filters in the query string. Agents do not see creat
 publish actions. `/catalog/products/:id` still opens the experience editor, which redirects
 when the product is an accommodation or a package.
 
+## Contenido público multiagencia (016)
+
+Each agency owns its public configuration; nothing is shared between agencies and nothing is
+fixed to CTT any more. Screens live under **CMS › Ajustes del catálogo › Sitio público**.
+
+| What | Table / RPCs | Who manages it |
+| --- | --- | --- |
+| Public categories | `public_categories`; `save_public_category`, `delete_public_category` | Operator, Admin |
+| Lodging types and amenities | `public_taxonomy_values` (kind `lodging_type` / `amenity`); `list_/save_/delete_public_taxonomy_value` | Operator, Admin |
+| Public profile (name, logo, color, contact, networks, languages, currency) | `public_profiles`; `get_public_profile`, `save_public_profile` | Operator, Admin |
+| Public access key | `public_access_keys`; `generate_/revoke_/list_public_access_keys` | Admin only |
+| Source policy (migration vs direct publication, CTT transition) | `public_source_config`; `set_public_source_migration`, `end_organization_identifier_transition`, `complete_public_cutover` | Admin only |
+
+Rules worth knowing:
+
+- **New agency defaults** (trigger on `organizations`): seven editable example categories
+  (`tours`, `playa`, `aventura`, `cultural`, `gastronomia`, `naturaleza`, `premium`), five lodging
+  types (incl. `hotel`), ten amenities (incl. `sea_view`), a profile from the agency name and
+  `settings.default_currency`, and `migration_required = false`.
+- **Used values**: a category, type or amenity used by a listing can be deactivated but not
+  deleted (`CATEGORY_IN_USE`, `TAXONOMY_VALUE_IN_USE`). A listing keeps a deactivated value it
+  already had; a deactivated value cannot be newly assigned (`TAXONOMY_VALUE_INACTIVE`), and a code
+  from another agency is rejected (`TAXONOMY_VALUE_INVALID`) by the `public_listings` trigger.
+  The public projection still labels inactive values that a published listing shows.
+- **Protected categories**: only an agency migrating CTT's site has them (the eight CTT
+  identifiers). They can be renamed or deactivated, never deleted (`CATEGORY_PROTECTED`).
+- **Keys**: `pk_` + 48 hex chars, shown once. Only the SHA-256 fingerprint and an 11-char prefix
+  are stored. Regenerating leaves the previous key valid for exactly **7 days**; revoking is
+  immediate, also during that grace period. Audit records actor and key id, never the key.
+- **Direct publication vs migration**: a migration-free agency's published listings are public at
+  once (`build_public_catalog` reports `source: panel`). A migrating agency shows the «preparing»
+  state until `complete_public_cutover` passes the manifest gate (`public_cutover_items`).
+
+## Sitio público externo (vitrinas)
+
+Traveler-facing websites are separate apps (CTT's is **https://www.cartagenatailoredtravel.com/**).
+This repository owns the admin panel and the Supabase contract they consume
+(`specs/016-multiagency-public-cms/contracts/public-consumer.md`):
+
+| Step | Showcase calls (anon key, **no user session**) | Notes |
+| --- | --- | --- |
+| Read profile + catalog | `get_public_site_by_key(p_key)` → `{ profile, catalog }` | `catalog` = `source`, `offers`, `lodgings`, `yachts`, `categories`, `lodgingTypes`, `amenities` |
+| Send a traveler request | `submit_public_request_by_key(p_key, payload)` | Same payload and errors as 003; lands in `/sales/requests` (channel `web`) |
+| CTT only, during its transition | `get_public_site(organization_id)`, `submit_public_request(organization_id, payload)` | Accepted until `public_source_config.organization_identifier_until` (90 days from migration 059, or earlier if an admin closes it). Never available to other agencies. |
+
+- Every invalid, unknown, expired or revoked key — and the organization identifier outside the
+  transition — gets the same error, `PUBLIC_ACCESS_UNAVAILABLE` (SQLSTATE `42501`), so a caller
+  cannot tell whether an agency exists.
+- The projection contains only published listings of active products plus the configured
+  profile fields; empty profile fields are omitted. No ids, users, customers, notes, providers,
+  costs or tariffs.
+- A signed-in panel user calling `get_public_site` always gets their own agency (preview).
+- `parsePublicSite` (`core/catalog/models/public-site-projection.ts`) is the typed reading of
+  the catalog part used by this app. Sold out never accepts requests.
+- Known gaps in the projection: offers and yachts expose only a cover (no gallery); offer
+  `location`, `meetingPoint`, `schedule` and `duration` exist only in Spanish.
+
 ## Quickstart mapping (T043)
 
 See `specs/002-catalog-pricing/quickstart.md`. Automated coverage:

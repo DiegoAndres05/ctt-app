@@ -20,6 +20,7 @@ import type {
   SavedPublicListing,
   UnpublishPublicListingResult,
 } from '../models/public-listing.model';
+import { parsePublicSite } from '../models/public-site-projection';
 
 const CATALOG_MEDIA_BUCKET = 'catalog-media';
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -340,13 +341,7 @@ export class PublicListingService {
       throw toAppError(error);
     }
 
-    const row = (data ?? {}) as Partial<PublicSiteProjection>;
-    return {
-      source: row.source ?? 'legacy',
-      offers: Array.isArray(row.offers) ? row.offers : [],
-      lodgings: Array.isArray(row.lodgings) ? row.lodgings : [],
-      yachts: Array.isArray(row.yachts) ? row.yachts : [],
-    };
+    return parsePublicSite(data);
   }
 
   private async listPublishedSlugs(): Promise<string[]> {

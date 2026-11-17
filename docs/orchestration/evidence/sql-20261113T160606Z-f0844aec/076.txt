@@ -1,0 +1,73 @@
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   fixture: the audit log already holds at least one event
+--- immutability as table owner ---
+NOTICE:  ok   UPDATE of an audit event is rejected even for the table owner
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   DELETE of an audit event is rejected even for the table owner
+NOTICE:  ok   TRUNCATE of the audit log is rejected
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   the targeted audit row is still present after the rejected mutations
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- immutability as an authenticated administrator ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an authenticated admin has no UPDATE privilege on audit_events
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an authenticated admin has no DELETE privilege on audit_events
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an authenticated admin can still read their tenant's audit history
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- a non-admin still cannot read or mutate ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an agent reads no audit history
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent has no UPDATE privilege on audit_events
+ assert_raises 
+---------------
+ 
+(1 row)
+

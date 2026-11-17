@@ -1,0 +1,123 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ price_and_activate 
+--------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+                                        attach_public_image                                        
+---------------------------------------------------------------------------------------------------
+ {"id": "17318bf6-dfb5-4931-90cf-ab15a8c51972", "ref": "/images/alpha-offer.jpg", "role": "cover"}
+(1 row)
+
+                              publish_public_listing                               
+-----------------------------------------------------------------------------------
+ {"status": "published", "first_published_at": "2026-11-13T16:07:02.892464+00:00"}
+(1 row)
+
+--- agent forbidden ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   agent cannot publish
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   agent cannot save public listing
+--- cross-tenant ---
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   beta operator cannot SELECT alpha public_listings
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   beta operator cannot publish alpha listing
+--- anon isolation ---
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+NOTICE:  ok   anon get_public_site returns empty arrays while source=legacy
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT public_listings rows (including drafts)
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT pricing_schemes
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   anon cannot SELECT products
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ clear_jwt 
+-----------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   anon get_public_site projects only published active offers when source=panel
+NOTICE:  ok   anon projection never includes draft listings
+ assert_true 
+-------------
+ 
+(1 row)
+

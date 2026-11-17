@@ -73,6 +73,9 @@ VALUES
   (:'org_a'::uuid, 'Requests A', 'requests-a', 'active', '{"default_phone_country_code":"57"}'::jsonb),
   (:'org_b'::uuid, 'Requests B', 'requests-b', 'active', '{"default_phone_country_code":"57"}'::jsonb);
 
+-- Feature 016: these agencies model CTT, so the organization-identifier transition is open.
+SELECT public.mark_public_site_as_migrated(o) FROM unnest(ARRAY[:'org_a'::uuid, :'org_b'::uuid]) AS o;
+
 SELECT pg_temp.add_collaborator(
   :'agent_a'::uuid, :'org_a'::uuid, 'agent-a-requests@test.invalid', 'Agente A', 'agent'
 );

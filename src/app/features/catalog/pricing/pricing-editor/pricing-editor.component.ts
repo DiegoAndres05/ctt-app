@@ -40,36 +40,38 @@ type PricingKind = 'base' | 'season';
         @if (currentSchemes().length === 0) {
           <p class="notice">Este producto aún no tiene un esquema de precio vigente.</p>
         } @else {
-          <table>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Cobro</th>
-                <th>Moneda</th>
-                <th>Monto</th>
-                <th>Temporada</th>
-                <th>Vigente desde</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (scheme of currentSchemes(); track scheme.id) {
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                  <td>{{ scheme.season_start ? 'Temporada' : 'Base' }}</td>
-                  <td>{{ chargeLabel(scheme.charge_type) }}</td>
-                  <td>{{ scheme.currency }}</td>
-                  <td>{{ scheme.base_amount }}</td>
-                  <td>
-                    @if (scheme.season_start && scheme.season_end) {
-                      {{ scheme.season_start }} – {{ scheme.season_end }}
-                    } @else {
-                      —
-                    }
-                  </td>
-                  <td>{{ scheme.valid_from | date: 'short' }}</td>
+                  <th>Tipo</th>
+                  <th>Cobro</th>
+                  <th>Moneda</th>
+                  <th>Monto</th>
+                  <th>Temporada</th>
+                  <th>Vigente desde</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (scheme of currentSchemes(); track scheme.id) {
+                  <tr>
+                    <td>{{ scheme.season_start ? 'Temporada' : 'Base' }}</td>
+                    <td>{{ chargeLabel(scheme.charge_type) }}</td>
+                    <td>{{ scheme.currency }}</td>
+                    <td>{{ scheme.base_amount }}</td>
+                    <td>
+                      @if (scheme.season_start && scheme.season_end) {
+                        {{ scheme.season_start }} – {{ scheme.season_end }}
+                      } @else {
+                        —
+                      }
+                    </td>
+                    <td>{{ scheme.valid_from | date: 'short' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         }
 
         @if (!readOnly()) {
@@ -80,44 +82,58 @@ type PricingKind = 'base' | 'season';
               modifican.
             </p>
 
-            <label for="kind">Esquema</label>
-            <select id="kind" [formField]="priceForm.kind">
-              <option value="base">Precio base</option>
-              <option value="season">Precio de temporada</option>
-            </select>
-
-            <label for="charge-type">Tipo de cobro</label>
-            <select id="charge-type" [formField]="priceForm.chargeType">
-              <option value="per_person">Por persona</option>
-              <option value="per_night">Por noche</option>
-              <option value="per_group">Por grupo</option>
-            </select>
-
-            <label for="currency">Moneda (ISO 4217)</label>
-            <input id="currency" type="text" [formField]="priceForm.currency" />
-
-            <label for="amount">Monto</label>
-            <input id="amount" type="number" step="0.01" [formField]="priceForm.baseAmount" />
-
-            @if (priceForm.kind().value() === 'season') {
-              <label for="season-start">Inicio de temporada</label>
-              <input id="season-start" type="date" [formField]="priceForm.seasonStart" />
-
-              <label for="season-end">Fin de temporada</label>
-              <input id="season-end" type="date" [formField]="priceForm.seasonEnd" />
-            }
-
-            <button type="submit" [disabled]="priceForm().submitting()">
-              {{ priceForm().submitting() ? 'Guardando…' : 'Guardar tarifa' }}
-            </button>
+            <div class="form-grid compact">
+              <div class="field">
+                <label for="kind">Esquema</label>
+                <select id="kind" [formField]="priceForm.kind">
+                  <option value="base">Precio base</option>
+                  <option value="season">Precio de temporada</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="charge-type">Tipo de cobro</label>
+                <select id="charge-type" [formField]="priceForm.chargeType">
+                  <option value="per_person">Por persona</option>
+                  <option value="per_night">Por noche</option>
+                  <option value="per_group">Por grupo</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="currency">Moneda (ISO 4217)</label>
+                <input id="currency" type="text" [formField]="priceForm.currency" />
+              </div>
+              <div class="field">
+                <label for="amount">Monto</label>
+                <input id="amount" type="number" step="0.01" [formField]="priceForm.baseAmount" />
+              </div>
+              @if (priceForm.kind().value() === 'season') {
+                <div class="field">
+                  <label for="season-start">Inicio de temporada</label>
+                  <input id="season-start" type="date" [formField]="priceForm.seasonStart" />
+                </div>
+                <div class="field">
+                  <label for="season-end">Fin de temporada</label>
+                  <input id="season-end" type="date" [formField]="priceForm.seasonEnd" />
+                </div>
+              }
+            </div>
+            <div>
+              <button class="primary" type="submit" [disabled]="priceForm().submitting()">
+                {{ priceForm().submitting() ? 'Guardando…' : 'Guardar tarifa' }}
+              </button>
+            </div>
           </form>
         }
 
         <form class="editor" (submit)="onResolve($event)" novalidate>
           <h3>Consultar tarifa vigente</h3>
-          <label for="on-date">Fecha</label>
-          <input id="on-date" type="date" [formField]="resolveForm.onDate" />
-          <button type="submit" [disabled]="resolveForm().submitting()">Consultar</button>
+          <div class="inline-form">
+            <div class="field">
+              <label for="on-date">Fecha</label>
+              <input id="on-date" type="date" [formField]="resolveForm.onDate" />
+            </div>
+            <button type="submit" [disabled]="resolveForm().submitting()">Consultar</button>
+          </div>
           @if (resolved(); as price) {
             <p class="notice">
               {{ price.amount }} {{ price.currency }} ({{
@@ -132,16 +148,25 @@ type PricingKind = 'base' | 'season';
             <h3>Sobreescritura manual</h3>
             <p class="notice">Solo administradores. Queda registrada en auditoría.</p>
 
-            <label for="override-amount">Nuevo monto</label>
-            <input
-              id="override-amount"
-              type="number"
-              step="0.01"
-              [formField]="overrideForm.newAmount"
-            />
-
-            <label for="override-reason">Motivo</label>
-            <textarea id="override-reason" rows="2" [formField]="overrideForm.reason"></textarea>
+            <div class="form-grid">
+              <div class="field">
+                <label for="override-amount">Nuevo monto</label>
+                <input
+                  id="override-amount"
+                  type="number"
+                  step="0.01"
+                  [formField]="overrideForm.newAmount"
+                />
+              </div>
+              <div class="field span-all">
+                <label for="override-reason">Motivo</label>
+                <textarea
+                  id="override-reason"
+                  rows="2"
+                  [formField]="overrideForm.reason"
+                ></textarea>
+              </div>
+            </div>
 
             <button type="submit" [disabled]="overrideForm().submitting()">
               {{ overrideForm().submitting() ? 'Aplicando…' : 'Aplicar sobreescritura' }}
@@ -161,8 +186,7 @@ type PricingKind = 'base' | 'season';
   styles: `
     .card {
       display: grid;
-      gap: 0.5rem;
-      width: min(40rem, 100%);
+      gap: 0.75rem;
     }
 
     h2,
@@ -180,16 +204,9 @@ type PricingKind = 'base' | 'season';
 
     .editor {
       display: grid;
-      gap: 0.5rem;
-    }
-
-    label {
-      font-weight: 600;
-    }
-
-    button {
-      margin-top: 0.25rem;
-      padding: 0.6rem 1rem;
+      gap: 0.75rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--color-border);
     }
 
     table {

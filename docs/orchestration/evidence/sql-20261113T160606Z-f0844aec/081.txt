@@ -1,0 +1,144 @@
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS is enabled on all 11 catalog/pricing tables
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   products, subtypes, providers, packages and pricing_schemes have no DELETE policy (Default Deny / logical deactivation)
+NOTICE:  ok   every catalog RLS policy pins organization_id to the JWT claim
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   require_catalog_manager reads organization_id/app_role from JWT and the live profile
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   require_tenant_admin reads organization_id/app_role from JWT and the live profile
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   providers: fetching Beta by id returns no row
+NOTICE:  ok   add_ons: fetching Beta by id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   pricing_schemes: fetching Beta tariffs by product id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   packages: fetching Beta by id returns no row
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   package_items: fetching Beta itinerary by package id returns no row
+NOTICE:  ok   resolve_price on a foreign product_id returns no row (RLS on pricing_schemes)
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   operator can link an add-on with is_mandatory and max_quantity
+NOTICE:  ok   product_addons cannot attach a foreign add-on (composite FK pins tenant)
+ assert_raises 
+---------------
+ 
+(1 row)
+
+                                      upsert_pricing_scheme                                       
+--------------------------------------------------------------------------------------------------
+ {"id": "ea09f45e-e67e-414a-960f-7ba16ebf51c2", "valid_from": "2026-11-13T16:06:50.687955+00:00"}
+(1 row)
+
+NOTICE:  ok   an operator cannot apply a manual price override
+ assert_raises 
+---------------
+ 
+(1 row)
+
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an agent can read add-ons of its own tenant
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot insert an add-on
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot define a pricing scheme
+ assert_raises 
+---------------
+ 
+(1 row)
+
+NOTICE:  ok   Beta add-on is unchanged after every Alpha attempt
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- catalog_security_review_test: all assertions passed ---

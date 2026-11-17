@@ -65,7 +65,7 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
   IMAGE_TOO_LARGE: 'La imagen supera el límite de 10 MB.',
   IMAGE_TYPE_NOT_ALLOWED: 'Solo se permiten imágenes JPEG, PNG o WebP.',
   GALLERY_ONLY_FOR_LODGING: 'La galería solo está disponible en fichas de alojamiento.',
-  CATEGORY_IN_USE: 'No se puede desactivar una categoría pública que aún usan fichas publicadas.',
+  CATEGORY_IN_USE: 'Esta categoría la usan fichas, así que no se puede eliminar. Desactívala.',
   CUTOVER_INCOMPLETE:
     'Faltan fichas del manifiesto. Publica todos los ítems antes de completar el cambio de fuente.',
   CUTOVER_ALREADY_COMPLETED: 'El cambio de fuente a panel ya se completó.',
@@ -129,6 +129,13 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
   VOID_REASON_REQUIRED: 'Indique el motivo de la anulación.',
   CONFIRMATION_REQUIRED: 'Confirme la aceptación para continuar.',
   FORBIDDEN: 'No tienes permisos para realizar esta acción.',
+  CATEGORY_PROTECTED:
+    'Esta categoría la usa el sitio que se migró y no se puede eliminar. Puedes renombrarla o desactivarla.',
+  TAXONOMY_VALUE_IN_USE: 'Este valor lo usan fichas, así que no se puede eliminar. Desactívalo.',
+  TAXONOMY_VALUE_INVALID: 'Ese tipo o amenidad no existe en la configuración de tu agencia.',
+  TAXONOMY_VALUE_INACTIVE:
+    'Ese tipo o amenidad está desactivado. Actívalo en Ajustes del catálogo o elige otro.',
+  PUBLIC_ACCESS_UNAVAILABLE: 'El acceso público no está disponible.',
   DATE_RANGE_TOO_LONG: 'El rango no puede superar 366 días.',
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
 };

@@ -44,8 +44,10 @@ checks the Meta signature. The panel never stores provider secrets.
 | `set_request_status` | Authenticated member | `received → in_review`, or either open state → `discarded` with a reason. |
 | `add_request_note` | Authenticated member | Appends one note to a request or a customer. |
 | `anonymize_customer` | Admin | Clears traveler PII and customer-authored text. |
+| `get_traveler_case_status` | `anon`, authenticated | Traveler stage lookup (015). Anon: CTT transition identifier. Authenticated: JWT agency, argument ignored. |
+| `get_traveler_case_status_by_key` | `anon`, authenticated | Same lookup for the agency that owns the public key (016). |
 
-`capture_request_core`, `match_or_create_customer`, and the normalizers are not executable by `anon` or `authenticated`.
+`capture_request_core`, `match_or_create_customer`, `traveler_case_status_for_org`, and the normalizers are not executable by `anon` or `authenticated`.
 
 ## Public web contract
 
@@ -75,6 +77,42 @@ const { data, error } = await supabase.rpc('submit_public_request', {
 `privacy_consent: true` is required. Generate `idempotency_key` once per mount and reuse it on retry. A repeated key, or the same content within two minutes, returns the existing `reference` with `deduplicated: true`.
 
 Error messages are stable codes: `CONSENT_REQUIRED`, `CONTACT_REQUIRED`, `INVALID_EMAIL`, `INVALID_PHONE`, `TRAVEL_DATE_IN_PAST`, `INVALID_DATE_RANGE`, `LISTING_NOT_AVAILABLE`, `RATE_LIMITED`, `VALIDATION_ERROR`. The sixth web request in an hour for the same email or phone, or the 200th for the organization, is `RATE_LIMITED`.
+
+## Traveler case status (015)
+
+The external site (not this app) shows «Consultar mi solicitud». It calls, with the anon key:
+
+```ts
+const { data, error } = await supabase.rpc('get_traveler_case_status_by_key', {
+  p_key: publicKey,
+  p_reference: 'SOL-00042', // case-insensitive, trimmed
+  p_contact: 'ana@example.com', // email or phone, normalized like intake
+});
+```
+
+During the CTT transition `get_traveler_case_status(p_organization_id, p_reference, p_contact)` is also accepted. Migrations: `064_traveler_case_status_enums.sql`, `065_traveler_case_status.sql`.
+
+The contact must match the email or phone of the customer linked to the request, and the customer must not be anonymized. Success returns exactly:
+
+`{ found: true, stage, reference, travel_start, travel_end, offer_name }`
+
+`offer_name` is the published listing name of the first catalog item, in the request locale, or `null`. Dates come from the open reservation version when there is one, otherwise from the request.
+
+`stage` is the most advanced piece of the case:
+
+| Stage | When |
+| --- | --- |
+| `trip_completed`, `trip_in_progress`, `reservation_confirmed`, `reservation_cancelled` | Open (non-superseded) reservation version with that status. Live beats cancelled. |
+| `proposal_ready` | An issued or accepted quotation, no reservation. |
+| `checking_availability` | A non-cancelled pre-reservation, no issued quotation. |
+| `request_received`, `request_in_review` | Request in that status. |
+| `request_closed` | Request discarded, or every pre-reservation cancelled. |
+
+Never returned: price or totals, notes, discard or cancel reason, quotation or reservation reference, `/q/` or `/r/` tokens, providers, documents, passengers, phone or email.
+
+Unknown reference, foreign contact, unparseable contact and anonymized customer all return the same `{ found: false }`. The only case-related error is `RATE_LIMITED`: 8 attempts per hour per normalized contact, or 30 per hour per agency, misses included. It is checked before the case is read, so it reveals nothing about the reference. Invalid keys or closed identifiers raise `PUBLIC_ACCESS_UNAVAILABLE` (016).
+
+Attempts live in `traveler_case_lookups` as a per-agency SHA-256 fingerprint of the contact; rows older than a day are pruned on the next lookup. Each lookup writes one `traveler_case_lookup` audit event with `{reference, found}` only. The lookup never changes requests, pre-reservations, quotations, reservations or payments. Tests: `supabase/tests/traveler_case_status_test.sql`.
 
 ## WhatsApp boundary
 

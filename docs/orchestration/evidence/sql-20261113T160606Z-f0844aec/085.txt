@@ -1,0 +1,123 @@
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+ add_collaborator 
+------------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.packages
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   RLS enabled on public.package_items
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- create_package: experience + accommodation nights ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   create_package stores a draft product of type package in the caller's tenant
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   package itinerary metadata is stored atomically
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   package_items are created for the experience and the accommodation
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+--- PACKAGE_NESTING_NOT_ALLOWED ---
+NOTICE:  ok   a package whose components are not inactive is consistent
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- cross-org component ---
+NOTICE:  ok   create_package rejects a package as a component
+NOTICE:  ok   create_package rejects a component that belongs to another organization
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- agent cannot create_package ---
+ act_as 
+--------
+ 
+(1 row)
+
+NOTICE:  ok   an agent cannot create a package
+ assert_raises 
+---------------
+ 
+(1 row)
+
+--- get_package_consistency warning, no auto-deactivate ---
+ act_as 
+--------
+ 
+(1 row)
+
+                          set_product_status                          
+----------------------------------------------------------------------
+ {"id": "3d3a1f5d-d328-4cc8-9917-dbf7e0cb6adb", "status": "inactive"}
+(1 row)
+
+NOTICE:  ok   the component was deactivated
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   deactivating a component does not change the package status
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   get_package_consistency reports the inactive component as a warning
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  ok   get_package_consistency without an id includes the inconsistent package

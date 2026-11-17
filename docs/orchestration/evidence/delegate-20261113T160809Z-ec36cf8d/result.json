@@ -1,0 +1,31 @@
+{
+  "run_id": "20261113T160809Z-ec36cf8d",
+  "mode": "delegate",
+  "head": "2844c6fc7a361ee821d9b118abf4d34fdb4f7868",
+  "branch": "main",
+  "status": "?? .opencode/\n?? docs/orchestration/\n?? scripts/orchestration/",
+  "commands": [
+    {
+      "argv": [
+        "opencode",
+        "run",
+        "--agent",
+        "ctt-release-orchestrator",
+        "-m",
+        "openai/gpt-6-astra",
+        "--format",
+        "json",
+        "# Auditor\u00eda real G0 y primera delegaci\u00f3n condicionada\n\nFecha 2026-11-13. Act\u00faa como orquestador usando tus agentes persistentes reales.\nLa auditor\u00eda anterior del11nov fall\u00f3 por429; han pasado dos d\u00edas y esta nueva\nejecuci\u00f3n tiene evidencia/revisi\u00f3n distintas. No repitas suites ni ejecutes shell.\n\nDelega INMEDIATAMENTE a ctt-quality-gate-auditor la auditor\u00eda G0, con este contexto\ny rutas (evita releer y copiar todos los logs t\u00fa antes de delegar):\n\n- Repo actual main2844c6fc7a361ee821d9b118abf4d34fdb4f7868; fixes056/057 integrados.\n- Nuevas unitarias: docs/orchestration/evidence/unit-20261113T160606Z-2ccbb6dc/\n  result.json, input-hashes.json, 000.txt.\n- Nuevas SQL: docs/orchestration/evidence/sql-20261113T160606Z-f0844aec/\n  result.json, input-hashes.json y logs referenciados.45 suites completas, fallos\n  readiness al arrancar no son tests fallidos. Contenedor nuevo autorizado\n  ctt-release-qa, network none/tmpfs, eliminado solo ID propio comprobado por label.\n- Configs reales restauradas y descubiertas:\n  docs/orchestration/evidence/agents-20261113T160606Z-2aa54024/.\n- Salud local13nov16:07UTC: app4200 HTTP200, auth/v1/health54321 HTTP200;\n  docker ps muestra DB/auth/rest/kong saludables; SELECT version ...schema_migrations\n  devuelve057,056,055,054. Son observaciones nuevas del instalador, NO E2E ni\n  identidad del bundle, y no sustituyen evidencia del stack aislado futuro.\n\nAuditor debe leer Constituci\u00f3n\u00a713/gates11\u201315, QUALITY-GATES secci\u00f3nG0, cambios056/\n057 y regresiones espec\u00edficas. Solo lectura, sin shell/modificaciones/delegaci\u00f3n.\nEvaluar D1/D2/regresiones/salud de entrada; G0 no requiere resultadoG2 (no circular).\nNo declarar D3/O1/O2 cerrados ni usar hist\u00f3rico como prueba actual.\nRetornar dictamen estructurado y cada observaci\u00f3n con evidencia/impacto/cierre.\n\nPersiste respuesta LITERAL en docs/orchestration/entry-audit.md con taskID; tu\ndecisi\u00f3n separada en RELEASE-STATUS y DECISIONS. Si no verificable/rechazado: detener.\n\nSI G0 habilita fase2, delega a ctt-local-e2e primera tarea real de fase2: inspecci\u00f3n\nde contratos/entorno necesario y preparaci\u00f3n del plan ejecutable desde cero.\nDebe crear docs/qa/reports/local-e2e-report.md con18 pasos y estado real por paso;\nno declarar pasos ejecutados. Puede crear un runner bajo docs/qa/ para revisi\u00f3n.\nAlcance de esta invocaci\u00f3n: SOLO lectura y escritura del informe/preparaci\u00f3n; NO\nshell ni mutaciones DB (el instalador revisar\u00e1 los comandos/scripts antes de\nejecutarlos con aprobaci\u00f3n de recursos nuevos). Identificar exactamente recursos,\nscripts, navegador/dependencias y bloqueos. No usar Supabase existente para fixtures.\nNo fase3/4/5 ni acceso externo. No commits/push. Los permisos no se autoaprueban.\nConcluye con taskIDs reales, G0 y siguiente operaci\u00f3n exacta necesaria para G2.\n"
+      ],
+      "label": null,
+      "started": "2026-11-13T16:08:10.319253+00:00",
+      "exit_code": 1,
+      "output": "000.txt"
+    }
+  ],
+  "exit_code": 1,
+  "child_agents": [],
+  "error": "Delegation incomplete: exit=1, errors=[{'message': 'The usage limit has been reached', 'statusCode': 429}], completed_children=0",
+  "changed_inputs_during_run": [],
+  "finished": "2026-11-13T16:11:41.025936+00:00"
+}

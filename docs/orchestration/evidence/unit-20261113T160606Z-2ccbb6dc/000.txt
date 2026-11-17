@@ -1,0 +1,35 @@
+
+> cttadmin@0.0.0 test
+> ng test --watch=false
+
+❯ Building...
+✔ Building...
+Application bundle generation complete. [28.136 seconds] - 2026-11-13T16:06:42.608Z
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/Users/diegoandresbarriosfranco/ProyectosB/ctt-app[39m
+
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/quotations/models/quotation.model.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/features/sales/pre-reservations/pre-reservation-create/pre-reservation-payload.spec.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/pre-reservations/models/pre-reservation.model.spec.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/shared/components/data-table/list-query.spec.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/features/sales/requests/request-intake/intake-payload.spec.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/error/error-handler.spec.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/reservations/models/reservation.model.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/shared/components/listing-preview/preview-listing.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/shared/layout/nav-items.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/analytics/models/analytics.model.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/customers/search-pattern.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/pre-reservations/provider-contact-links.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/customers/models/request.model.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/customers/models/customer.model.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/auth/interceptors/session.interceptor.spec.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 428[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/core/auth/guards/role.guard.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/app.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 264[2mms[22m[39m
+ [32m✓[39m [30m[43m cttadmin [49m[39m src/app/features/auth/login/login.component.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 307[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m18 passed[39m[22m[90m (18)[39m
+[2m      Tests [22m [1m[32m143 passed[39m[22m[90m (143)[39m
+[2m   Start at [22m 11:06:43
+[2m   Duration [22m 15.37s[2m (transform 7.75s, setup 55.00s, import 11.49s, tests 1.39s, environment 120.13s)[22m
+

@@ -457,6 +457,30 @@ const protectedRoutes: Routes = [
                 ],
               },
               {
+                path: 'public-taxonomies',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/catalog/public-taxonomies/public-taxonomies.component').then(
+                    (m) => m.PublicTaxonomiesComponent,
+                  ),
+              },
+              {
+                path: 'public-profile',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/catalog/public-profile/public-profile.component').then(
+                    (m) => m.PublicProfileComponent,
+                  ),
+              },
+              {
+                path: 'public-key',
+                canActivate: [roleGuard('admin')],
+                loadComponent: () =>
+                  import('./features/catalog/public-key/public-key.component').then(
+                    (m) => m.PublicKeyComponent,
+                  ),
+              },
+              {
                 path: 'cutover',
                 canActivate: [roleGuard('admin')],
                 loadComponent: () =>
