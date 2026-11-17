@@ -27,6 +27,7 @@ describe('visibleNavItems', () => {
       'experiences',
       'accommodations',
       'packages',
+      'blog',
       'cms-settings',
     ]);
   });
@@ -36,6 +37,7 @@ describe('visibleNavItems', () => {
     expect(visible).not.toContain('settings');
     expect(visible).not.toContain('users');
     expect(visible).toContain('cms-settings');
+    expect(visible).toContain('blog');
     expect(visible).toContain('experiences');
     expect(visible).toContain('sales-requests');
     expect(visible).toContain('sales-pre-reservations');
@@ -64,6 +66,10 @@ describe('visibleNavItems', () => {
       'accommodations',
       'packages',
     ]);
+  });
+
+  it('never shows the blog to an agent (spec 013 FR-018)', () => {
+    expect(ids(visibleNavItems('agent'))).not.toContain('blog');
   });
 
   it('returns nothing without a role', () => {

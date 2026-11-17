@@ -400,6 +400,29 @@ const protectedRoutes: Routes = [
             ],
           },
           {
+            // Blog (spec 013): Operator and Administrator only; Agent has no access (FR-018).
+            path: 'blog',
+            canActivate: [roleGuard('operator')],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./features/blog/blog-list/blog-list.component').then(
+                    (m) => m.BlogListComponent,
+                  ),
+              },
+              {
+                path: ':id',
+                canDeactivate: [unsavedChangesGuard],
+                loadComponent: () =>
+                  import('./features/blog/blog-editor/blog-editor.component').then(
+                    (m) => m.BlogEditorComponent,
+                  ),
+              },
+            ],
+          },
+          {
             path: 'settings',
             canActivate: [roleGuard('operator')],
             children: [
@@ -478,6 +501,14 @@ const protectedRoutes: Routes = [
                 loadComponent: () =>
                   import('./features/catalog/public-key/public-key.component').then(
                     (m) => m.PublicKeyComponent,
+                  ),
+              },
+              {
+                path: 'blog-migration',
+                canActivate: [roleGuard('admin')],
+                loadComponent: () =>
+                  import('./features/blog/blog-migration/blog-migration.component').then(
+                    (m) => m.BlogMigrationComponent,
                   ),
               },
               {

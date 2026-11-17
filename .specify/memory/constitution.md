@@ -44,13 +44,15 @@ Backend
 
 Content Management
 
-- WordPress (Headless CMS)
+- Platform CMS (blog articles and public listings, per agency)
+- WordPress (Headless CMS) for landing pages, marketing and SEO-oriented content
 
 Infrastructure
 
 - Docker-compatible deployment
 - Cloud-first architecture
 - Infrastructure portability
+- Self-hosted open-source machine translation (LibreTranslate) for editorial drafts (*Amended 2026-11-17 by ADR-0005*)
 
 Future technology changes are permitted only if they preserve the architectural principles established by this Constitution.
 
@@ -3202,14 +3204,17 @@ Database design SHALL prioritize:
 
 ## Content Management
 
-WordPress SHALL be used as a headless content management system.
+*Amended 2026-11-17 by ADR-0004 (`docs/adr/0004-blog-authoring-in-panel.md`).*
 
-Its responsibility SHALL be limited to content-oriented capabilities such as:
+Blog articles SHALL be authored, published and retired in the platform CMS, isolated per agency and exposed to each agency's public site through the public access model.
 
-- Blog articles
+WordPress MAY be used as a headless content management system for:
+
 - Landing pages
 - Marketing content
 - SEO-oriented information
+
+An agency that already publishes a blog in WordPress SHALL migrate it through an explicit source switch; until the switch is completed, its public site MAY keep reading WordPress.
 
 Business data SHALL NOT be managed within WordPress.
 

@@ -36,7 +36,13 @@ export type AuditEventType =
   | 'public_key_generated'
   | 'public_key_revoked'
   | 'public_source_config_changed'
-  | 'traveler_case_lookup';
+  | 'traveler_case_lookup'
+  | 'blog_article_published'
+  | 'blog_article_changes_published'
+  | 'blog_article_retired'
+  | 'blog_article_deleted'
+  | 'blog_source_changed'
+  | 'blog_cutover_manifest_changed';
 
 /** Mirrors the `audit.audit_result` enum. */
 export type AuditResult = 'success' | 'failure' | 'error';

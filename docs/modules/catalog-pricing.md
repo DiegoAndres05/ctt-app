@@ -193,6 +193,58 @@ This repository owns the admin panel and the Supabase contract they consume
 - Known gaps in the projection: offers and yachts expose only a cover (no gallery); offer
   `location`, `meetingPoint`, `schedule` and `duration` exist only in Spanish.
 
+## Blog (013)
+
+Each agency writes, publishes, edits and retires its blog articles in the panel (`/cms/blog`). The site connected to the agency reads only what is published. Decision record: [ADR-0004](../adr/0004-blog-authoring-in-panel.md). Spec: `specs/013-editorial-content/`.
+
+| Entity | Table | Notes |
+| --- | --- | --- |
+| Article | `blog_articles` | Slug unique per agency, fixed from the first publication. `status` draft / published / retired. `revision` for optimistic concurrency. |
+| Content | `blog_article_contents` | At most two rows per article: `published` (what the site reads) and `working` (draft or pending revision, never public). Bilingual `*_es` / `*_en`. |
+| Blog source | `public_blog_source`, `public_blog_cutover_items` | Migration from a previous blog (WordPress): manifest of slugs and source switch. |
+
+**Body.** The body is a JSON block document (`paragraph`, `heading` 2|3, `list`, `quote`, `image`) with inline `bold`, `italic` and `href` (http, https, mailto). `blog_normalize_body` drops anything else on save, so no HTML or script reaches a site. Images live in `catalog-media` under `{org}/blog/{article}/`. Only migrated articles may reference `https` images on the old blog.
+
+**Publishing.** Publishing (and publishing changes) requires the slug, the cover and, for every language the agency offers in its public profile, the title, summary, cover alt text, a non-empty body and an alt text (or the decorative mark) on each image. The error is `PUBLISH_INCOMPLETE`, with `[{field, locale}]` in `DETAIL`.
+
+| RPC | Who | Behavior |
+| --- | --- | --- |
+| `list_blog_articles`, `get_blog_article` | Operator / Admin | Panel reads. Another agency's id is `NOT_FOUND`. |
+| `save_blog_article` | Operator / Admin | Creates a draft (a title is enough) or writes the working content. Requires `expectedRevision` (`ARTICLE_CONFLICT`). |
+| `publish_blog_article`, `publish_blog_article_changes`, `discard_blog_article_changes` | Operator / Admin | Draft → published; pending revision → published; drop the revision. |
+| `retire_blog_article`, `republish_blog_article`, `delete_blog_article` | Operator / Admin | Retire and republish keep the slug and date. Only a never-published draft can be deleted. |
+| `get_blog_source`, `set_blog_migration_required`, `replace_blog_cutover_manifest`, `complete_blog_cutover` | Admin | Migration. The cutover fails with `BLOG_CUTOVER_INCOMPLETE` while a manifest slug has no published article. |
+| `get_public_blog_by_key`, `get_public_blog_article_by_key` | `anon` | Public read for the agency of the key. |
+| `get_public_blog`, `get_public_blog_article` | `anon` (CTT transition), authenticated (own agency preview) | Same answer as the `_by_key` variants. |
+
+**Public read contract.** See `specs/013-editorial-content/contracts/public-consumer.md`.
+- The list is paginated (12 by default, at most 50) and sorted by first publication date, newest first.
+- Only the languages the agency offers now are returned. SEO fields fall back to the title and summary.
+- A draft, retired, unknown or other-agency slug returns `{"found": false}`.
+- While a migration is open the read answers `source: "legacy"` with no articles, so the site keeps its old blog.
+- There is no server cache. A site that caches must drop its copy within 300 s, so that changes show in 5 minutes or less.
+- The blog is read separately from `get_public_site`, so a blog failure does not affect the catalog.
+
+**Security invariants.**
+- RLS limits `SELECT` to Operator and Admin of the same agency; Agent sees nothing.
+- No API role can write the tables directly. `anon` has no table access.
+- Audit events (`blog_article_*`, `blog_source_changed`, `blog_cutover_manifest_changed`) carry only article id, slug and locales, never titles or bodies.
+
+SQL suites: `blog_articles_test.sql`, `blog_isolation_test.sql`, `blog_public_read_test.sql`, `blog_cutover_test.sql`.
+
+## Traducción del blog (017)
+
+Spec: `specs/017-blog-translation/` · ADR: `docs/adr/0005-self-hosted-machine-translation.md`.
+
+- **Qué hace**: en el editor del blog, la pestaña de un idioma tiene «Traducir desde Español/Inglés». Rellena título, resumen, contenido, textos alternativos y SEO como edición **sin guardar**, con aviso y «Deshacer traducción». Si el destino ya tiene texto pregunta: rellenar vacíos, reemplazar todo o cancelar. Nunca guarda, publica ni toca el slug.
+- **Motor**: LibreTranslate propio (sin IA generativa, sin terceros, sin coste por uso). Local: `docker compose -f docker/libretranslate/compose.yml up -d` (puerto 5050, modelos es↔en).
+- **Camino**: panel → Edge Function `translate-blog` (`verify_jwt = true`) → RPC `consume_blog_translation_quota(p_characters)` (Operador/Administrador; 150.000 caracteres por agencia y hora; migración 072) → `LIBRETRANSLATE_URL`. El navegador nunca llama al traductor.
+- **Formato**: cada texto viaja como HTML mínimo (`<b>`, `<i>`, `<a id="N">`); las URLs de los enlaces no se envían. Si vuelven las marcas cambiadas, ese texto se retraduce fragmento por fragmento (`blog-translation.ts`).
+- **Partes**: hasta 40 textos y 5.000 caracteres por solicitud, en serie, con progreso. En un Mac Intel con Docker el traductor tarda ~2 s por frase (research R9).
+- **Configuración**: `supabase/functions/.env` (copiar de `.env.example`) para `supabase functions serve`. En producción, sin `LIBRETRANSLATE_URL` la función responde `TRANSLATION_UNAVAILABLE` y el panel sigue funcionando a mano. El alojamiento de producción está pendiente.
+- **Privacidad**: la tabla de uso solo guarda caracteres por hora; la función registra código, número de textos y duración, nunca el texto.
+- **Pruebas**: `supabase/tests/blog_translation_quota_test.sql`, `blog-translation.spec.ts`, `blog.service.spec.ts`, `blog-editor.component.spec.ts`.
+
 ## Quickstart mapping (T043)
 
 See `specs/002-catalog-pricing/quickstart.md`. Automated coverage:

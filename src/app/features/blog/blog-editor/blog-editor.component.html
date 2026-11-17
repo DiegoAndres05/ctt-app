@@ -1,0 +1,523 @@
+<main class="page stack">
+  <header class="page-head">
+    <a routerLink="/cms/blog">Blog</a>
+    <h1>{{ isNew() ? 'Nuevo artículo' : current().title || draft().slug || 'Artículo' }}</h1>
+    @if (!isNew()) {
+      <div class="status-line">
+        <span>{{ statusLabels[status()] }}</span>
+        @if (hasPending()) {
+          <span class="tag">Cambios sin publicar</span>
+        }
+        @if (detail()?.firstPublishedAt; as published) {
+          <span class="hint">Publicado el {{ published | date: 'd MMM y' }}</span>
+        }
+        @if (detail()?.migrated) {
+          <span class="hint">· Artículo migrado</span>
+        }
+      </div>
+    }
+  </header>
+
+  @if (loading()) {
+    <app-spinner label="Cargando artículo…" />
+  } @else {
+    @if (error(); as failure) {
+      <app-alert kind="error">{{ failure.message }}</app-alert>
+    }
+    @if (conflict()) {
+      <div class="actions" role="group" aria-label="Conflicto de edición">
+        <button type="button" class="btn" (click)="reload()" [disabled]="busy()">Recargar</button>
+        <button type="button" class="btn" (click)="overwrite()" [disabled]="busy()">
+          Sobrescribir
+        </button>
+      </div>
+    }
+    @if (errorGroups().length > 0) {
+      <div class="card" role="alert">
+        <p>Para publicar falta:</p>
+        <ul class="error-list">
+          @for (group of errorGroups(); track group.label) {
+            <li>
+              <button type="button" (click)="focusError(group.locale)">{{ group.label }}</button>:
+              {{ group.fields.join(', ') }}
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    @if (notice(); as message) {
+      <app-alert kind="success">{{ message }}</app-alert>
+    }
+
+    @if (hasPending()) {
+      <app-alert kind="warning">
+        Hay cambios sin publicar. El sitio sigue mostrando la versión publicada hasta que pulses
+        «Publicar cambios».
+      </app-alert>
+    }
+
+    <div class="editor-layout">
+      <form class="card stack" (submit)="$event.preventDefault(); save()" novalidate>
+        <section class="section">
+          <h3>Dirección</h3>
+          <div class="form-grid">
+            <div class="field req" [class.has-error]="slugInvalid()">
+              <label for="blog-slug">Slug</label>
+              <input
+                id="blog-slug"
+                type="text"
+                [value]="draft().slug"
+                [readOnly]="slugLocked()"
+                [attr.maxlength]="draft().migrated ? 200 : limits.slug"
+                (input)="setSlug($event)"
+              />
+              @if (slugLocked()) {
+                <p class="hint">
+                  El slug quedó fijo al publicar, para no romper los enlaces existentes.
+                </p>
+              } @else if (slugInvalid()) {
+                <p class="field-error">Solo minúsculas sin tilde, números y guiones simples.</p>
+              } @else {
+                <p class="hint">
+                  El sitio arma la dirección, por ejemplo /blog/{{ draft().slug || 'mi-articulo' }}.
+                </p>
+              }
+            </div>
+
+            @if (isNew() && draft().migrated) {
+              <div class="field">
+                <label class="check">
+                  <input
+                    type="checkbox"
+                    [checked]="draft().migrated"
+                    (change)="setMigrated($event)"
+                  />
+                  Artículo migrado del blog anterior
+                </label>
+                <label for="blog-original-date">Fecha de publicación original</label>
+                <input
+                  id="blog-original-date"
+                  type="date"
+                  [value]="draft().originalPublishedAt"
+                  (input)="setOriginalDate($event)"
+                />
+                <p class="hint">Conserva el slug y la fecha del blog anterior.</p>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>Portada</h3>
+          @if (isNew()) {
+            <p class="hint">Guarda el borrador para subir imágenes.</p>
+          } @else {
+            <div class="actions">
+              @if (coverUrl(); as url) {
+                <img class="thumb-image" [src]="url" alt="Portada actual" />
+              }
+              <label class="btn">
+                {{ draft().coverRef ? 'Cambiar portada' : 'Subir portada' }}
+                <input
+                  class="visually-hidden"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  (change)="onCoverSelected($event)"
+                  [disabled]="uploading()"
+                />
+              </label>
+              @if (draft().coverRef) {
+                <button type="button" class="btn danger" (click)="removeCover()">Quitar</button>
+              }
+            </div>
+          }
+        </section>
+
+        <div class="locale-toggle" role="group" aria-label="Idioma del contenido">
+          @for (code of locales; track code) {
+            <button
+              type="button"
+              class="btn"
+              [attr.aria-pressed]="locale() === code"
+              (click)="selectLocale(code)"
+            >
+              {{ localeLabels[code] }}
+              @if (requiredLocales().includes(code)) {
+                <span class="hint">(obligatorio para publicar)</span>
+              }
+            </button>
+          }
+        </div>
+
+        @if (canTranslate()) {
+          <div class="translate-bar">
+            <button
+              type="button"
+              class="btn"
+              (click)="requestTranslation()"
+              [disabled]="translating() || busy() || !sourceHasText() || askTranslationMode()"
+              [attr.aria-busy]="translating()"
+            >
+              @if (translating()) {
+                Traduciendo…
+                @if (translationProgress(); as progress) {
+                  {{ progress.done }}/{{ progress.total }}
+                }
+              } @else {
+                Traducir desde {{ localeLabels[translationSource()] }}
+              }
+            </button>
+            @if (!sourceHasText()) {
+              <span class="hint"
+                >{{ localeLabels[translationSource()] }} no tiene texto para traducir.</span
+              >
+            }
+          </div>
+
+          @if (askTranslationMode()) {
+            <div class="card stack" role="alertdialog" aria-labelledby="translate-ask-title">
+              <p id="translate-ask-title">
+                {{ localeLabels[locale()] }} ya tiene texto. ¿Qué hacemos con la traducción?
+              </p>
+              <div class="actions">
+                <button type="button" class="btn" (click)="chooseTranslationMode('fill')">
+                  Rellenar solo campos vacíos
+                </button>
+                <button type="button" class="btn danger" (click)="chooseTranslationMode('replace')">
+                  Reemplazar todo
+                </button>
+                <button type="button" class="btn" (click)="chooseTranslationMode(null)">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (showTranslationNotice()) {
+            <app-alert kind="warning">
+              Traducción automática desde {{ localeLabels[translationSource()] }}. Revísala y
+              corrígela antes de guardar y publicar.
+              <button type="button" class="btn" (click)="undoTranslation()">
+                Deshacer traducción
+              </button>
+            </app-alert>
+          }
+        }
+
+        <section class="section">
+          <h3>Texto · {{ localeLabels[locale()] }}</h3>
+          <div class="form-grid">
+            <div class="field req span-all">
+              <label [attr.for]="'blog-title-' + locale()">Título</label>
+              <input
+                [id]="'blog-title-' + locale()"
+                type="text"
+                [value]="current().title"
+                [attr.maxlength]="limits.title"
+                (input)="setField('title', $event)"
+              />
+              <span class="counter">{{ fieldLength('title') }}/{{ limits.title }}</span>
+            </div>
+            <div class="field req span-all">
+              <label [attr.for]="'blog-summary-' + locale()">Resumen</label>
+              <textarea
+                [id]="'blog-summary-' + locale()"
+                rows="3"
+                [value]="current().summary"
+                [attr.maxlength]="limits.summary"
+                (input)="setField('summary', $event)"
+              ></textarea>
+              <span class="counter">{{ fieldLength('summary') }}/{{ limits.summary }}</span>
+            </div>
+            <div class="field req span-all">
+              <label [attr.for]="'blog-coverAlt-' + locale()"
+                >Texto alternativo de la portada</label
+              >
+              <input
+                [id]="'blog-coverAlt-' + locale()"
+                type="text"
+                [value]="current().coverAlt"
+                [attr.maxlength]="limits.coverAlt"
+                (input)="setField('coverAlt', $event)"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>Contenido · {{ localeLabels[locale()] }}</h3>
+          <p class="hint">
+            Marcas: **negrita**, *cursiva* y [texto](https://enlace). Lo que pegues entra como texto
+            plano.
+          </p>
+          @if (missingAlt() > 0) {
+            <p class="field-error">
+              {{ missingAlt() }} imagen(es) sin texto alternativo. Escríbelo o márcala como
+              decorativa.
+            </p>
+          }
+
+          <div class="blocks">
+            @for (
+              block of current().blocks;
+              track block.key;
+              let first = $first;
+              let last = $last
+            ) {
+              <div class="block">
+                <div class="block-head">
+                  <strong>
+                    @switch (block.type) {
+                      @case ('paragraph') {
+                        Párrafo
+                      }
+                      @case ('heading') {
+                        Subtítulo
+                      }
+                      @case ('quote') {
+                        Cita
+                      }
+                      @case ('list') {
+                        Lista
+                      }
+                      @case ('image') {
+                        Imagen
+                      }
+                    }
+                  </strong>
+                  <span class="block-tools">
+                    <button
+                      type="button"
+                      class="btn"
+                      (click)="moveBlock(block.key, -1)"
+                      [disabled]="first"
+                      aria-label="Subir bloque"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      class="btn"
+                      (click)="moveBlock(block.key, 1)"
+                      [disabled]="last"
+                      aria-label="Bajar bloque"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      class="btn danger"
+                      (click)="removeBlock(block.key)"
+                      aria-label="Eliminar bloque"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                </div>
+
+                @switch (block.type) {
+                  @case ('heading') {
+                    <select
+                      [value]="'' + block.level"
+                      (change)="setHeadingLevel(block.key, $event)"
+                      aria-label="Nivel del subtítulo"
+                    >
+                      <option value="2">Nivel 2</option>
+                      <option value="3">Nivel 3</option>
+                    </select>
+                    <input
+                      type="text"
+                      [value]="block.markup"
+                      (input)="setBlockText(block.key, 'markup', $event)"
+                      aria-label="Texto del subtítulo"
+                    />
+                  }
+                  @case ('list') {
+                    <label class="check">
+                      <input
+                        type="checkbox"
+                        [checked]="block.ordered"
+                        (change)="setBlockFlag(block.key, 'ordered', $event)"
+                      />
+                      Numerada
+                    </label>
+                    <textarea
+                      [value]="block.itemsMarkup"
+                      (input)="setBlockText(block.key, 'itemsMarkup', $event)"
+                      aria-label="Elementos, uno por línea"
+                    ></textarea>
+                  }
+                  @case ('image') {
+                    @if (block.ref) {
+                      <img class="thumb-image" [src]="imageUrl(block.ref)" [alt]="block.alt" />
+                    }
+                    @if (!isNew()) {
+                      <label class="btn">
+                        {{ block.ref ? 'Cambiar imagen' : 'Subir imagen' }}
+                        <input
+                          class="visually-hidden"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          (change)="onBlockImageSelected(block.key, $event)"
+                          [disabled]="uploading()"
+                        />
+                      </label>
+                    } @else {
+                      <p class="hint">Guarda el borrador para subir imágenes.</p>
+                    }
+                    <input
+                      type="text"
+                      [value]="block.alt"
+                      [disabled]="block.decorative"
+                      maxlength="250"
+                      placeholder="Describe la imagen para quien no puede verla"
+                      (input)="setBlockText(block.key, 'alt', $event)"
+                      aria-label="Texto alternativo de la imagen"
+                    />
+                    <label class="check">
+                      <input
+                        type="checkbox"
+                        [checked]="block.decorative"
+                        (change)="setBlockFlag(block.key, 'decorative', $event)"
+                      />
+                      Decorativa (no necesita texto alternativo)
+                    </label>
+                  }
+                  @default {
+                    <textarea
+                      [value]="block.markup"
+                      (input)="setBlockText(block.key, 'markup', $event)"
+                      [attr.aria-label]="
+                        block.type === 'quote' ? 'Texto de la cita' : 'Texto del párrafo'
+                      "
+                    ></textarea>
+                  }
+                }
+              </div>
+            }
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn" (click)="addBlock('paragraph')">+ Párrafo</button>
+            <button type="button" class="btn" (click)="addBlock('heading')">+ Subtítulo</button>
+            <button type="button" class="btn" (click)="addBlock('list')">+ Lista</button>
+            <button type="button" class="btn" (click)="addBlock('quote')">+ Cita</button>
+            <button type="button" class="btn" (click)="addBlock('image')">+ Imagen</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>Buscadores · {{ localeLabels[locale()] }}</h3>
+          <p class="hint">Opcional. Si lo dejas vacío, se usan el título y el resumen.</p>
+          <div class="form-grid">
+            <div class="field span-all">
+              <label [attr.for]="'blog-seoTitle-' + locale()">Título SEO</label>
+              <input
+                [id]="'blog-seoTitle-' + locale()"
+                type="text"
+                [value]="current().seoTitle"
+                [attr.maxlength]="limits.seoTitle"
+                (input)="setField('seoTitle', $event)"
+              />
+              <span class="counter">{{ fieldLength('seoTitle') }}/{{ limits.seoTitle }}</span>
+            </div>
+            <div class="field span-all">
+              <label [attr.for]="'blog-seoDescription-' + locale()">Descripción SEO</label>
+              <textarea
+                [id]="'blog-seoDescription-' + locale()"
+                rows="2"
+                [value]="current().seoDescription"
+                [attr.maxlength]="limits.seoDescription"
+                (input)="setField('seoDescription', $event)"
+              ></textarea>
+              <span class="counter"
+                >{{ fieldLength('seoDescription') }}/{{ limits.seoDescription }}</span
+              >
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button class="btn" type="submit" [disabled]="busy() || slugInvalid()">
+            {{ status() === 'draft' ? 'Guardar borrador' : 'Guardar cambios' }}
+          </button>
+          @switch (status()) {
+            @case ('draft') {
+              <button
+                type="button"
+                class="btn primary"
+                (click)="publish()"
+                [disabled]="busy() || slugInvalid()"
+              >
+                Publicar
+              </button>
+              @if (!isNew()) {
+                <button type="button" class="btn danger" (click)="remove()" [disabled]="busy()">
+                  Eliminar borrador
+                </button>
+              }
+            }
+            @case ('published') {
+              @if (hasPending() || hasUnsavedChanges()) {
+                <button
+                  type="button"
+                  class="btn primary"
+                  (click)="publishChanges()"
+                  [disabled]="busy()"
+                >
+                  Publicar cambios
+                </button>
+              }
+              @if (hasPending()) {
+                <button type="button" class="btn" (click)="discardChanges()" [disabled]="busy()">
+                  Descartar cambios
+                </button>
+              }
+              <button type="button" class="btn danger" (click)="retire()" [disabled]="busy()">
+                Retirar
+              </button>
+            }
+            @case ('retired') {
+              <button type="button" class="btn primary" (click)="republish()" [disabled]="busy()">
+                Volver a publicar
+              </button>
+              @if (hasPending()) {
+                <button type="button" class="btn" (click)="publishChanges()" [disabled]="busy()">
+                  Aplicar cambios a la versión retirada
+                </button>
+                <button type="button" class="btn" (click)="discardChanges()" [disabled]="busy()">
+                  Descartar cambios
+                </button>
+              }
+            }
+          }
+        </div>
+      </form>
+
+      <aside class="preview-column">
+        <div class="actions">
+          <strong>Vista previa</strong>
+          @if (detail()?.published && hasPending()) {
+            <label class="check">
+              <input
+                type="checkbox"
+                [checked]="showPublished()"
+                (change)="showPublished.set(!showPublished())"
+              />
+              Ver la versión publicada
+            </label>
+          }
+        </div>
+        <app-blog-preview
+          [locale]="locale()"
+          [title]="previewSource().title"
+          [summary]="previewSource().summary"
+          [coverUrl]="previewSource().coverUrl"
+          [coverAlt]="previewSource().coverAlt"
+          [blocks]="previewSource().blocks"
+          [imageUrl]="imageUrl"
+        />
+      </aside>
+    </div>
+  }
+</main>

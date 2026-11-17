@@ -32,7 +32,12 @@
 #   service_orders_test.sql, reservation_public_voucher_test.sql
 # Analytics suites (008):
 #   analytics_funnel_test.sql, analytics_ops_test.sql,
-#   analytics_sales_test.sql, analytics_rls_test.sql,,
+#   analytics_sales_test.sql, analytics_rls_test.sql,
+# Blog suites (013):
+#   blog_articles_test.sql, blog_isolation_test.sql,
+#   blog_public_read_test.sql, blog_cutover_test.sql
+# Traveler case status (015):
+#   traveler_case_status_test.sql
 # There is no explicit file list to maintain; adding a `*_test.sql` is enough.
 
 set -euo pipefail

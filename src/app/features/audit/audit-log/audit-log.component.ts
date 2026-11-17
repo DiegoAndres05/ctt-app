@@ -40,6 +40,12 @@ const EVENT_TYPES: readonly AuditEventType[] = [
   'public_key_revoked',
   'public_source_config_changed',
   'traveler_case_lookup',
+  'blog_article_published',
+  'blog_article_changes_published',
+  'blog_article_retired',
+  'blog_article_deleted',
+  'blog_source_changed',
+  'blog_cutover_manifest_changed',
 ];
 
 const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
@@ -69,6 +75,12 @@ const EVENT_TYPE_LABELS: Readonly<Partial<Record<AuditEventType, string>>> = {
   public_key_revoked: 'Clave pública revocada',
   public_source_config_changed: 'Fuente del sitio público',
   traveler_case_lookup: 'Consulta de etapa por el viajero',
+  blog_article_published: 'Artículo publicado',
+  blog_article_changes_published: 'Cambios de artículo publicados',
+  blog_article_retired: 'Artículo retirado',
+  blog_article_deleted: 'Borrador de artículo eliminado',
+  blog_source_changed: 'Fuente del blog',
+  blog_cutover_manifest_changed: 'Manifiesto de migración del blog',
 };
 
 /**

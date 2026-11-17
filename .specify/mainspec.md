@@ -621,12 +621,13 @@ The agency needs to understand what it sells, what converts, and where its busin
 
 The public-facing platform SHALL support content-oriented information separately from transactional business information.
 
+Blog content SHALL be managed in the platform CMS per agency (amended 2026-11-17 by ADR-0004).
+
 WordPress SHALL be considered the content management system for:
 
-* Blog content.
 * Marketing content.
 * SEO-oriented pages.
-* Editorial information.
+* Other editorial information not covered by the platform CMS.
 
 Transactional business data SHALL remain outside WordPress.
 
@@ -739,7 +740,7 @@ The platform SHALL be capable of integrating with external services.
 Initial important integrations include:
 
 * WhatsApp.
-* WordPress.
+* WordPress (landing pages and marketing content).
 * Payment services when required.
 * External service providers when required.
 
@@ -819,7 +820,7 @@ The MVP SHALL prioritize:
 * Basic reports and statistics.
 * Web customer channel.
 * WhatsApp customer channel.
-* WordPress content integration.
+* Content management: platform blog and WordPress integration for marketing content.
 * Authentication.
 * Privacy-aware customer data management.
 * Tenant-aware domain design.

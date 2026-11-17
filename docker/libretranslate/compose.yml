@@ -1,0 +1,18 @@
+# Self-hosted translator for blog drafts (spec 017, ADR-0005). Local development.
+#   docker compose -f docker/libretranslate/compose.yml up -d
+# First start downloads the es<->en models (~1 GB) into the volume.
+name: ctt-libretranslate
+services:
+  libretranslate:
+    image: libretranslate/libretranslate:v1.6.4
+    restart: unless-stopped
+    ports:
+      - "5050:5000"
+    environment:
+      LT_LOAD_ONLY: es,en
+      LT_UPDATE_MODELS: "false"
+      LT_DISABLE_WEB_UI: "true"
+    volumes:
+      - libretranslate-models:/home/libretranslate/.local
+volumes:
+  libretranslate-models:

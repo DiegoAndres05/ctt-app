@@ -92,3 +92,7 @@ verify_jwt = false
 # Webhook de Meta; la autorización es la firma X-Hub-Signature-256 verificada en la función.
 [functions.whatsapp-inbound]
 verify_jwt = false
+
+# Traducción del blog (017, ADR-0005): exige sesión; rol y límite los comprueba la RPC.
+[functions.translate-blog]
+verify_jwt = true

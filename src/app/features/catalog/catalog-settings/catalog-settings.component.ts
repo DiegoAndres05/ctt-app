@@ -51,6 +51,12 @@ const PUBLIC_SITE: readonly SettingsLink[] = [
     description: 'Migración desde un sitio existente o publicación directa.',
     adminOnly: true,
   },
+  {
+    path: '/cms/settings/blog-migration',
+    title: 'Migración del blog',
+    description: 'Copia el blog anterior conservando sus direcciones antes de cambiar de fuente.',
+    adminOnly: true,
+  },
 ];
 
 /**

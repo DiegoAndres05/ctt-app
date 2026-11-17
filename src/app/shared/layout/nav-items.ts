@@ -151,6 +151,13 @@ export const NAV_TREE: readonly NavItem[] = [
         minRole: 'agent',
       },
       {
+        id: 'blog',
+        label: 'Blog',
+        path: '/cms/blog',
+        minRole: 'operator',
+        hideForAgent: true,
+      },
+      {
         id: 'cms-settings',
         label: 'Ajustes del catálogo',
         path: '/cms/settings',

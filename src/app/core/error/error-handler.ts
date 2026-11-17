@@ -137,6 +137,25 @@ const USER_FACING_MESSAGES: Readonly<Record<AuthErrorCode, string>> = {
     'Ese tipo o amenidad está desactivado. Actívalo en Ajustes del catálogo o elige otro.',
   PUBLIC_ACCESS_UNAVAILABLE: 'El acceso público no está disponible.',
   DATE_RANGE_TOO_LONG: 'El rango no puede superar 366 días.',
+  // Blog (feature 013).
+  NOT_FOUND: 'No encontramos ese elemento. Puede que se haya eliminado.',
+  ARTICLE_CONFLICT:
+    'Otra persona guardó este artículo mientras lo editabas. Recarga para ver sus cambios o sobrescríbelos.',
+  SLUG_TAKEN: 'Otro artículo de la agencia ya usa ese slug.',
+  INVALID_SLUG:
+    'El slug solo admite minúsculas sin tilde, números y guiones, sin guion al inicio ni al final.',
+  SLUG_LOCKED: 'El slug quedó fijo al publicar el artículo y ya no se puede cambiar.',
+  INVALID_IMAGE_REF: 'Una imagen no pertenece a este artículo. Vuelve a subirla.',
+  PUBLISH_INCOMPLETE: 'Faltan campos para publicar. Revisa la lista por idioma.',
+  NOT_DELETABLE: 'Un artículo que ya se publicó no se elimina: retíralo.',
+  MIGRATION_CLOSED: 'La migración del blog no está abierta.',
+  BLOG_CUTOVER_INCOMPLETE:
+    'Faltan artículos del blog anterior. Publícalos antes de completar el cambio de fuente.',
+  // Blog translation (feature 017).
+  TRANSLATION_UNAVAILABLE:
+    'La traducción automática no está disponible ahora. Puedes seguir escribiendo a mano.',
+  TRANSLATION_RATE_LIMITED: 'Tu agencia alcanzó el límite de traducciones de esta hora.',
+  TRANSLATION_TOO_LARGE: 'El artículo es demasiado largo para traducirlo de una vez.',
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
 };
 

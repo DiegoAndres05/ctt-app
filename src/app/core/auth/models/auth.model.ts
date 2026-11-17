@@ -197,4 +197,19 @@ export type AuthErrorCode =
   | 'TAXONOMY_VALUE_INACTIVE'
   | 'PUBLIC_ACCESS_UNAVAILABLE'
   | 'DATE_RANGE_TOO_LONG'
+  // Blog (feature 013, specs/013-editorial-content/contracts/management.md).
+  | 'NOT_FOUND'
+  | 'ARTICLE_CONFLICT'
+  | 'SLUG_TAKEN'
+  | 'INVALID_SLUG'
+  | 'SLUG_LOCKED'
+  | 'INVALID_IMAGE_REF'
+  | 'PUBLISH_INCOMPLETE'
+  | 'NOT_DELETABLE'
+  | 'MIGRATION_CLOSED'
+  | 'BLOG_CUTOVER_INCOMPLETE'
+  // Blog translation (feature 017, specs/017-blog-translation/contracts/translate-blog.md).
+  | 'TRANSLATION_UNAVAILABLE'
+  | 'TRANSLATION_RATE_LIMITED'
+  | 'TRANSLATION_TOO_LARGE'
   | 'UNKNOWN_ERROR';
